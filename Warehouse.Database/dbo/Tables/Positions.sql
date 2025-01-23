@@ -1,0 +1,6 @@
+﻿CREATE TABLE Positions(
+	PositionID INT PRIMARY KEY IDENTITY(1,1),
+	Name NVARCHAR(50) NOT NULL,
+	Description NVARCHAR(1000) NULL,
+	Salary MONEY NULL
+);

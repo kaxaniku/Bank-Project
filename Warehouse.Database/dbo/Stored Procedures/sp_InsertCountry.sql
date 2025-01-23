@@ -1,0 +1,15 @@
+﻿CREATE PROCEDURE sp_InsertCountry
+    @Name NVARCHAR(100),
+    @ISOCode NVARCHAR(3),
+	@CountryID INT OUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO Countries(Name, ISOCode)
+	VALUES (@Name, @ISOCode);
+
+	SET @CountryID = SCOPE_IDENTITY();
+
+	RETURN 0;
+END

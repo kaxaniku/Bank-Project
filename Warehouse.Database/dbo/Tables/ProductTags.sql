@@ -1,0 +1,5 @@
+﻿CREATE TABLE ProductTags(
+	TagID INT NOT NULL REFERENCES Tags(TagID),
+	ProductID INT NOT NULL REFERENCES Products(ProductID),
+	PRIMARY KEY (TagID, ProductID)
+);
