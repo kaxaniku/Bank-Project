@@ -76,6 +76,19 @@
     <Build Include="dbo\Stored Procedures\sp_UpdateCountry.sql" />
     <Build Include="dbo\Stored Procedures\sp_DeleteCountry.sql" />
     <Build Include="dbo\Stored Procedures\sp_InsertCity.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteCity.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteProduct.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteSlot.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteStorage.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertProduct.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertSlot.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertStorage.sql" />
+    <Build Include="dbo\Stored Procedures\sp_ProductTags.sql" />
+    <Build Include="dbo\Stored Procedures\sp_Tags.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateCity.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateProducts.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateSlot.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateStorage.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DEV.publish.xml" />
