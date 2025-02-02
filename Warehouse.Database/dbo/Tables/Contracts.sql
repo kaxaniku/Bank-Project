@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[Contracts]
+(
+    ContractID INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(1000) NULL,
+    CustomerID INT NOT NULL REFERENCES Customers(CustomerID),
+    EmployeeID INT NOT NULL REFERENCES Employees(EmployeeID),
+    Price MONEY NOT NULL,
+    IsActive BIT NOT NULL DEFAULT(1),
+	CreateDate DATETIME NOT NULL DEFAULT(GETDATE()),
+	UpdateDate DATETIME NULL
+)
