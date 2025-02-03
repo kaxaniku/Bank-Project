@@ -93,6 +93,27 @@
     <Build Include="dbo\Tables\ContractDetails.sql" />
     <Build Include="dbo\Tables\Transactions.sql" />
     <Build Include="dbo\Tables\Users.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteCategories.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteContract.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteCustomer.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteEmployee.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeletePosition.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteUser.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertCategories.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertContract.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertContractDetail.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertCustomer.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertEmployee.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertPositions.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertTransaction.sql" />
+    <Build Include="dbo\Stored Procedures\sp_InsertUser.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateCategories.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateContract.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateCustomer.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateEmployee.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdatePositions.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateUser.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetCity.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DEV.publish.xml" />
