@@ -1,8 +1,8 @@
-CREATE OR ALTER PROCEDURE sp_GetTransactions
+CREATE OR ALTER PROCEDURE sp_GetTRansactions
     @TransactionsID  int
 AS
 BEGIN
     SELECT * 
-    FROM Transactions 
+    FROM TransactionsID 
     WHERE TransactionsID = @TransactionsID AND IsActive = 1;
 END;
