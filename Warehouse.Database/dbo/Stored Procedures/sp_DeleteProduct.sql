@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_DeleteProduct
+CREATE PROCEDURE sp_DeleteProduct
 	@ProductID INT
 AS
 BEGIN

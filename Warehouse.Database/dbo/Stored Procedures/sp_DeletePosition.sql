@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_DeletePosition
+CREATE PROCEDURE sp_DeletePosition
     @PositionID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
     WHERE PositionID = @PositionID;
 
     RETURN 0;
-END;
+END

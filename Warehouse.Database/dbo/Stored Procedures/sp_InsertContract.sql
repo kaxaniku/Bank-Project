@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertContract
+CREATE PROCEDURE sp_InsertContract
     @Name NVARCHAR(100),
     @Description NVARCHAR(1000),
     @CustomerID INT,
@@ -15,4 +15,4 @@ BEGIN
     SET @ContractID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

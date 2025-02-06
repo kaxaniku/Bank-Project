@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertPosition
+CREATE PROCEDURE sp_InsertPosition
     @Name NVARCHAR(50),
     @Description NVARCHAR(1000),
     @Salary money,
@@ -13,4 +13,4 @@ BEGIN
     SET @PositionID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

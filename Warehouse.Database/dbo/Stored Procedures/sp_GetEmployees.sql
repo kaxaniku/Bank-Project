@@ -1,8 +1,8 @@
-CREATE OR ALTER PROCEDURE sp_GetEmployees
+CREATE PROCEDURE sp_GetEmployees
     @EmployesID  int
 AS
 BEGIN
     SELECT * 
     FROM  Employees
     WHERE CustomerID = @CustomerID AND IsActive = 1;
-END;
+END

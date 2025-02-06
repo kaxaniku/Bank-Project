@@ -15,4 +15,4 @@ BEGIN
     WHERE TagID = @TagID;
 
     RETURN 0;
-END;
+END

@@ -24,4 +24,4 @@ BEGIN
 	WHERE TagID = @OldTagID AND ProductID = @OldProductID;
 
 	RETURN 0;
-END;
+END

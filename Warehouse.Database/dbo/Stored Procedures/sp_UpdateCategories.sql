@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_UpdateCategories
+CREATE PROCEDURE sp_UpdateCategories
     @CategoryID INT,
     @Name NVARCHAR(50),
     @Description NVARCHAR(MAX)

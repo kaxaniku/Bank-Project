@@ -19,4 +19,4 @@ BEGIN
 	WHERE CountryID = @CountryID AND (Name != @Name OR ISOCode != @ISOCode);
 
 	RETURN 0;
-END;
+END

@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_DeleteCategories
+CREATE PROCEDURE sp_DeleteCategories
     @CategoryID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
     WHERE CategoryID = @CategoryID;
 
     RETURN 0;
-END;
+END

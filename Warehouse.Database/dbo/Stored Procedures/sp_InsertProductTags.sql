@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertProductTags
+CREATE PROCEDURE sp_InsertProductTags
 	@TagID INT,
 	@ProductID INT
 AS
@@ -15,4 +15,4 @@ BEGIN
 	VALUES (@TagID, @ProductID);
 
 	RETURN 0;
-END;
+END

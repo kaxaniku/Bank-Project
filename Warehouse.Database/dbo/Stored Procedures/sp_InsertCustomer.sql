@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertCustomer
+CREATE PROCEDURE sp_InsertCustomer
     @Name NVARCHAR(100),
 	@AdressLine1  NVARCHAR(100),
 	@CityID INT,
@@ -15,4 +15,4 @@ BEGIN
     SET @CustomerID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

@@ -1,4 +1,4 @@
-﻿CREATE OR ALTER PROCEDURE sp_DeleteCountry
+﻿CREATE PROCEDURE sp_DeleteCountry
 	@CountryID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
 	WHERE CountryID = @CountryID;
 
 	RETURN 0;
-END;
+END

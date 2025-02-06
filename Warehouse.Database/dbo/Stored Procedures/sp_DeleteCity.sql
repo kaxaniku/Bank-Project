@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_DeleteCity
+CREATE PROCEDURE sp_DeleteCity
 	@CityID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
 	WHERE CityID = @CityID;
 
 	RETURN 0;
-END;
+END

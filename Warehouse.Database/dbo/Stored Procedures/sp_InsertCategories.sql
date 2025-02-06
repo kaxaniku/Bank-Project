@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertCategories
+CREATE PROCEDURE sp_InsertCategories
     @Name NVARCHAR(50),
     @Description NVARCHAR(MAX),
     @CategoryID INT OUT
@@ -12,4 +12,4 @@ BEGIN
     SET @CategoryID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

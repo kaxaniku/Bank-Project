@@ -19,4 +19,4 @@ BEGIN
     WHERE TagID = @TagID AND (Name != @Name OR Description != @Description);
 
     RETURN 0;
-END;
+END

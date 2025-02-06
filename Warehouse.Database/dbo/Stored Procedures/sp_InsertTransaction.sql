@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertTransaction
+CREATE PROCEDURE sp_InsertTransaction
     @ContractID INT,
     @EmployeeID INT,
     @ProductID INT,
@@ -17,4 +17,4 @@ BEGIN
     SET @TransactionID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

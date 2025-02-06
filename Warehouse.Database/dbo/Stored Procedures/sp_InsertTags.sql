@@ -12,4 +12,4 @@ BEGIN
     SET @TagID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

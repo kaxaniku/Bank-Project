@@ -64,7 +64,4 @@
     <Build Include="dbo\Tables\*.sql" />
     <Build Include="dbo\Stored Procedures\*.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="DEV.publish.xml" />
-  </ItemGroup>
 </Project>

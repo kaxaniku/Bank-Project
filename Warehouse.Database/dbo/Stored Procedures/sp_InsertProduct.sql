@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertProduct
+CREATE PROCEDURE sp_InsertProduct
 	@CategoryID INT,
 	@ProductID INT OUT,
 	@Barcode VARCHAR(100),
@@ -16,4 +16,4 @@ BEGIN
 	SET @ProductID = SCOPE_IDENTITY();
 
 	RETURN 0;
-END;
+END

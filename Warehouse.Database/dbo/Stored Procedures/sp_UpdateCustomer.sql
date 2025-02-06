@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_UpdateCustomer
+CREATE PROCEDURE sp_UpdateCustomer
     @Name NVARCHAR(100),
     @AdressLine1 NVARCHAR(100),
     @CityID INT,
@@ -27,4 +27,4 @@ BEGIN
       AND (Name != @Name OR Phone != @Phone OR AddressLine1 != @AdressLine1 OR CityID != @CityID OR Email != @Email);
 
     RETURN 0;
-END;
+END

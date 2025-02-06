@@ -1,11 +1,10 @@
-CREATE OR ALTER PROCEDURE sp_UpdatePosition
+CREATE PROCEDURE sp_UpdatePosition
     @PositionID INT,
     @PositionName NVARCHAR(50),
     @DepartmentID INT,
     @Name NVARCHAR(50),
     @Description NVARCHAR(1000),
-    @Salary MONEY,
-    @PositionID OUT INT
+    @Salary MONEY
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -32,4 +31,4 @@ BEGIN
     SET @PositionID = @PositionID;
 
     RETURN 0;
-END;
+END

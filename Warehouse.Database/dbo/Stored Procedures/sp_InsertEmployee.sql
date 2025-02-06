@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertEmployee
+CREATE PROCEDURE sp_InsertEmployee
     @FirstName NVARCHAR(50),
     @LastName NVARCHAR(50),
 	@Email NVARCHAR(50),
@@ -20,4 +20,4 @@ BEGIN
     SET @EmployeeID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_InsertContractDetail
+CREATE PROCEDURE sp_InsertContractDetail
     @ContractID INT,
     @SlotID INT,
     @StartDate DATETIME,
@@ -14,4 +14,4 @@ BEGIN
     SET @ContractDetailID = SCOPE_IDENTITY();
 
     RETURN 0;
-END;
+END

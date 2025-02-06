@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_DeleteCustomer
+CREATE PROCEDURE sp_DeleteCustomer
     @CustomerID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
     WHERE CustomerID = @CustomerID;
 
     RETURN 0;
-END;
+END

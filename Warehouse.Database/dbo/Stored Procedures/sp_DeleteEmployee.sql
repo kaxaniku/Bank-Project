@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_DeleteEmployee
+CREATE PROCEDURE sp_DeleteEmployee
     @EmployeeID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
     WHERE EmployeeID = @EmployeeID;
 
     RETURN 0;
-END;
+END

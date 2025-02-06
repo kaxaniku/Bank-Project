@@ -1,8 +1,8 @@
-CREATE OR ALTER PROCEDURE sp_GetCategories
+CREATE PROCEDURE sp_GetCategories
     @CategoryID int
 AS
 BEGIN
     SELECT * 
     FROM Categories 
     WHERE CategoryID = @CategoryID AND IsActive = 1;
-END;
+END

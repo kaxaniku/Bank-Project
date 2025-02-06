@@ -19,4 +19,4 @@ BEGIN
 	WHERE SlotID = @SlotID AND (SlotCode != @SlotCode OR StorageID != @StorageID);
 
 	RETURN 0;
-END;
+END

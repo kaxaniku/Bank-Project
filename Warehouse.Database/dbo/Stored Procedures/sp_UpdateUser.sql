@@ -20,4 +20,4 @@ BEGIN
 	WHERE UserID = @UserID AND (Username != @Username OR Password != @Password OR UserRole != @UserRole)
 
 	RETURN 0;
-END;
+END

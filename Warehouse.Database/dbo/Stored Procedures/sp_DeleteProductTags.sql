@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_DeleteProductTags
+CREATE PROCEDURE sp_DeleteProductTags
 	@TagID INT,
 	@ProductID INT
 AS
@@ -15,4 +15,4 @@ BEGIN
 	WHERE TagID = @TagID AND ProductID = @ProductID;
 
 	RETURN 0;
-END;
+END

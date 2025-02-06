@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE sp_UpdateEmployee
+CREATE PROCEDURE sp_UpdateEmployee
     @EmployeeID INT,
     @FirstName NVARCHAR(50),
     @LastName NVARCHAR(50),
@@ -38,4 +38,4 @@ BEGIN
              CityID != @CityID OR HireDate != @HireDate OR BirthDate != @BirthDate);
 
     RETURN 0;
-END;
+END
