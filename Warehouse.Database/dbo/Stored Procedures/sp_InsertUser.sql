@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE sp_InsertUser
+﻿CREATE OR ALTER PROCEDURE sp_InsertUser
     @UserName VARCHAR(30),
 	@Password VARBINARY(64),
 	@UserRole TINYINT,
@@ -12,4 +12,4 @@ BEGIN
 
 	 SET @UserID = SCOPE_IDENTITY()
      RETURN 0;
-END
+END;

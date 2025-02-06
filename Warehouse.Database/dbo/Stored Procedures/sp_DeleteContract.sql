@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_DeleteContract
+CREATE OR ALTER PROCEDURE sp_DeleteContract
     @ContractID INT
 AS
 BEGIN

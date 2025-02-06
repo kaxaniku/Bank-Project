@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE sp_InsertCity
+﻿CREATE OR ALTER PROCEDURE sp_InsertCity
     @Name NVARCHAR(100),
     @CountryID INT,
     @CityID INT OUT
@@ -12,4 +12,4 @@ BEGIN
     SET @CityID = SCOPE_IDENTITY();
 
     RETURN 0;
-END
+END;

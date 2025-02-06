@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_InsertContractDetail
+CREATE OR ALTER PROCEDURE sp_InsertContractDetail
     @ContractID INT,
     @SlotID INT,
     @StartDate DATETIME,

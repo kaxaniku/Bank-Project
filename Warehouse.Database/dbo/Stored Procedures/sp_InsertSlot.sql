@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE sp_InsertSlot
+﻿CREATE OR ALTER PROCEDURE sp_InsertSlot
     @StorageID INT,
     @SlotCode VARCHAR(50),
     @SlotID INT OUT

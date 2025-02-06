@@ -33,4 +33,4 @@ BEGIN
             OR EmployeeID != @EmployeeID 
             OR Price != @Price
         );
-END
+END;

@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_DeleteStorage
+CREATE OR ALTER PROCEDURE sp_DeleteStorage
     @StorageID INT
 AS
 BEGIN
@@ -15,5 +15,4 @@ BEGIN
     WHERE StorageID = @StorageID;
 
     RETURN 0;
-END
-GO
+END;

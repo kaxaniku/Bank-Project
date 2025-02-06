@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_DeleteProduct
+CREATE OR ALTER PROCEDURE sp_DeleteProduct
 	@ProductID INT
 AS
 BEGIN
@@ -16,4 +16,3 @@ BEGIN
 
 	RETURN 0;
 END
-go

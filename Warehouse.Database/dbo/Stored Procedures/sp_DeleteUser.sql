@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE sp_DeleteUser
+﻿CREATE OR ALTER PROCEDURE sp_DeleteUser
     @UserID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
 	 WHERE UserID = @UserID
 
 	 RETURN 0;
-END
+END;

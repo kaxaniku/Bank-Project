@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_InsertStorage
+CREATE OR ALTER PROCEDURE sp_InsertStorage
     @Name NVARCHAR(100),
     @AddressLine1 NVARCHAR(100),
     @AddressLine2 NVARCHAR(100),
@@ -15,5 +15,4 @@ BEGIN
     SET @StorageID = SCOPE_IDENTITY();
 
     RETURN 0;
-END
-GO
+END;

@@ -21,4 +21,4 @@ BEGIN
 	WHERE CityID = @CityID AND (Name != @Name OR PostCode != @PostCode OR CityID != @CityID);
 
 	RETURN 0;
-END
+END;

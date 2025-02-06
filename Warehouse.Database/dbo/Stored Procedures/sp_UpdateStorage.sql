@@ -26,5 +26,4 @@ BEGIN
       AND (Name != @Name OR AddressLine1 != @AddressLine1 OR AddressLine2 != @AddressLine2 OR CityID != @CityID OR Description != @Description);
 
     RETURN 0;
-END
-GO
+END;

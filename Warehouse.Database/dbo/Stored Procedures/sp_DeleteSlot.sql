@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE sp_DeleteSlot
+﻿CREATE OR ALTER PROCEDURE sp_DeleteSlot
 	@SlotID INT
 AS
 BEGIN
@@ -15,4 +15,4 @@ BEGIN
 	WHERE SlotID = @SlotID;
 
 	Return 0;
-END
+END;
