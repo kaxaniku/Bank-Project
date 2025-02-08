@@ -3,6 +3,6 @@ CREATE PROCEDURE sp_GetProductTags
 AS
 BEGIN
     SELECT * 
-    FROM Products
-    WHERE ProductID = @ProductTagsID;
+    FROM ProductTags
+    WHERE ProductTagsID = @ProductTagsID AND IsActive = 1;
 END

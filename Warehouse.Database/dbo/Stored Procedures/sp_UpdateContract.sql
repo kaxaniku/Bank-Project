@@ -17,12 +17,12 @@ BEGIN
     
     UPDATE Contracts
     SET 
-        ContractID = @ContractID,
         Name = @Name,
         Description = @Description,
         CustomerID = @CustomerID,
         EmployeeID = @EmployeeID,
         Price = @Price,
+        IsActive = @IsActive,
         UpdateDate = GETDATE()
     WHERE
         ContractID = @ContractID 

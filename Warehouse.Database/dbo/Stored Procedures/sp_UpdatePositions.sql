@@ -1,5 +1,7 @@
 CREATE PROCEDURE sp_UpdatePosition
     @PositionID INT,
+    @PositionName NVARCHAR(50),
+    @DepartmentID INT,
     @Name NVARCHAR(50),
     @Description NVARCHAR(1000),
     @Salary MONEY
@@ -7,7 +9,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM Positions WHERE PositionID = @PositionID)
+    IF EXISTS (SELECT 1 FROM Positions WHERE PositionID = @PositionID AND IsActive = 0)
     BEGIN
         RAISERROR('Record is not active', 16, 1);
         RETURN 1;
@@ -15,13 +17,16 @@ BEGIN
 
     UPDATE Positions
     SET 
-        PositionID = @PositionID,
+        PositionName = @PositionName,
+        DepartmentID = @DepartmentID,
         Name = @Name,
         Description = @Description,
-        Salary = @Salary
+        Salary = @Salary,
+        UpdateDate = GETDATE()
     WHERE 
         PositionID = @PositionID 
-        AND (Name != Name OR Description != @Description OR Salary != @Salary);
+        AND (PositionName != @PositionName OR DepartmentID != @DepartmentID OR 
+             Name != @Name OR Description != @Description OR Salary != @Salary);
 
     SET @PositionID = @PositionID;
 

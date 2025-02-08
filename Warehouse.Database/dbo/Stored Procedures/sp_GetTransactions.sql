@@ -3,6 +3,6 @@ CREATE PROCEDURE sp_GetTRansactions
 AS
 BEGIN
     SELECT * 
-    FROM Transactions
-    WHERE TransactionID = @TransactionsID;
+    FROM TransactionsID 
+    WHERE TransactionsID = @TransactionsID AND IsActive = 1;
 END

@@ -4,5 +4,5 @@ AS
 BEGIN
     SELECT * 
     FROM Positions 
-    WHERE PositionID = @PositionsID;
+    WHERE PositionsID = @PositionsID AND IsActive = 1;
 END

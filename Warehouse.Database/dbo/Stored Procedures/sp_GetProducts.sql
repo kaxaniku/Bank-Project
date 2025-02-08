@@ -4,5 +4,5 @@ AS
 BEGIN
     SELECT * 
     FROM Products 
-    WHERE ProductID = @ProductsID AND IsActive = 1;
+    WHERE ProductsID = @ProductsID AND IsActive = 1;
 END

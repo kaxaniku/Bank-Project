@@ -1,8 +1,8 @@
 CREATE PROCEDURE sp_GetEmployees
-    @EmployeeID  int
+    @EmployesID  int
 AS
 BEGIN
     SELECT * 
-    FROM Employees
-    WHERE EmployeeID = @EmployeeID AND IsActive = 1;
+    FROM  Employees
+    WHERE CustomerID = @CustomerID AND IsActive = 1;
 END
