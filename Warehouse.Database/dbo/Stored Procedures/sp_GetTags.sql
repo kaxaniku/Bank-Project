@@ -1,8 +1,8 @@
 CREATE PROCEDURE sp_GetTags
-    @TagsID  int
+    @TagID  int
 AS
 BEGIN
     SELECT * 
-    FROM Tags 
-    WHERE TagsID = @TagsID AND IsActive = 1;
+    FROM Tags
+    WHERE TagID = @TagID AND IsActive = 1;
 END

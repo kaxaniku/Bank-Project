@@ -1,8 +1,8 @@
 CREATE PROCEDURE sp_GetUsers
-    @UsersID  int
+    @UserID  int
 AS
 BEGIN
     SELECT * 
     FROM Users 
-    WHERE UsersID = @UsersID AND IsActive = 1;
+    WHERE UserID = @UserID AND IsActive = 1;
 END

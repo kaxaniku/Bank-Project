@@ -1,8 +1,8 @@
 CREATE PROCEDURE sp_GetStorages
-    @StoragesID  int
+    @StorageID  int
 AS
 BEGIN
     SELECT * 
     FROM Storages 
-    WHERE StoragesID = @StoragesID AND IsActive = 1;
+    WHERE StorageID = @StorageID AND IsActive = 1;
 END

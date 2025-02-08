@@ -1,8 +1,8 @@
 CREATE PROCEDURE sp_GetContractDetails
-    @ContractDetailsID int
+    @ContractDetailID int
 AS
 BEGIN
     SELECT * 
-    FROM ContractDetails 
-    WHERE ContractDetailsID = @ContractDetailsID AND IsActive = 1;
+    FROM ContractDetails
+    WHERE ContractDetailID = @ContractDetailID;
 END
