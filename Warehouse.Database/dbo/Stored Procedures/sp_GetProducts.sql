@@ -1,8 +1,8 @@
 CREATE PROCEDURE sp_GetProducts
-    @ProductsID  INT
+    @ProductID  INT
 AS
 BEGIN
     SELECT * 
     FROM Products 
-    WHERE ProductsID = @ProductsID AND IsActive = 1;
+    WHERE ProductID = @ProductID AND IsActive = 1;
 END

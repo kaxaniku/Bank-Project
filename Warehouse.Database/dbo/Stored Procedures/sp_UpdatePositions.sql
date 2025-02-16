@@ -1,7 +1,5 @@
 CREATE PROCEDURE sp_UpdatePosition
     @PositionID INT,
-    @PositionName NVARCHAR(50),
-    @DepartmentID INT,
     @Name NVARCHAR(50),
     @Description NVARCHAR(1000),
     @Salary MONEY
@@ -17,16 +15,13 @@ BEGIN
 
     UPDATE Positions
     SET 
-        PositionName = @PositionName,
-        DepartmentID = @DepartmentID,
         Name = @Name,
         Description = @Description,
         Salary = @Salary,
         UpdateDate = GETDATE()
     WHERE 
         PositionID = @PositionID 
-        AND (PositionName != @PositionName OR DepartmentID != @DepartmentID OR 
-             Name != @Name OR Description != @Description OR Salary != @Salary);
+        AND (Name != @Name  OR Description != @Description OR Salary != @Salary);
 
     SET @PositionID = @PositionID;
 

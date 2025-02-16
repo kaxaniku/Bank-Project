@@ -3,6 +3,6 @@ CREATE PROCEDURE sp_GetCustomers
 AS
 BEGIN
     SELECT * 
-    FROM Customer 
+    FROM Customers
     WHERE CustomerID = @CustomerID AND IsActive = 1;
 END

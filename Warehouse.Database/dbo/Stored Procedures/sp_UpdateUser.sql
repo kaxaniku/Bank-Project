@@ -14,7 +14,7 @@ BEGIN
 	END
 
 	UPDATE Users
-	SET Username = @UserName,
+	SET Username = @Username,
 	    Password = @Password,
 		UserRole = @UserRole
 	WHERE UserID = @UserID AND (Username != @Username OR Password != @Password OR UserRole != @UserRole)

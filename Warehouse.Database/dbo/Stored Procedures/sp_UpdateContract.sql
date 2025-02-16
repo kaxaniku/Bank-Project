@@ -22,7 +22,6 @@ BEGIN
         CustomerID = @CustomerID,
         EmployeeID = @EmployeeID,
         Price = @Price,
-        IsActive = @IsActive,
         UpdateDate = GETDATE()
     WHERE
         ContractID = @ContractID 

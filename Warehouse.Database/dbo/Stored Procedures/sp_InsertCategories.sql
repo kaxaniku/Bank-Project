@@ -1,6 +1,6 @@
 CREATE PROCEDURE sp_InsertCategories
     @Name NVARCHAR(50),
-    @Description NVARCHAR(MAX),
+    @Description NVARCHAR(1000),
     @CategoryID INT OUT
 AS
 BEGIN
