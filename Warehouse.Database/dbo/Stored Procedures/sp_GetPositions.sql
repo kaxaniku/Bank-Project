@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetPositions
-    @PositionsID  int
+    @PositionsID  INT
 AS
 BEGIN
     SELECT * 

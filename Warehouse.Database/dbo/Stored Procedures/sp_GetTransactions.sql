@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetTRansactions
-    @TransactionsID  int
+    @TransactionsID  INT
 AS
 BEGIN
     SELECT * 

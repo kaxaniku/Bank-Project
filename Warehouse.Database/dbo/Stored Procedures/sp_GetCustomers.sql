@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetCustomers
-    @CustomerID int
+    @CustomerID INT
 AS
 BEGIN
     SELECT * 

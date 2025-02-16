@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetTags
-    @TagsID  int
+    @TagsID  INT
 AS
 BEGIN
     SELECT * 

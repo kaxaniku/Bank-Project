@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetCountries
-    @CountryID int
+    @CountryID INT
 AS
 BEGIN
     SELECT * 

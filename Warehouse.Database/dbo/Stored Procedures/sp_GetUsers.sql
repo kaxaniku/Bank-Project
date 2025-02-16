@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetUsers
-    @UsersID  int
+    @UsersID  INT
 AS
 BEGIN
     SELECT * 

@@ -6,8 +6,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO Tags (Name, Description, IsActive, CreateDate)
-    VALUES (@Name, @Description, 1, GETDATE());
+    INSERT INTO Tags (Name, Description)
+    VALUES (@Name, @Description);
 
     SET @TagID = SCOPE_IDENTITY();
 

@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetContracts
-    @ContractID int
+    @ContractID INT
 AS
 BEGIN
     SELECT * 

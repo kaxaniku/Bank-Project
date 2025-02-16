@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetSlots
-    @SlotsID  int
+    @SlotsID  INT
 AS
 BEGIN
     SELECT * 

@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetCategories
-    @CategoryID int
+    @CategoryID INT
 AS
 BEGIN
     SELECT * 

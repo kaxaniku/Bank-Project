@@ -1,5 +1,5 @@
 CREATE PROCEDURE sp_GetStorages
-    @StoragesID  int
+    @StoragesID  INT
 AS
 BEGIN
     SELECT * 

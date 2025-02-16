@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE sp_GetCity
-    @CityID int
+    @CityID INT
 AS
 BEGIN
     SELECT * 
