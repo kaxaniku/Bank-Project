@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Warehouse.DTO\Warehouse.DTO.csproj" />
+  </ItemGroup>
+
 </Project>
