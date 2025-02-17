@@ -5,7 +5,7 @@ CREATE PROCEDURE sp_InsertTransaction
     @SlotID INT,
     @Quantity INT,
     @TransactionType NVARCHAR(50),
-    @CustomerAgent NVARCHAR(100) NULL,
+    @CustomerAgent NVARCHAR(100) = NULL,
     @TransactionID INT OUT
 AS
 BEGIN

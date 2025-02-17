@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetCustomers
+CREATE PROCEDURE sp_GetCustomer
     @CustomerID INT
 AS
 BEGIN

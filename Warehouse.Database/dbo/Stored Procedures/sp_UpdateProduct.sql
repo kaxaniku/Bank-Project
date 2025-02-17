@@ -3,7 +3,7 @@ CREATE PROCEDURE sp_UpdateProduct
 	@CategoryID INT,
 	@Barcode VARCHAR(100),
 	@Name NVARCHAR(100),
-	@Description NVARCHAR(1000),
+	@Description NVARCHAR(1000) = NULL,
 	@Dimensions NVARCHAR(255),
 	@Weight Float
 AS

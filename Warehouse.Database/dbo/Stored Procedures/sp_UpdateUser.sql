@@ -16,7 +16,8 @@ BEGIN
 	UPDATE Users
 	SET Username = @Username,
 	    Password = @Password,
-		UserRole = @UserRole
+		UserRole = @UserRole,
+		UpdateDate = GETDATE()
 	WHERE UserID = @UserID AND (Username != @Username OR Password != @Password OR UserRole != @UserRole)
 
 	RETURN 0;

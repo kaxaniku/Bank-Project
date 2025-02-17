@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetProducts
+CREATE PROCEDURE sp_GetProduct
     @ProductID  INT
 AS
 BEGIN

@@ -1,6 +1,6 @@
 CREATE PROCEDURE sp_InsertContract
     @Name NVARCHAR(100),
-    @Description NVARCHAR(1000),
+    @Description NVARCHAR(1000) = NULL,
     @CustomerID INT,
     @EmployeeID INT,
     @Price MONEY,

@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetUsers
+CREATE PROCEDURE sp_GetUser
     @UserID  INT
 AS
 BEGIN

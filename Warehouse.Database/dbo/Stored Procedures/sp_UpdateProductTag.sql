@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_UpdateProductTags
+CREATE PROCEDURE sp_UpdateProductTag
 	@OldTagID INT,
 	@OldProductID INT,
 	@NewTagID INT,
@@ -20,7 +20,9 @@ BEGIN
 	END
 
 	UPDATE ProductTags
-	SET TagID = @NewTagID, ProductID = @NewProductID
+	SET
+		TagID = @NewTagID,
+		ProductID = @NewProductID
 	WHERE TagID = @OldTagID AND ProductID = @OldProductID;
 
 	RETURN 0;

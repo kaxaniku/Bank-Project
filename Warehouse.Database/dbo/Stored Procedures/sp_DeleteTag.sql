@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_DeleteTags
+CREATE PROCEDURE sp_DeleteTag
     @TagID INT
 AS
 BEGIN

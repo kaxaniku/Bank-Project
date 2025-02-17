@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetProductTags
+CREATE PROCEDURE sp_GetProductTag
     @TagID  INT
 AS
 BEGIN

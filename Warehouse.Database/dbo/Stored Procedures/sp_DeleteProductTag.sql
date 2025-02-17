@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_DeleteProductTags
+CREATE PROCEDURE sp_DeleteProductTag
 	@TagID INT,
 	@ProductID INT
 AS

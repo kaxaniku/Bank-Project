@@ -2,7 +2,7 @@ CREATE PROCEDURE sp_UpdateStorage
     @StorageID INT,
     @Name NVARCHAR(100),
     @AddressLine1 NVARCHAR(100),
-    @AddressLine2 NVARCHAR(100),
+    @AddressLine2 NVARCHAR(100) = NULL,
     @CityID INT,
     @Description NVARCHAR(1000)
 AS

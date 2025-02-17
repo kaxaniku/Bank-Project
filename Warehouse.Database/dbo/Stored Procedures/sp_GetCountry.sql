@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetCountries
+CREATE PROCEDURE sp_GetCountry
     @CountryID INT
 AS
 BEGIN

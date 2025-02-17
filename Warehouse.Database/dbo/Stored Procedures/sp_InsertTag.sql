@@ -1,6 +1,6 @@
-CREATE PROCEDURE sp_InsertTags
+CREATE PROCEDURE sp_InsertTag
     @Name NVARCHAR(50),
-    @Description NVARCHAR(1000),
+    @Description NVARCHAR(1000) = NULL,
     @TagID INT OUT
 AS
 BEGIN

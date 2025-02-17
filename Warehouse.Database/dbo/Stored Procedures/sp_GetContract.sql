@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetContracts
+CREATE PROCEDURE sp_GetContract
     @ContractID INT
 AS
 BEGIN

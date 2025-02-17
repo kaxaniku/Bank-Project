@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetEmployees
+CREATE PROCEDURE sp_GetEmployee
     @EmployeeID  INT
 AS
 BEGIN

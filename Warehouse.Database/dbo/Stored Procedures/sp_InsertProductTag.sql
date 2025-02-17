@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_InsertProductTags
+CREATE PROCEDURE sp_InsertProductTag
 	@TagID INT,
 	@ProductID INT
 AS

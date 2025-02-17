@@ -1,7 +1,7 @@
-CREATE PROCEDURE sp_UpdateTags
+CREATE PROCEDURE sp_UpdateTag
     @TagID INT,
     @Name NVARCHAR(50),
-    @Description NVARCHAR(1000)
+    @Description NVARCHAR(1000) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;

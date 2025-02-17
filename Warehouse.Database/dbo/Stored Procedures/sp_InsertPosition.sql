@@ -1,7 +1,7 @@
 CREATE PROCEDURE sp_InsertPosition
     @Name NVARCHAR(50),
-    @Description NVARCHAR(1000),
-    @Salary money,
+    @Description NVARCHAR(1000) = NULL,
+    @Salary MONEY = NULL,
     @PositionID INT OUT
 AS
 BEGIN

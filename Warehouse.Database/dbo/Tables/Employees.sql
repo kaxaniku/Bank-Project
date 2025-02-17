@@ -11,7 +11,7 @@
 	HireDate DATE NOT NULL,
 	PositionID INT NOT NULL REFERENCES Positions(PositionID),
 	ReportsTo INT NULL REFERENCES Employees(EmployeeID),
-	IsActive BIT NOT NULL DEFAULT 1,
+	IsActive BIT NOT NULL DEFAULT(1),
 	CreateDate DATETIME NOT NULL DEFAULT(GETDATE()),
 	UpdateDate DATETIME NULL
 );

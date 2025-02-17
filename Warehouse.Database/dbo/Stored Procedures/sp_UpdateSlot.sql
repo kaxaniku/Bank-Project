@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE sp_UpdateSlot
+    @SlotID INT,
 	@StorageID INT,
-    @SlotCode VARCHAR(50),
-    @SlotID INT OUT
+    @SlotCode VARCHAR(50)
 AS
 BEGIN
 	SET NOCOUNT ON;

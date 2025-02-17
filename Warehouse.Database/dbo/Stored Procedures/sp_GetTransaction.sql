@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetTRansactions
+CREATE PROCEDURE sp_GetTRansaction
     @TransactionID  INT
 AS
 BEGIN

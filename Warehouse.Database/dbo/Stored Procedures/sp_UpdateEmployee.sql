@@ -1,14 +1,16 @@
 CREATE PROCEDURE sp_UpdateEmployee
     @EmployeeID INT,
-    @FirstName NVARCHAR(50),
-    @LastName NVARCHAR(50),
-    @PositionID INT,
-    @PhoneNumber NVARCHAR(24),
-    @Email NVARCHAR(50),
+    @FirstName NVARCHAR(15),
+    @LastName NVARCHAR(20),
+    @Email VARCHAR(50),
     @AddressLine1 NVARCHAR(100),
+    @AddressLine2 NVARCHAR(100) = NULL,
     @CityID INT,
+    @PhoneNumber VARCHAR(24),
+    @BirthDate DATE,
     @HireDate DATE,
-    @BirthDate DATE
+    @PositionID INT,
+	@ReportsTo INT = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -23,19 +25,29 @@ BEGIN
     SET 
         FirstName = @FirstName,
         LastName = @LastName,
-        PositionID = @PositionID,
-        PhoneNumber = @PhoneNumber,
         Email = @Email,
         AddressLine1 = @AddressLine1,
+        AddressLine2 = @AddressLine2,
         CityID = @CityID,
-        HireDate = @HireDate,
+        PhoneNumber = @PhoneNumber,
         BirthDate = @BirthDate,
+        HireDate = @HireDate,
+        PositionID = @PositionID,
+        ReportsTo = @ReportsTo,
         UpdateDate = GETDATE()
     WHERE 
         EmployeeID = @EmployeeID 
-        AND (FirstName != @FirstName OR LastName != @LastName OR PositionID != @PositionID OR 
-             PhoneNumber != @PhoneNumber OR Email != @Email OR AddressLine1 != @AddressLine1 OR 
-             CityID != @CityID OR HireDate != @HireDate OR BirthDate != @BirthDate);
+        AND (FirstName != @FirstName 
+        OR LastName != @LastName 
+        OR Email != @Email 
+        OR AddressLine1 != @AddressLine1 
+        OR AddressLine2 != @AddressLine2 
+        OR CityID != @CityID 
+        OR PhoneNumber != @PhoneNumber 
+        OR BirthDate != @BirthDate
+        OR HireDate != @HireDate 
+        OR PositionID != @PositionID 
+        OR ReportsTo != @ReportsTo);
 
     RETURN 0;
 END

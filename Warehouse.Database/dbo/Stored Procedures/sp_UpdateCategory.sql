@@ -1,7 +1,7 @@
-CREATE PROCEDURE sp_UpdateCategories
+CREATE PROCEDURE sp_UpdateCategory
     @CategoryID INT,
-    @Name NVARCHAR(50),
-    @Description NVARCHAR(1000)
+    @Name NVARCHAR(15),
+    @Description NVARCHAR(1000) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;

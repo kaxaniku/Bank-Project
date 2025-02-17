@@ -1,10 +1,11 @@
 CREATE PROCEDURE sp_UpdateCustomer
+    @CustomerID INT,
     @Name NVARCHAR(100),
-    @AdressLine1 NVARCHAR(100),
+    @AddressLine1 NVARCHAR(100),
+    @AddressLine2 NVARCHAR(100) = NULL,
     @CityID INT,
-    @Phone NVARCHAR(20),
-    @Email NVARCHAR(20),
-    @CustomerID INT OUT
+    @Phone VARCHAR(24),
+	@Email VARCHAR(50)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -19,12 +20,19 @@ BEGIN
     SET 
         Name = @Name,
         Phone = @Phone,
-        AddressLine1 = @AdressLine1,
+        AddressLine1 = @AddressLine1,
+        AddressLine2 = @AddressLine2,
         CityID = @CityID,
         Email = @Email,
         UpdateDate = GETDATE()
-    WHERE CustomerID = @CustomerID 
-      AND (Name != @Name OR Phone != @Phone OR AddressLine1 != @AdressLine1 OR CityID != @CityID OR Email != @Email);
+	WHERE CustomerID = @CustomerID
+        AND (
+        Name != @Name 
+        OR Phone != @Phone 
+        OR AddressLine1 != @AddressLine1 
+        OR AddressLine2 != @AddressLine2 
+        OR CityID != @CityID 
+        OR Email != @Email);
 
     RETURN 0;
 END

@@ -1,7 +1,7 @@
-CREATE PROCEDURE UpdateContract
+CREATE PROCEDURE sp_UpdateContract
     @ContractID INT,
     @Name NVARCHAR(100),
-    @Description NVARCHAR(1000),
+    @Description NVARCHAR(1000) = NULL,
     @CustomerID INT,
     @EmployeeID INT,
     @Price MONEY

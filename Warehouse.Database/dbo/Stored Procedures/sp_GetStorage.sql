@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetStorages
+CREATE PROCEDURE sp_GetStorage
     @StorageID  INT
 AS
 BEGIN

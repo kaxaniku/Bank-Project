@@ -3,7 +3,7 @@ CREATE PROCEDURE sp_InsertStorage
     @AddressLine1 NVARCHAR(100),
     @AddressLine2 NVARCHAR(100),
     @CityID INT,
-    @Description NVARCHAR(1000),
+    @Description NVARCHAR(1000) = NULL,
     @StorageID INT OUT
 AS
 BEGIN

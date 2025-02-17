@@ -1,8 +1,8 @@
 CREATE PROCEDURE sp_UpdatePosition
     @PositionID INT,
     @Name NVARCHAR(50),
-    @Description NVARCHAR(1000),
-    @Salary MONEY
+    @Description NVARCHAR(1000) = NULL,
+    @Salary MONEY = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -22,8 +22,6 @@ BEGIN
     WHERE 
         PositionID = @PositionID 
         AND (Name != @Name  OR Description != @Description OR Salary != @Salary);
-
-    SET @PositionID = @PositionID;
 
     RETURN 0;
 END

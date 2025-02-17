@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetCategories
+CREATE PROCEDURE sp_GetCategory
     @CategoryID INT
 AS
 BEGIN

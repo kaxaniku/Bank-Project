@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetSlots
+CREATE PROCEDURE sp_GetSlot
     @SlotID  INT
 AS
 BEGIN

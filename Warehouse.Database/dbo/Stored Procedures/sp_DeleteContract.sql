@@ -11,7 +11,7 @@ BEGIN
 	END
 
     UPDATE Contracts
-    SET IsActive = 0, UpdateDate = GETDATE()
+    SET IsActive = 0
     WHERE ContractID = @ContractID;
 
 	RETURN 0;
