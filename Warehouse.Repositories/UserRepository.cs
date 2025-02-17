@@ -3,17 +3,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq.Expressions;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 namespace Warehouse.Repositories
 {
-    public interface IUserRepository
-    {
-        User? Get(int id);
-        IEnumerable<User> Query();
-        int Insert(User value);
-        void Update(User value);
-        void Delete(User value);
-    }
-
     class UserRepository(IDbConnection connection) : IUserRepository
     {
 

@@ -1,16 +1,8 @@
 ﻿using System.Data;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
-
-public interface ICityRepository
-{
-    City? Get(int id);
-    IEnumerable<City> Query();
-    int Insert(City value);
-    void Update(City value);
-    void Delete(int id);
-}
 
 public class CityCategory(IDbConnection connection) : ICityRepository
 {
