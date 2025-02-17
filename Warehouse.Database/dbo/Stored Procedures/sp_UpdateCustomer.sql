@@ -27,12 +27,13 @@ BEGIN
         UpdateDate = GETDATE()
 	WHERE CustomerID = @CustomerID
         AND (
-        Name != @Name 
-        OR Phone != @Phone 
-        OR AddressLine1 != @AddressLine1 
-        OR AddressLine2 != @AddressLine2 
-        OR CityID != @CityID 
-        OR Email != @Email);
+            Name != @Name 
+            OR Phone != @Phone 
+            OR AddressLine1 != @AddressLine1 
+            OR COALESCE(AddressLine2, '') != COALESCE(@AddressLine2, '')
+            OR CityID != @CityID 
+            OR Email != @Email
+        );
 
     RETURN 0;
 END

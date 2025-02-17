@@ -62,11 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\*.sql" />
-    <Build Include="dbo\Stored Procedures\sp_DeleteProductTag.sql" />
-    <Build Include="dbo\Stored Procedures\sp_UpdateContractDetail.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Warehouse.Database.publish.xml" />
-    <None Include="Warehouse_1.Database.publish.xml" />
+	<Build Include="dbo\Stored Procedures\*.sql" />
   </ItemGroup>
 </Project>

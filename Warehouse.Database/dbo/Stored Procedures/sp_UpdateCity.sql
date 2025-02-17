@@ -18,7 +18,13 @@ BEGIN
 		Name = @Name,
 	    PostCode = @PostCode,
 		UpdateDate = GETDATE()
-	WHERE CityID = @CityID AND (Name != @Name OR PostCode != @PostCode OR CountryID != @CountryID);
+	WHERE 
+		CityID = @CityID 
+		AND (
+			Name != @Name 
+			OR PostCode != @PostCode 
+			OR CountryID != @CountryID
+		);
 
 	RETURN 0;
 END

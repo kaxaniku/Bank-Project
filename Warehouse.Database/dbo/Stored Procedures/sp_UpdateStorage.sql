@@ -4,7 +4,7 @@ CREATE PROCEDURE sp_UpdateStorage
     @AddressLine1 NVARCHAR(100),
     @AddressLine2 NVARCHAR(100) = NULL,
     @CityID INT,
-    @Description NVARCHAR(1000)
+    @Description NVARCHAR(1000) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -22,8 +22,15 @@ BEGIN
         CityID = @CityID,
         Description = @Description,
         UpdateDate = GETDATE()
-    WHERE StorageID = @StorageID 
-      AND (Name != @Name OR AddressLine1 != @AddressLine1 OR AddressLine2 != @AddressLine2 OR CityID != @CityID OR Description != @Description);
+    WHERE 
+        StorageID = @StorageID 
+        AND (
+            Name != @Name 
+            OR AddressLine1 != @AddressLine1
+            OR COALESCE(AddressLine2, '') != COALESCE(@AddressLine2, '')
+            OR CityID != @CityID
+            OR COALESCE(Description, '') != COALESCE(@Description, '')
+        );
 
     RETURN 0;
 END

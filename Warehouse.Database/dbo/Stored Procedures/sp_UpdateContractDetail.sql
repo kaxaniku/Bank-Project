@@ -20,10 +20,13 @@ BEGIN
         StartDate = @StartDate,
         EndDate = @EndDate,
         UpdateDate = GETDATE()
-    WHERE ContractID = @ContractID
-        AND(SlotID != @SlotID
-        OR StartDate != @StartDate
-        OR EndDate != @EndDate);
+    WHERE 
+        ContractDetailID = @ContractDetailID
+        AND (
+            SlotID != @SlotID
+            OR StartDate != @StartDate
+            OR EndDate != @EndDate
+        );
 
     RETURN 0;
 END

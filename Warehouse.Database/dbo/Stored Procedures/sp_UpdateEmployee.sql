@@ -37,17 +37,19 @@ BEGIN
         UpdateDate = GETDATE()
     WHERE 
         EmployeeID = @EmployeeID 
-        AND (FirstName != @FirstName 
-        OR LastName != @LastName 
-        OR Email != @Email 
-        OR AddressLine1 != @AddressLine1 
-        OR AddressLine2 != @AddressLine2 
-        OR CityID != @CityID 
-        OR PhoneNumber != @PhoneNumber 
-        OR BirthDate != @BirthDate
-        OR HireDate != @HireDate 
-        OR PositionID != @PositionID 
-        OR ReportsTo != @ReportsTo);
+        AND (
+            FirstName != @FirstName 
+            OR LastName != @LastName 
+            OR Email != @Email 
+            OR AddressLine1 != @AddressLine1 
+            OR COALESCE(AddressLine2, '') != COALESCE(@AddressLine2, '')
+            OR CityID != @CityID 
+            OR PhoneNumber != @PhoneNumber 
+            OR BirthDate != @BirthDate
+            OR HireDate != @HireDate 
+            OR PositionID != @PositionID 
+            OR COALESCE(ReportsTo, '') != COALESCE(@ReportsTo, '')
+        );
 
     RETURN 0;
 END

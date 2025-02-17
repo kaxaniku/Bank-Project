@@ -21,7 +21,11 @@ BEGIN
         UpdateDate = GETDATE()
     WHERE 
         PositionID = @PositionID 
-        AND (Name != @Name  OR Description != @Description OR Salary != @Salary);
+        AND (
+            Name != @Name OR 
+            COALESCE(Description, '') != COALESCE(@Description, '') OR 
+            Salary != @Salary
+        );
 
     RETURN 0;
 END

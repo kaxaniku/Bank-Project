@@ -1,7 +1,7 @@
 CREATE PROCEDURE sp_InsertStorage
     @Name NVARCHAR(100),
     @AddressLine1 NVARCHAR(100),
-    @AddressLine2 NVARCHAR(100),
+    @AddressLine2 NVARCHAR(100) = NULL,
     @CityID INT,
     @Description NVARCHAR(1000) = NULL,
     @StorageID INT OUT

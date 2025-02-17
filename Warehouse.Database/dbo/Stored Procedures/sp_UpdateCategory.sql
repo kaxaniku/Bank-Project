@@ -16,7 +16,12 @@ BEGIN
     SET Name = @Name,
         Description = @Description,
         UpdateDate = GETDATE()
-    WHERE CategoryID = @CategoryID  AND (Name != @Name OR Description != @Description);
+    WHERE 
+        CategoryID = @CategoryID
+        AND (
+            Name != @Name
+            OR COALESCE(Description, '') != COALESCE(@Description, '')
+        );
 
     RETURN 0;
 END

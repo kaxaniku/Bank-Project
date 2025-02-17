@@ -24,15 +24,16 @@ BEGIN
 	    Dimensions = @Dimensions,
 		Weight = @Weight,
 		UpdateDate = GETDATE()
-	WHERE ProductID = @ProductID 
-      AND (
-          CategoryID != @CategoryID OR 
-          Barcode != @Barcode OR 
-          Name != @Name OR 
-          Description != @Description OR 
-          Dimensions != @Dimensions OR 
-          Weight != @Weight
-      );
+	WHERE 
+		ProductID = @ProductID 
+		AND (
+		    CategoryID != @CategoryID 
+		    OR Barcode != @Barcode
+		    OR Name != @Name
+			OR COALESCE(Description, '') != COALESCE(@Description, '')
+		    OR Dimensions != @Dimensions
+		    OR Weight != @Weight
+		);
 
 	RETURN 0;
 END

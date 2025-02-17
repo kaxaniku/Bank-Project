@@ -16,7 +16,12 @@ BEGIN
 	SET Name = @Name,
 	    ISOCode = @ISOCode,
 		UpdateDate = GETDATE()
-	WHERE CountryID = @CountryID AND (Name != @Name OR ISOCode != @ISOCode);
+	WHERE 
+		CountryID = @CountryID 
+		AND (
+			Name != @Name 
+			OR ISOCode != @ISOCode
+		);
 
 	RETURN 0;
 END

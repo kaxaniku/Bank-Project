@@ -27,7 +27,7 @@ BEGIN
         ContractID = @ContractID 
         AND (
             Name != @Name 
-            OR Description != @Description 
+            OR COALESCE(Description, '') != COALESCE(@Description, '')
             OR CustomerID != @CustomerID 
             OR EmployeeID != @EmployeeID 
             OR Price != @Price

@@ -20,8 +20,7 @@ BEGIN
 	END
 
 	UPDATE ProductTags
-	SET
-		TagID = @NewTagID,
+	SET TagID = @NewTagID,
 		ProductID = @NewProductID
 	WHERE TagID = @OldTagID AND ProductID = @OldProductID;
 
