@@ -44,7 +44,7 @@ public abstract class BaseRepository<T> : IRepository<T>
         SetInsertParameters(value, parameters);
         _connection.Execute($"sp_Insert{_entityName}", parameters, commandType: CommandType.StoredProcedure);
 
-        return parameters.Get<object>($"{_entityName}ID");
+        return parameters.Get<object>($"{_entityName}Id");
     }
 
     public void Update(T value)
@@ -57,7 +57,7 @@ public abstract class BaseRepository<T> : IRepository<T>
     public void Delete(object id)
     {
         var parameters = new DynamicParameters();
-        parameters.Add($"{_entityName}ID", id);
+        parameters.Add($"{_entityName}Id", id);
 
         _connection.Execute($"sp_Delete{_entityName}", parameters, commandType: CommandType.StoredProcedure);
     }
