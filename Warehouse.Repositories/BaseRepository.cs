@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using Warehouse.Repositories.Interfaces;
+using Dapper;
+using System.Reflection;
 
 namespace Warehouse.Repositories;
 
@@ -16,7 +18,10 @@ public abstract class BaseRepository<T> : IRepository<T>
 
     public T? Get(object id)
     {
-        throw new NotImplementedException();
+        var parameters = new DynamicParameters();
+        parameters.Add($"{_entityName}ID", id);
+        
+        return _connection.QueryFirstOrDefault<T>($"sp_Get{_entityName}", parameters, commandType: CommandType.StoredProcedure);
     }
 
     public IEnumerable<T> Query()
@@ -26,42 +31,59 @@ public abstract class BaseRepository<T> : IRepository<T>
 
     public object Insert(T value)
     {
-        var command = GetCommand($"sp_Insert{_entityName}", CommandType.StoredProcedure);
+        var parameters = new DynamicParameters();
+        PropertyInfo[] properties = typeof(T).GetProperties();
 
-        //AddParameter(command, "@Name", value.Name, DbType.String);
-        //AddParameter(command, "@CountryID", value.CountryId, DbType.Int32);
-        //AddParameter(command, "@CityID", value.CityId, DbType.Int32, ParameterDirection.Output);
-        command.ExecuteNonQuery();
+        foreach (PropertyInfo property in properties)
+        {
+            if (PropertyIsValid(property))
+            {
+                parameters.Add(property.Name, property.GetValue(value));
+            }
+        }
+        
+        _connection.Execute($"sp_Insert{_entityName}", parameters, commandType: CommandType.StoredProcedure);
 
-        return 0;
+        return parameters.Get<object>($"{_entityName}ID"); 
     }
 
     public void Update(T value)
     {
-        throw new NotImplementedException();
+        var parameters = new DynamicParameters();
+        PropertyInfo[] properties = typeof(T).GetProperties();
+
+        foreach (PropertyInfo property in properties)
+        {
+            if (PropertyIsValid(property))
+            {
+                parameters.Add(property.Name, property.GetValue(value));
+            }
+        }
+
+        _connection.Execute($"sp_Update{_entityName}", parameters, commandType: CommandType.StoredProcedure);
     }
 
     public void Delete(object id)
     {
-        throw new NotImplementedException();
+        var parameters = new DynamicParameters();
+        parameters.Add($"{_entityName}ID", id);
+
+        _connection.Execute($"sp_Delete{_entityName}", parameters, commandType: CommandType.StoredProcedure);
     }
 
-    private static void AddParameter(IDbCommand command, string paramName, object? value, DbType type, ParameterDirection direction = ParameterDirection.Input)
+    private static bool PropertyIsValid(PropertyInfo property)
     {
-        var parameter = command.CreateParameter();
-        parameter.ParameterName = paramName;
-        parameter.Value = value;
-        parameter.DbType = type;
-        parameter.Direction = direction;
+        string[] invalidProperties = { "IsActive", "CreateDate", "UpdateDate", "TransactionDate" };
 
-        command.Parameters.Add(parameter);
-    }
+        foreach (string invalidProperty in invalidProperties)
+        {
+            if (property.Name == invalidProperty)
+            {
+                return false;
+            }
+        }
 
-    private IDbCommand GetCommand(string commandText, CommandType commandType)
-    {
-        IDbCommand command = _connection.CreateCommand();
-        command.CommandText = commandText;
-        command.CommandType = commandType;
-        return command;
+        return true;
     }
 }
+
