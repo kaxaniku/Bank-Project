@@ -9,12 +9,24 @@ public abstract class BaseRepository<T> : IRepository<T>
 {
     protected readonly IDbConnection _connection;
     protected readonly string _entityName;
+    private static readonly HashSet<string> _allowedEntities = new()
+    {
+        "Category", "City", "ContractDetail", "Contract", "Country",
+        "Customer", "Employee", "Position", "Product", "ProductTag",
+        "Slot", "Storage", "Tag", "Transaction", "User"
+    };
     private static readonly HashSet<string> _invalidProperties = new() { "IsActive", "CreateDate", "UpdateDate", "TransactionDate" };
 
     protected BaseRepository(IDbConnection connection)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-        _entityName = typeof(T).Name;
+
+        string entityName = typeof(T).Name;
+        if (!_allowedEntities.Contains(entityName))
+        {
+            throw new InvalidOperationException($"Unauthorized entity: {entityName}");
+        }
+        _entityName = entityName;
     }
 
     public T? Get(object id)
