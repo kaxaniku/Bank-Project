@@ -9,6 +9,7 @@ public abstract class BaseRepository<T> : IRepository<T>
 {
     protected readonly IDbConnection _connection;
     protected readonly string _entityName;
+    private static readonly HashSet<string> _invalidProperties = new() { "IsActive", "CreateDate", "UpdateDate", "TransactionDate" };
 
     protected BaseRepository(IDbConnection connection)
     {
@@ -34,14 +35,11 @@ public abstract class BaseRepository<T> : IRepository<T>
         var parameters = new DynamicParameters();
         PropertyInfo[] properties = typeof(T).GetProperties();
 
-        foreach (PropertyInfo property in properties)
+        foreach (var property in properties.Where(p => !_invalidProperties.Contains(p.Name)))
         {
-            if (PropertyIsValid(property))
-            {
-                parameters.Add(property.Name, property.GetValue(value));
-            }
+            parameters.Add(property.Name, property.GetValue(value));
         }
-        
+
         _connection.Execute($"sp_Insert{_entityName}", parameters, commandType: CommandType.StoredProcedure);
 
         return parameters.Get<object>($"{_entityName}ID"); 
@@ -52,12 +50,9 @@ public abstract class BaseRepository<T> : IRepository<T>
         var parameters = new DynamicParameters();
         PropertyInfo[] properties = typeof(T).GetProperties();
 
-        foreach (PropertyInfo property in properties)
+        foreach (var property in properties.Where(p => !_invalidProperties.Contains(p.Name)))
         {
-            if (PropertyIsValid(property))
-            {
-                parameters.Add(property.Name, property.GetValue(value));
-            }
+            parameters.Add(property.Name, property.GetValue(value));
         }
 
         _connection.Execute($"sp_Update{_entityName}", parameters, commandType: CommandType.StoredProcedure);
@@ -69,21 +64,6 @@ public abstract class BaseRepository<T> : IRepository<T>
         parameters.Add($"{_entityName}ID", id);
 
         _connection.Execute($"sp_Delete{_entityName}", parameters, commandType: CommandType.StoredProcedure);
-    }
-
-    private static bool PropertyIsValid(PropertyInfo property)
-    {
-        string[] invalidProperties = { "IsActive", "CreateDate", "UpdateDate", "TransactionDate" };
-
-        foreach (string invalidProperty in invalidProperties)
-        {
-            if (property.Name == invalidProperty)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
 

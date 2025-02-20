@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
+using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
-namespace Warehouse.Repositories
+namespace Warehouse.Repositories;
+
+public class TransactionRepository : BaseRepository<Transaction>, ITransactionRepository
 {
-    class TransactionRepository
+    public TransactionRepository(IDbConnection connection) : base(connection)
     {
     }
 }
