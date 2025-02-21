@@ -11,7 +11,7 @@ public abstract class BaseRepository<T> : IRepository<T>
     protected readonly string _entityName;
 
     private IEnumerable<string> InsertIgnoredProperties =>
-        new[] { "IsActive", "CreateDate", "UpdateDate" };
+        new[] { "IsActive", "CreateDate", "UpdateDate", $"{ _entityName }Id" };
 
     private IEnumerable<string> UpdateIgnoredProperties =>
         new[] { "IsActive", "CreateDate", "UpdateDate" };
@@ -25,7 +25,7 @@ public abstract class BaseRepository<T> : IRepository<T>
     public T? Get(object id)
     {
         var parameters = new DynamicParameters();
-        parameters.Add($"{_entityName}ID", id);
+        parameters.Add($"{_entityName}Id", id);
 
         return _connection.QueryFirstOrDefault<T>(
             $"sp_Get{_entityName}",
@@ -65,6 +65,7 @@ public abstract class BaseRepository<T> : IRepository<T>
     private void SetInsertParameters(T value, DynamicParameters parameters)
     {
         PropertyInfo[] properties = typeof(T).GetProperties();
+        parameters.Add($"{_entityName}Id", DbType.Int32, direction: ParameterDirection.Output);
         foreach (var property in properties.Where(p => !InsertIgnoredProperties.Contains(p.Name)))
         {
             parameters.Add(property.Name, property.GetValue(value));
