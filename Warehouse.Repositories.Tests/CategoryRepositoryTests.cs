@@ -1,68 +1,58 @@
-using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
 
-namespace Warehouse.Repositories.Tests
+namespace Warehouse.Repositories.Tests;
+
+public class CategoryRepositoryTests : BaseRepositoryTests<Category>
 {
-    public class CategoryRepositoryTests
+    [Test]
+    public void TestInsert_ShouldInsert()
     {
-        private readonly SqlConnection _connection;
-
-        public CategoryRepositoryTests()
+        CategoryRepository repository = new(_connection!);
+        Category category = new()
         {
-            _connection = new SqlConnection("Data Source=.;Database=G15_WarehouseTest;Integrated Security=True;Trust Server Certificate=True;");
-        }
+            Name = "Test Category",
+            Description = "Test Description"
+        };
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        int id = (int)repository.Insert(category);
+        Category? result = repository.Get(id);
+
+        Assert.Greater(id, 0);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(category.Name, result!.Name);
+        Assert.AreEqual(category.Description, result!.Description);
+    }
+
+    [Test]
+    public void TestUpdate_ShouldUpdate()
+    {
+        CategoryRepository repository = new(_connection);
+        Category category = new()
         {
-            _connection.Dispose();
-        }
+            CategoryId = 5,
+            Name = "Updated Category",
+            Description = "Test Description was updated"
+        };
 
-        [Test]
-        public void TestInsert_ShouldInsert()
-        {
-            CategoryRepository repository = new(_connection);
-            Category category = new()
-            {
-                Name = "Test Category",
-                Description = "Test Description"
-            };
+        repository.Update(category);
+    }
 
-            int id = (int)repository.Insert(category);
-            Assert.Greater(id, 0);
-        }
+    [Test]
+    public void TestGet_ShouldGet()
+    {
+        CategoryRepository repository = new(_connection);
+        int id = 6;
 
-        [Test]
-        public void TestUpdate_ShouldUpdate()
-        {
-            CategoryRepository repository = new(_connection);
-            Category category = new()
-            {
-                CategoryId = 5,
-                Name = "Updated Category",
-                Description = "Test Description was updated"
-            };
+        Category? result = repository.Get(id);
+        Console.WriteLine(result!.Name);
+    }
 
-            repository.Update(category);
-        }
+    [Test]
+    public void TestDelete_ShouldDelete()
+    {
+        CategoryRepository repository = new(_connection);
+        int id = 7;
 
-        [Test]
-        public void TestGet_ShouldGet()
-        {
-            CategoryRepository repository = new(_connection);
-            int id = 6;
-
-            Category? result = repository.Get(id);
-            Console.WriteLine(result!.Name);
-        }
-
-        [Test]
-        public void TestDelete_ShouldDelete()
-        {
-            CategoryRepository repository = new(_connection);
-            int id = 7;
-
-            repository.Delete(id);
-        }
+        repository.Delete(id);
     }
 }

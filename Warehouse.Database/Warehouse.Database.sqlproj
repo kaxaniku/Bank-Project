@@ -63,6 +63,8 @@
   <ItemGroup>
     <Build Include="dbo\Tables\*.sql" />
     <Build Include="dbo\Stored Procedures\*.sql" />
+    <Build Include="dbo\Stored Procedures\sp_ClearDatabase.sql" />
+    <Build Include="dbo\Stored Procedures\sp_SeedDatabase.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dev.publish.xml" />
