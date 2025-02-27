@@ -25,11 +25,11 @@ BEGIN
     DELETE FROM Positions;
     DBCC CHECKIDENT ('Positions', RESEED, 0);
     
-    DELETE FROM Categories;
-    DBCC CHECKIDENT ('Categories', RESEED, 0);
-    
     DELETE FROM Products;
     DBCC CHECKIDENT ('Products', RESEED, 0);
+    
+    DELETE FROM Categories;
+    DBCC CHECKIDENT ('Categories', RESEED, 0);
     
     DELETE FROM Slots;
     DBCC CHECKIDENT ('Slots', RESEED, 0);

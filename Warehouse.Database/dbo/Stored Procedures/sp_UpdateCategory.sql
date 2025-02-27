@@ -1,6 +1,6 @@
 CREATE PROCEDURE sp_UpdateCategory
     @CategoryID INT,
-    @Name NVARCHAR(15),
+    @Name NVARCHAR(100),
     @Description NVARCHAR(1000) = NULL
 AS
 BEGIN

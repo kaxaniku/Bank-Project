@@ -88,7 +88,6 @@ BEGIN
     EXEC sp_InsertUser @EmployeeID1, 'admin', 0x123456789, 1, @UserID1 OUTPUT;    -- Creates a user for EmployeeID1
     EXEC sp_InsertUser @EmployeeID2, 'operator', 0x987654321, 2, @UserID2 OUTPUT; -- Creates a user for EmployeeID2
 
-
     -- Insert Tags
     DECLARE @TagID1 INT, @TagID2 INT, @TagID3 INT, @TagID4 INT, @TagID5 INT;
     EXEC sp_InsertTag 'Portable', 'Portable devices', @TagID1 OUTPUT;       -- TagID = 1

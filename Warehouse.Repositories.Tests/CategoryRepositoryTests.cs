@@ -4,6 +4,7 @@ namespace Warehouse.Repositories.Tests;
 
 public class CategoryRepositoryTests : BaseRepositoryTests<Category>
 {
+
     [Test]
     public void TestInsert_ShouldInsert()
     {
@@ -26,33 +27,29 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        CategoryRepository repository = new(_connection);
-        Category category = new()
-        {
-            CategoryId = 5,
-            Name = "Updated Category",
-            Description = "Test Description was updated"
-        };
+        CategoryRepository repository = new(_connection!);
+        Category? current = repository.Get(Constants.UpdateTestId);
+        Assert.IsNotNull(current);
 
-        repository.Update(category);
-    }
+        current!.Name = "Updated " + current.Name;
+        current.Description = "Updated " + current.Description;
+        repository.Update(current);
 
-    [Test]
-    public void TestGet_ShouldGet()
-    {
-        CategoryRepository repository = new(_connection);
-        int id = 6;
-
-        Category? result = repository.Get(id);
-        Console.WriteLine(result!.Name);
+        Category? updated = repository.Get(Constants.UpdateTestId);
+        Assert.IsNotNull(updated);
+        Assert.AreEqual(current.Name, updated!.Name);
+        Assert.AreEqual(current.Description, updated!.Description);
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        CategoryRepository repository = new(_connection);
-        int id = 7;
+        CategoryRepository repository = new(_connection!);
+        Category? current = repository.Get(Constants.DeleteTestId);
+        Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        repository.Delete(id);
+        repository.Delete(Constants.DeleteTestId);
+        Category? deleted = repository.Get(Constants.DeleteTestId);
+        Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 }
