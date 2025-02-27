@@ -1,15 +1,17 @@
 ﻿CREATE PROCEDURE sp_InsertUser
+    @EmployeeID INT,
     @UserName VARCHAR(30),
-	@Password VARBINARY(64),
-	@UserRole TINYINT,
-	@UserID INT OUT
+    @Password VARBINARY(64),
+    @UserRole TINYINT,
+    @UserID INT OUTPUT
 AS
 BEGIN
-     SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	 INSERT INTO Users(Username, Password, UserRole)
-	 VALUES(@UserName, @Password, @UserRole)
+    INSERT INTO Users(UserID, Username, Password, UserRole)
+    VALUES(@EmployeeID, @UserName, @Password, @UserRole);
 
-	 SET @UserID = SCOPE_IDENTITY()
-     RETURN 0;
+    SET @UserID = @EmployeeID;
+
+    RETURN 0;
 END
