@@ -1,12 +1,24 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using NUnit.Framework;
 
 namespace Warehouse.Repositories.Tests;
 
 public abstract class BaseRepositoryTests<T>
 {
-    // TODO: Move connection string to appsettings.json.
-    private readonly string _connectionString = "Data Source=.;Database=G15_WarehouseTest;Integrated Security=True;Trust Server Certificate=True;";
+    private readonly string _connectionString;
     protected SqlConnection? _connection;
+
+    public BaseRepositoryTests()
+    {
+        var configurationBuilder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+        IConfiguration configuration = configurationBuilder.Build();
+        _connectionString = configuration.GetConnectionString("WarehouseTestConnection");
+    }
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
