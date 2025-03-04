@@ -13,11 +13,11 @@ public abstract class BaseRepositoryTests<T>
     public BaseRepositoryTests()
     {
         var configurationBuilder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(Path.GetFullPath(@"..\..\.."))
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
         IConfiguration configuration = configurationBuilder.Build();
-        _connectionString = configuration.GetConnectionString("WarehouseTestConnection");
+        _connectionString = configuration.GetConnectionString("WarehouseTestConnection")!;
     }
 
     [OneTimeSetUp]

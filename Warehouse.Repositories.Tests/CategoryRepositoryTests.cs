@@ -8,6 +8,7 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
     [Test]
     public void TestInsert_ShouldInsert()
     {
+
         CategoryRepository repository = new(_connection!);
         Category category = new()
         {
