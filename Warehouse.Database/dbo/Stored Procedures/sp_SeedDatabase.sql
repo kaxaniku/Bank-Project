@@ -75,8 +75,9 @@ BEGIN
     EXEC sp_InsertSlot @StorageID1, 'B2', @SlotID2 OUTPUT;   -- SlotID = 2
     
     -- Insert ContractDetails
-    DECLARE @ContractDetailID1 INT;
+    DECLARE @ContractDetailID1 INT, @ContractDetailID2 INT;
     EXEC sp_InsertContractDetail @ContractID1, @SlotID1, '2024-01-01', '2024-12-31', @ContractDetailID1 OUTPUT;  -- ContractDetailID = 1
+    EXEC sp_InsertContractDetail @ContractID2, @SlotID2, '2025-01-01', '2025-12-31', @ContractDetailID2 OUTPUT;  -- ContractDetailID = 2
     
     -- Insert Transactions
     DECLARE @TransactionID1 INT, @TransactionID2 INT;
