@@ -1,14 +1,13 @@
+using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
 
 namespace Warehouse.Repositories.Tests;
 
 public class CategoryRepositoryTests : BaseRepositoryTests<Category>
 {
-
     [Test]
     public void TestInsert_ShouldInsert()
     {
-
         CategoryRepository repository = new(_connection!);
         Category category = new()
         {
@@ -23,6 +22,19 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
         Assert.IsNotNull(result);
         Assert.AreEqual(category.Name, result!.Name);
         Assert.AreEqual(category.Description, result!.Description);
+    }
+
+    [Test]
+    public void TestInsert_ShouldNotInsert()
+    {
+        CategoryRepository repository = new(_connection!);
+        Category category = new()
+        {
+            Name = null,
+            Description = "Test Description"
+        };
+
+        Assert.Throws<SqlException>(() => repository.Insert(category));
     }
 
     [Test]
