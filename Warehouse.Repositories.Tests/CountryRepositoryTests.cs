@@ -4,16 +4,14 @@ namespace Warehouse.Repositories.Tests;
 
 public class CountryRepositoryTests : BaseRepositoryTests<Country>
 {
-
     [Test]
     public void TestInsert_ShouldInsert()
     {
-
         CountryRepository repository = new(_connection!);
         Country country = new()
         {
             Name = "Test Country",
-            ISOCode = "Test ISOCode"
+            ISOCode = "123"
         };
 
         int id = (int)repository.Insert(country);
@@ -33,7 +31,7 @@ public class CountryRepositoryTests : BaseRepositoryTests<Country>
         Assert.IsNotNull(current);
 
         current!.Name = "Updated " + current.Name;
-        current.ISOCode = "Updated " + current.ISOCode;
+        current.ISOCode = "124";
         repository.Update(current);
 
         Country? updated = repository.Get(Constants.UpdateTestId);

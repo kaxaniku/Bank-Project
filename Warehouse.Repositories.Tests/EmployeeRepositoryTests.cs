@@ -14,13 +14,13 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
         {
             FirstName = "Test FirstName",
             LastName = "Test LastName",
-            Email = "Test Email",
+            Email = "Test@Email.com",
             AddressLine1 = "Test AddressLine1",
             AddressLine2 = "Test AddressLine2",
             CityId = 1,
             PhoneNumber = "Test PhoneNumber",
-            BirthDate = DateTime.Now,
-            HireDate = DateTime.Now,
+            BirthDate = DateTime.Today.AddYears(-30),
+            HireDate = DateTime.Today.AddMonths(-8),
             PositionId = 1,
             ReportsTo = 1,
         };
@@ -37,8 +37,8 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
         Assert.AreEqual(employee.AddressLine2, result!.AddressLine2);
         Assert.AreEqual(employee.CityId, result!.CityId);
         Assert.AreEqual(employee.PhoneNumber, result!.PhoneNumber);
-        Assert.AreEqual(employee.BirthDate.ToString("yyyy-MM-dd HH:mm:ss"), result!.BirthDate.ToString("yyyy-MM-dd HH:mm:ss"));
-        Assert.AreEqual(employee.HireDate.ToString("yyyy-MM-dd HH:mm:ss"), result!.HireDate.ToString("yyyy-MM-dd HH:mm:ss"));
+        Assert.AreEqual(employee.BirthDate, result!.BirthDate);
+        Assert.AreEqual(employee.HireDate, result!.HireDate);
         Assert.AreEqual(employee.PositionId, result!.PositionId);
         Assert.AreEqual(employee.ReportsTo, result!.ReportsTo);
     }
@@ -52,12 +52,12 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
 
         current!.FirstName = "Updated " + current.FirstName;
         current!.LastName = "Updated " + current.LastName;
-        current!.Email = "Updated " + current.Email;
+        current!.Email = "New" + current.Email;
         current!.AddressLine1 = "Updated " + current.AddressLine1;
         current.AddressLine2 = "Updated " + current.AddressLine2;
         current.PhoneNumber = "Updated " + current.PhoneNumber;
-        current.BirthDate = DateTime.Now;
-        current.HireDate = DateTime.Now;
+        current.BirthDate = current.BirthDate.AddYears(-15);
+        current.HireDate = current.HireDate.AddMonths(-4);
         repository.Update(current);
 
         Employee? updated = repository.Get(Constants.UpdateTestId);
@@ -67,8 +67,8 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
         Assert.AreEqual(current.Email, updated!.Email);
         Assert.AreEqual(current.AddressLine1, updated!.AddressLine1);
         Assert.AreEqual(current.AddressLine2, updated.AddressLine2);
-        Assert.AreEqual(current.BirthDate.ToString("yyyy-MM-dd HH:mm:ss"), updated!.BirthDate.ToString("yyyy-MM-dd HH:mm:ss"));
-        Assert.AreEqual(current.HireDate.ToString("yyyy-MM-dd HH:mm:ss"), updated!.HireDate.ToString("yyyy-MM-dd HH:mm:ss"));
+        Assert.AreEqual(current.BirthDate, updated!.BirthDate);
+        Assert.AreEqual(current.HireDate, updated!.HireDate);
     }
 
     [Test]
