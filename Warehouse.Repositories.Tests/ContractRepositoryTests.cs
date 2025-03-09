@@ -1,3 +1,4 @@
+using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
 
 namespace Warehouse.Repositories.Tests;
@@ -32,6 +33,22 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
     }
 
     [Test]
+    public void TestInsert_ShouldNotInsert()
+    {
+        ContractRepository repository = new(_connection!);
+        Contract contract = new()
+        {
+            Name = null,
+            Description = "Test Description",
+            CustomerId = 1,
+            EmployeeId = 1,
+            Price = 100
+        };
+
+        Assert.Throws<SqlException>(() => repository.Insert(contract));
+    }
+
+    [Test]
     public void TestUpdate_ShouldUpdate()
     {
         ContractRepository repository = new(_connection!);
@@ -40,6 +57,9 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
 
         current!.Name = "Updated " + current.Name;
         current.Description = "Updated " + current.Description;
+        current.CustomerId = 2;
+        current.EmployeeId = 2;
+        current.Price = 200;
         repository.Update(current);
 
         Contract? updated = repository.Get(Constants.UpdateTestId);
@@ -52,6 +72,22 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
     }
 
     [Test]
+    public void TestUpdate_ShouldNotUpdate()
+    {
+        ContractRepository repository = new(_connection!);
+        Contract? current = repository.Get(Constants.UpdateTestId);
+        Assert.IsNotNull(current);
+
+        current!.Name = null;
+        current.Description = "Updated " + current.Description;
+        current.CustomerId = 2;
+        current.EmployeeId = 2;
+        current.Price = 200;
+
+        Assert.Throws<SqlException>(() => repository.Update(current));
+    }
+
+    [Test]
     public void TestDelete_ShouldDelete()
     {
         ContractRepository repository = new(_connection!);
@@ -61,5 +97,19 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
         repository.Delete(Constants.DeleteTestId);
         Contract? deleted = repository.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
+    }
+
+    [Test]
+    public void TestDelete_ShouldNotDelete()
+    {
+        ContractRepository repository = new(_connection!);
+        Contract? current = repository.Get(Constants.DeleteTestId2);
+        Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
+
+        repository.Delete(Constants.DeleteTestId2);
+        Contract? deleted = repository.Get(Constants.DeleteTestId2);
+        Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
+
+        Assert.Throws<SqlException>(() => repository.Delete(Constants.DeleteTestId2));
     }
 }

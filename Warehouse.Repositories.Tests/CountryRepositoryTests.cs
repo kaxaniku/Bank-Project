@@ -1,4 +1,5 @@
-﻿using Warehouse.DTO;
+﻿using Microsoft.Data.SqlClient;
+using Warehouse.DTO;
 
 namespace Warehouse.Repositories.Tests;
 
@@ -24,6 +25,19 @@ public class CountryRepositoryTests : BaseRepositoryTests<Country>
     }
 
     [Test]
+    public void TestInsert_ShouldNotInsert()
+    {
+        CountryRepository repository = new(_connection!);
+        Country country = new()
+        {
+            Name = "Test Country",
+            ISOCode = null,
+        };
+
+        Assert.Throws<SqlException>(() => repository.Insert(country));
+    }
+
+    [Test]
     public void TestUpdate_ShouldUpdate()
     {
         CountryRepository repository = new(_connection!);
@@ -41,6 +55,19 @@ public class CountryRepositoryTests : BaseRepositoryTests<Country>
     }
 
     [Test]
+    public void TestUpdate_ShouldNotUpdate()
+    {
+        CountryRepository repository = new(_connection!);
+        Country? current = repository.Get(Constants.UpdateTestId);
+        Assert.IsNotNull(current);
+
+        current!.Name = "null";
+        current.ISOCode = null;
+
+        Assert.Throws<SqlException>(() => repository.Update(current));
+    }
+
+    [Test]
     public void TestDelete_ShouldDelete()
     {
         CountryRepository repository = new(_connection!);
@@ -50,5 +77,19 @@ public class CountryRepositoryTests : BaseRepositoryTests<Country>
         repository.Delete(Constants.DeleteTestId);
         Country? deleted = repository.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
+    }
+
+    [Test]
+    public void TestDelete_ShouldNotDelete()
+    {
+        CountryRepository repository = new(_connection!);
+        Country? current = repository.Get(Constants.DeleteTestId2);
+        Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
+
+        repository.Delete(Constants.DeleteTestId2);
+        Country? deleted = repository.Get(Constants.DeleteTestId2);
+        Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
+
+        Assert.Throws<SqlException>(() => repository.Delete(Constants.DeleteTestId2));
     }
 }

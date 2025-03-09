@@ -55,6 +55,19 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
     }
 
     [Test]
+    public void TestUpdate_ShouldNotUpdate()
+    {
+        CategoryRepository repository = new(_connection!);
+        Category? current = repository.Get(Constants.UpdateTestId);
+        Assert.IsNotNull(current);
+
+        current!.Name = null;
+        current.Description = "Updated " + current.Description;
+
+        Assert.Throws<SqlException>(() => repository.Update(current));
+    }
+
+    [Test]
     public void TestDelete_ShouldDelete()
     {
         CategoryRepository repository = new(_connection!);
@@ -64,5 +77,19 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
         repository.Delete(Constants.DeleteTestId);
         Category? deleted = repository.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
+    }
+
+    [Test]
+    public void TestDelete_ShouldNotDelete()
+    {
+        CategoryRepository repository = new(_connection!);
+        Category? current = repository.Get(Constants.DeleteTestId2);
+        Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
+
+        repository.Delete(Constants.DeleteTestId2);
+        Category? deleted = repository.Get(Constants.DeleteTestId2);
+        Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
+
+        Assert.Throws<SqlException>(() => repository.Delete(Constants.DeleteTestId2));
     }
 }

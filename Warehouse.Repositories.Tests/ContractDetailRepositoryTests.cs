@@ -1,3 +1,4 @@
+using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
 
 namespace Warehouse.Repositories.Tests;
@@ -12,10 +13,10 @@ public class ContractDetailRepositoryTests : BaseRepositoryTests<ContractDetail>
         ContractDetailRepository repository = new(_connection!);
         ContractDetail contractDetail = new()
         {
-            SlotId = 1,
+            SlotId = 3,
             ContractId = 1,
-            StartDate = DateTime.Now,
-            EndDate = DateTime.Now.AddMonths(1)
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today.AddMonths(1)
         };
 
         int id = (int)repository.Insert(contractDetail);
@@ -25,7 +26,22 @@ public class ContractDetailRepositoryTests : BaseRepositoryTests<ContractDetail>
         Assert.IsNotNull(result);
         Assert.AreEqual(contractDetail.SlotId, result!.SlotId);
         Assert.AreEqual(contractDetail.ContractId, result!.ContractId);
-        Assert.AreEqual(contractDetail.StartDate.ToString("yyyy-MM-dd HH:mm:ss"), result!.StartDate.ToString("yyyy-MM-dd HH:mm:ss"));
-        Assert.AreEqual(contractDetail.EndDate.ToString("yyyy-MM-dd HH:mm:ss"), result!.EndDate.ToString("yyyy-MM-dd HH:mm:ss"));
+        Assert.AreEqual(contractDetail.StartDate, result!.StartDate);
+        Assert.AreEqual(contractDetail.EndDate, result!.EndDate);
+    }
+
+    [Test]
+    public void TestInsert_ShouldNotInsert()
+    {
+        ContractDetailRepository repository = new(_connection!);
+        ContractDetail contractDetail = new()
+        {
+            SlotId = -1,
+            ContractId = 1,
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today.AddMonths(1)
+        };
+
+        Assert.Throws<SqlException>(() => repository.Insert(contractDetail));
     }
 }
