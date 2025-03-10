@@ -35,13 +35,18 @@ BEGIN
     EXEC sp_InsertProduct @CategoryID2, @ProductID3 OUTPUT, 'TSHIRT20', 'T-shirt', 'Comfortable cotton t-shirt', 'Medium size', 0.3;     -- ProductID = 3
 
     -- Insert Positions
-    DECLARE @PositionID1 INT, @PositionID2 INT, @PositionID3 INT;
-    EXEC sp_InsertPosition 'Manager', 'Manages operations', 50000, @PositionID1 OUTPUT; -- PositionID = 1
-    EXEC sp_InsertPosition 'Clerk', 'Handles sales', 30000, @PositionID2 OUTPUT;        -- PositionID = 2
-    EXEC sp_InsertPosition 'Security', 'Responsible for security', 40000, @PositionID3 OUTPUT;        -- PositionID = 3
+    DECLARE @PositionID1 INT, @PositionID2 INT, @PositionID3 INT, @PositionID4 INT, @PositionID5 INT;
+    
+    EXEC sp_InsertPosition 'Manager', 'Manages operations', 50000, @PositionID1 OUTPUT;      -- PositionID = 1
+    EXEC sp_InsertPosition 'Clerk', 'Handles sales', 30000, @PositionID2 OUTPUT;            -- PositionID = 2
+    EXEC sp_InsertPosition 'Security', 'Responsible for security', 40000, @PositionID3 OUTPUT; -- PositionID = 3
+    EXEC sp_InsertPosition 'Technician', 'Maintains equipment and IT infrastructure', 45000, @PositionID4 OUTPUT; -- PositionID = 4
+    EXEC sp_InsertPosition 'HR Specialist', 'Handles employee relations and recruitment', 47000, @PositionID5 OUTPUT; -- PositionID = 5
+
     
     -- Insert Employees
-    DECLARE @EmployeeID1 INT, @EmployeeID2 INT, @EmployeeID3 INT;
+    DECLARE @EmployeeID1 INT, @EmployeeID2 INT, @EmployeeID3 INT, @EmployeeID4 INT, @EmployeeID5 INT;
+    
     EXEC sp_InsertEmployee 
          'John', 'Doe', 'john@example.com', 
          '123 Street', NULL, 
@@ -49,7 +54,7 @@ BEGIN
          '1985-05-10', '2010-06-15', 
          @PositionID1, NULL, 
          @EmployeeID1 OUTPUT;   -- EmployeeID = 1
-
+    
     EXEC sp_InsertEmployee 
          'Jane', 'Smith', 'jane@example.com', 
          '456 Avenue', NULL, 
@@ -57,7 +62,7 @@ BEGIN
          '1990-07-20', '2015-09-30', 
          @PositionID2, @EmployeeID1, 
          @EmployeeID2 OUTPUT;   -- EmployeeID = 2
-
+    
     EXEC sp_InsertEmployee 
          'Reinhard', 'Heydrich', 'Reinhard@example.com', 
          'Niederkirchnerstraße 8', NULL, 
@@ -65,6 +70,23 @@ BEGIN
          '1904-03-07', '2013-03-20', 
          @PositionID3, @EmployeeID1, 
          @EmployeeID3 OUTPUT;   -- EmployeeID = 3
+    
+    EXEC sp_InsertEmployee 
+         'Alice', 'Johnson', 'alice@example.com', 
+         '789 Boulevard', NULL, 
+         @CityID4, '555-2468', 
+         '1995-12-05', '2020-01-15', 
+         @PositionID4, @EmployeeID2, 
+         @EmployeeID4 OUTPUT;   -- EmployeeID = 4
+    
+    EXEC sp_InsertEmployee 
+         'Michael', 'Brown', 'michael@example.com', 
+         '159 Park Lane', NULL, 
+         @CityID5, '555-9876', 
+         '1988-11-22', '2012-07-08', 
+         @PositionID5, @EmployeeID3, 
+         @EmployeeID5 OUTPUT;   -- EmployeeID = 5
+
     
     -- Insert Customers
     DECLARE @CustomerID1 INT, @CustomerID2 INT, @CustomerID3 INT;
