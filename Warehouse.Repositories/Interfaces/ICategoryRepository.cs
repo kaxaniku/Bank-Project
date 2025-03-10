@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface ICategoryRepository : IRepository<Category> { }
+public interface ICategoryRepository : IRepository<Category> { }

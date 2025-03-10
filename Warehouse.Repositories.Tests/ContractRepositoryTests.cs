@@ -5,11 +5,9 @@ namespace Warehouse.Repositories.Tests;
 
 public class ContractRepositoryTests : BaseRepositoryTests<Contract>
 {
-
     [Test]
     public void TestInsert_ShouldInsert()
     {
-
         ContractRepository repository = new(_connection!);
         Contract contract = new()
         {
