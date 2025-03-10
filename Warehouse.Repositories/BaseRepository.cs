@@ -22,7 +22,7 @@ public abstract class BaseRepository<T> : IRepository<T>
         _entityName = typeof(T).Name;
     }
 
-    public T? Get(object id)
+    public virtual T? Get(object id)
     {
         var parameters = new DynamicParameters();
         parameters.Add($"{_entityName}Id", id);
@@ -33,12 +33,12 @@ public abstract class BaseRepository<T> : IRepository<T>
             commandType: CommandType.StoredProcedure);
     }
 
-    public IEnumerable<T> Query()
+    public virtual IEnumerable<T> Query()
     {
         throw new NotImplementedException();
     }
 
-    public object Insert(T value)
+    public virtual object Insert(T value)
     {
         var parameters = new DynamicParameters();
         SetInsertParameters(value, parameters);
@@ -47,14 +47,14 @@ public abstract class BaseRepository<T> : IRepository<T>
         return parameters.Get<object>($"{_entityName}Id");
     }
 
-    public void Update(T value)
+    public virtual void Update(T value)
     {
         var parameters = new DynamicParameters();
         SetUpdateParameters(value, parameters);
         _connection.Execute($"sp_Update{_entityName}", parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public void Delete(object id)
+    public virtual void Delete(object id)
     {
         var parameters = new DynamicParameters();
         parameters.Add($"{_entityName}Id", id);
