@@ -12,7 +12,7 @@ public class SlotRepositoryTests : BaseRepositoryTests<Slot>
         Slot slot = new()
         {
             StorageId = 1,
-            SlotCode = "A1"
+            SlotCode = "D1"
         };
 
         int id = (int)repository.Insert(slot);

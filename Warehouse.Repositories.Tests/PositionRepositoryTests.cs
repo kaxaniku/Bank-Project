@@ -67,6 +67,7 @@ public class PositionRepositoryTests : BaseRepositoryTests<Position>
         Assert.IsNotNull(current);
 
         current!.Name = null; // Invalid update, should fail
+        current!.Description = "Updated Description";
 
         Assert.Throws<SqlException>(() => repository.Update(current));
     }

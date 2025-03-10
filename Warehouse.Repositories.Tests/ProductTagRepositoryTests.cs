@@ -11,14 +11,13 @@ public class ProductTagRepositoryTests : BaseRepositoryTests<ProductTag>
         ProductTagRepository repository = new(_connection!);
         ProductTag productTag = new()
         {
-            TagId = 1,
-            ProductId = 1
+            TagId = 3,
+            ProductId = 2
         };
 
-        int id = (int)repository.Insert(productTag);
-        ProductTag? result = repository.Get(id);
+        repository.Insert(productTag);
+        ProductTag? result = repository.Get(productTag);
 
-        Assert.Greater(id, 0);
         Assert.IsNotNull(result);
         Assert.AreEqual(productTag.TagId, result!.TagId);
         Assert.AreEqual(productTag.ProductId, result!.ProductId);
@@ -41,25 +40,37 @@ public class ProductTagRepositoryTests : BaseRepositoryTests<ProductTag>
     public void TestDelete_ShouldDelete()
     {
         ProductTagRepository repository = new(_connection!);
-        ProductTag? current = repository.Get(Constants.DeleteTestId);
-        Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
+        ProductTag productTag = new ProductTag()
+        {
+            TagId = 2,
+            ProductId = 3
+        };
 
-        repository.Delete(Constants.DeleteTestId);
-        ProductTag? deleted = repository.Get(Constants.DeleteTestId);
-        Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
+        ProductTag? current = repository.Get(productTag);
+        Assert.IsNotNull(current, $"Record doesn't exist");
+
+        repository.Delete(productTag);
+        ProductTag? deleted = repository.Get(productTag);
+        Assert.IsNull(deleted, $"Record should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
         ProductTagRepository repository = new(_connection!);
-        ProductTag? current = repository.Get(Constants.DeleteTestId2);
-        Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
+        ProductTag productTag = new ProductTag()
+        {
+            TagId = 1,
+            ProductId = 2
+        };
 
-        repository.Delete(Constants.DeleteTestId2);
-        ProductTag? deleted = repository.Get(Constants.DeleteTestId2);
-        Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
+        ProductTag? current = repository.Get(productTag);
+        Assert.IsNotNull(current, $"Record doesn't exist");
 
-        Assert.Throws<SqlException>(() => repository.Delete(Constants.DeleteTestId2));
+        repository.Delete(productTag);
+        ProductTag? deleted = repository.Get(productTag);
+        Assert.IsNull(deleted, $"Record should not be retried");
+
+        Assert.Throws<SqlException>(() => repository.Delete(productTag));
     }
 }
