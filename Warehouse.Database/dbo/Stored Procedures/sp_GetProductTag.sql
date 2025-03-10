@@ -1,8 +1,9 @@
 CREATE PROCEDURE sp_GetProductTag
-    @TagID  INT
+    @TagID  INT,
+    @ProductID INT
 AS
 BEGIN
     SELECT * 
     FROM ProductTags
-    WHERE TagID = @TagID;
+    WHERE TagID = @TagID AND ProductID = @ProductID;
 END
