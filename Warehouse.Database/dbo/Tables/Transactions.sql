@@ -6,6 +6,6 @@
     SlotID INT NOT NULL REFERENCES Slots(SlotID),
     Quantity INT NOT NULL CHECK (Quantity > 0),
     TransactionType NVARCHAR(50) NOT NULL CHECK (TransactionType IN ('Import', 'Export')),
-    TransactionDate DATETIME NOT NULL DEFAULT GETDATE(),
+    CreateDate DATETIME NOT NULL DEFAULT GETDATE(),
 	CustomerAgent NVARCHAR(100) NULL
 );
