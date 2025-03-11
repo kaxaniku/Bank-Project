@@ -1,16 +1,16 @@
 ﻿using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories.Tests;
 
 public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
 {
+    public ITransactionRepository Repository => new UnitOfWork(_connection!).TransactionRepository;
 
     [Test]
     public void TestInsert_ShouldInsert()
     {
-
-        TransactionRepository repository = new(_connection!);
         Transaction transaction = new()
         {
             ContractId = 1,
@@ -21,8 +21,8 @@ public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
             TransactionType = "Import"
         };
 
-        int id = (int)repository.Insert(transaction);
-        Transaction? result = repository.Get(id);
+        int id = (int)Repository.Insert(transaction);
+        Transaction? result = Repository.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -37,7 +37,6 @@ public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        TransactionRepository repository = new(_connection!);
         Transaction transaction = new()
         {
             ContractId = 1,
@@ -48,6 +47,6 @@ public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
             TransactionType = "Test"
         };
 
-        Assert.Throws<SqlException>(() => repository.Insert(transaction));
+        Assert.Throws<SqlException>(() => Repository.Insert(transaction));
     }
 }

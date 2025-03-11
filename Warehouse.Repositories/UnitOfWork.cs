@@ -23,6 +23,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly ITagRepository _tagRepository;
     private readonly ISlotRepository _slotRepository;
     private readonly IStorageRepository _storageRepository;
+    private readonly IUserRepository _userRepository;
 
 
     public UnitOfWork(IDbConnection connection)
@@ -41,6 +42,7 @@ public sealed class UnitOfWork : IUnitOfWork
         _tagRepository = new TagRepository(connection);
         _slotRepository = new SlotRepository(connection);
         _storageRepository = new StorageRepository(connection);
+        _userRepository = new UserRepository(connection);
     }
 
     public ICategoryRepository CategoryRepository => _categoryRepository;
@@ -56,4 +58,5 @@ public sealed class UnitOfWork : IUnitOfWork
     public ITagRepository TagRepository => _tagRepository;
     public ISlotRepository SlotRepository => _slotRepository;
     public IStorageRepository StorageRepository => _storageRepository;
+    public IUserRepository UserRepository => _userRepository;
 }
