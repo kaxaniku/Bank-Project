@@ -1,16 +1,16 @@
 ﻿using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories.Tests;
 
 public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
 {
+    public IEmployeeRepository Repository => new UnitOfWork(_connection!).EmployeeRepository;
 
     [Test]
     public void TestInsert_ShouldInsert()
     {
-
-        EmployeeRepository repository = new(_connection!);
         Employee employee = new()
         {
             FirstName = "Test FirstName",
@@ -26,8 +26,8 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
             ReportsTo = 1,
         };
 
-        int id = (int)repository.Insert(employee);
-        Employee? result = repository.Get(id);
+        int id = (int)Repository.Insert(employee);
+        Employee? result = Repository.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -47,7 +47,6 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        EmployeeRepository repository = new(_connection!);
         Employee employee = new()
         {
             FirstName = "Test FirstName",
@@ -63,14 +62,13 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
             ReportsTo = 1,
         };
 
-        Assert.Throws<SqlException>(() => repository.Insert(employee));
+        Assert.Throws<SqlException>(() => Repository.Insert(employee));
     }
 
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        EmployeeRepository repository = new(_connection!);
-        Employee? current = repository.Get(Constants.UpdateTestId);
+        Employee? current = Repository.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.FirstName = "Updated " + current.FirstName;
@@ -81,9 +79,9 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
         current.PhoneNumber = "Updated " + current.PhoneNumber;
         current.BirthDate = current.BirthDate.AddYears(-15);
         current.HireDate = current.HireDate.AddMonths(-4);
-        repository.Update(current);
+        Repository.Update(current);
 
-        Employee? updated = repository.Get(Constants.UpdateTestId);
+        Employee? updated = Repository.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.FirstName, updated!.FirstName);
         Assert.AreEqual(current.LastName, updated!.LastName);
@@ -97,8 +95,7 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        EmployeeRepository repository = new(_connection!);
-        Employee? current = repository.Get(Constants.UpdateTestId);
+        Employee? current = Repository.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.FirstName = "Updated " + current.FirstName;
@@ -110,32 +107,30 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
         current.BirthDate = current.BirthDate.AddYears(-15);
         current.HireDate = current.HireDate.AddMonths(-4);
 
-        Assert.Throws<SqlException>(() => repository.Update(current));
+        Assert.Throws<SqlException>(() => Repository.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        EmployeeRepository repository = new(_connection!);
-        Employee? current = repository.Get(Constants.DeleteTestId);
+        Employee? current = Repository.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        repository.Delete(Constants.DeleteTestId);
-        Employee? deleted = repository.Get(Constants.DeleteTestId);
+        Repository.Delete(Constants.DeleteTestId);
+        Employee? deleted = Repository.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        EmployeeRepository repository = new(_connection!);
-        Employee? current = repository.Get(Constants.DeleteTestId2);
+        Employee? current = Repository.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        repository.Delete(Constants.DeleteTestId2);
-        Employee? deleted = repository.Get(Constants.DeleteTestId2);
+        Repository.Delete(Constants.DeleteTestId2);
+        Employee? deleted = Repository.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => Repository.Delete(Constants.DeleteTestId2));
     }
 }

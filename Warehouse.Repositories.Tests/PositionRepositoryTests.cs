@@ -1,14 +1,16 @@
 ﻿using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories.Tests;
 
 public class PositionRepositoryTests : BaseRepositoryTests<Position>
 {
+    public IPositionRepository Repository => new UnitOfWork(_connection!).PositionRepository;
+
     [Test]
     public void TestInsert_ShouldInsert()
     {
-        PositionRepository repository = new(_connection!);
         Position position = new()
         {
             Name = "Test Position",
@@ -16,8 +18,8 @@ public class PositionRepositoryTests : BaseRepositoryTests<Position>
             Salary = 50000
         };
 
-        int id = (int)repository.Insert(position);
-        Position? result = repository.Get(id);
+        int id = (int)Repository.Insert(position);
+        Position? result = Repository.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -29,30 +31,28 @@ public class PositionRepositoryTests : BaseRepositoryTests<Position>
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        PositionRepository repository = new(_connection!);
         Position position = new()
         {
-            Name = null, // Name is required, should cause an error
+            Name = null,
             Description = "Test Description",
             Salary = 50000
         };
 
-        Assert.Throws<SqlException>(() => repository.Insert(position));
+        Assert.Throws<SqlException>(() => Repository.Insert(position));
     }
 
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        PositionRepository repository = new(_connection!);
-        Position? current = repository.Get(Constants.UpdateTestId);
+        Position? current = Repository.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Name = "Updated " + current.Name;
         current.Description = "Updated " + current.Description;
         current.Salary = 60000;
-        repository.Update(current);
+        Repository.Update(current);
 
-        Position? updated = repository.Get(Constants.UpdateTestId);
+        Position? updated = Repository.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.Name, updated!.Name);
         Assert.AreEqual(current.Description, updated!.Description);
@@ -62,39 +62,36 @@ public class PositionRepositoryTests : BaseRepositoryTests<Position>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        PositionRepository repository = new(_connection!);
-        Position? current = repository.Get(Constants.UpdateTestId);
+        Position? current = Repository.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
-        current!.Name = null; // Invalid update, should fail
+        current!.Name = null;
         current!.Description = "Updated Description";
 
-        Assert.Throws<SqlException>(() => repository.Update(current));
+        Assert.Throws<SqlException>(() => Repository.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        PositionRepository repository = new(_connection!);
-        Position? current = repository.Get(Constants.DeleteTestId);
+        Position? current = Repository.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        repository.Delete(Constants.DeleteTestId);
-        Position? deleted = repository.Get(Constants.DeleteTestId);
+        Repository.Delete(Constants.DeleteTestId);
+        Position? deleted = Repository.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        PositionRepository repository = new(_connection!);
-        Position? current = repository.Get(Constants.DeleteTestId2);
+        Position? current = Repository.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        repository.Delete(Constants.DeleteTestId2);
-        Position? deleted = repository.Get(Constants.DeleteTestId2);
+        Repository.Delete(Constants.DeleteTestId2);
+        Position? deleted = Repository.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => Repository.Delete(Constants.DeleteTestId2));
     }
 }
