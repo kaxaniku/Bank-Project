@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface ICustomerRepository : IRepository<Customer> { }
+public interface ICustomerRepository : IRepository<Customer> { }

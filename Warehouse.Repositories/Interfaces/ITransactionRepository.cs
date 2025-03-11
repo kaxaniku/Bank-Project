@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface ITransactionRepository : IRepository<Transaction> { }
+public interface ITransactionRepository : IRepository<Transaction> { }

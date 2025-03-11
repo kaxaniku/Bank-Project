@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface IPositionRepository : IRepository<Position> { }
+public interface IPositionRepository : IRepository<Position> { }

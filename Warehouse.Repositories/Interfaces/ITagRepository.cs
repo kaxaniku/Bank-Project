@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface ITagRepository : IRepository<Tag> { }
+public interface ITagRepository : IRepository<Tag> { }

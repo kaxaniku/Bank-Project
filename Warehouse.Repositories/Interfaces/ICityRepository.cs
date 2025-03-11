@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface ICityRepository : IRepository<City> { }
+public interface ICityRepository : IRepository<City> { }

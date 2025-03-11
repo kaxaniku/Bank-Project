@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface ICountryRepository : IRepository<Country> { }
+public interface ICountryRepository : IRepository<Country> { }

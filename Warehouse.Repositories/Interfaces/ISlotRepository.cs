@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface ISlotRepository : IRepository<Slot> { }
+public interface ISlotRepository : IRepository<Slot> { }

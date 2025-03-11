@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface IStorageRepository : IRepository<Storage> { }
+public interface IStorageRepository : IRepository<Storage> { }

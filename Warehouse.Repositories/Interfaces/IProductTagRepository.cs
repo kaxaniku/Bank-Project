@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface IProductTagRepository : IRepository<ProductTag> { }
+public interface IProductTagRepository : IRepository<ProductTag> { }

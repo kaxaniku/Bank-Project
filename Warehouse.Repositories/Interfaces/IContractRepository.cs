@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface IContractRepository : IRepository<Contract> { }
+public interface IContractRepository : IRepository<Contract> { }

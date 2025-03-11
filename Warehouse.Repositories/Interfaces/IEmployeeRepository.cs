@@ -2,4 +2,4 @@
 
 namespace Warehouse.Repositories.Interfaces;
 
-interface IEmployeeRepository : IRepository<Employee> { }
+public interface IEmployeeRepository : IRepository<Employee> { }
