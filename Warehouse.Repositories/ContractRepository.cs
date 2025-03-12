@@ -4,7 +4,7 @@ using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public class ContractRepository : BaseRepository<Contract>, IContractRepository
+internal class ContractRepository : BaseRepository<Contract>, IContractRepository
 {
     public ContractRepository(IDbConnection connection) : base(connection)
     {

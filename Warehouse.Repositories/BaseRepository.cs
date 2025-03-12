@@ -5,7 +5,7 @@ using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public abstract class BaseRepository<T> : IRepository<T>
+internal abstract class BaseRepository<T> : IRepository<T>
 {
     protected readonly IDbConnection _connection;
     protected readonly string _entityName;

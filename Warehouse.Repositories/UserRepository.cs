@@ -5,7 +5,7 @@ using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public class UserRepository : BaseRepository<User>, IUserRepository
+internal class UserRepository : BaseRepository<User>, IUserRepository
 {
     public UserRepository(IDbConnection connection) : base(connection)
     {

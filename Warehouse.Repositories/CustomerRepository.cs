@@ -4,7 +4,7 @@ using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
+internal class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
 {
     public CustomerRepository(IDbConnection connection) : base(connection)
     {

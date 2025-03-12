@@ -4,7 +4,7 @@ using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public class CityRepository : BaseRepository<City>, ICityRepository
+internal class CityRepository : BaseRepository<City>, ICityRepository
 {
     public CityRepository(IDbConnection connection) : base(connection)
     {

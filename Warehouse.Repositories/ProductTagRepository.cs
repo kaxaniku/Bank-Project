@@ -5,7 +5,7 @@ using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public class ProductTagRepository : BaseRepository<ProductTag>, IProductTagRepository
+internal class ProductTagRepository : BaseRepository<ProductTag>, IProductTagRepository
 {
     public ProductTagRepository(IDbConnection connection) : base(connection)
     {    
