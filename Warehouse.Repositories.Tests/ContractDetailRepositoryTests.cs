@@ -6,7 +6,13 @@ namespace Warehouse.Repositories.Tests;
 
 public class ContractDetailRepositoryTests : BaseRepositoryTests<ContractDetail>
 {
-    public IContractDetailRepository Repository => new UnitOfWork(_connection!).ContractDetailRepository;
+    private IContractDetailRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.ContractDetailRepository;
+    }
 
     [Test]
     public void TestInsert_ShouldInsert()
@@ -19,8 +25,8 @@ public class ContractDetailRepositoryTests : BaseRepositoryTests<ContractDetail>
             EndDate = DateTime.Today.AddMonths(1)
         };
 
-        int id = (int)Repository.Insert(contractDetail);
-        ContractDetail? result = Repository.Get(id);
+        int id = (int)_repository!.Insert(contractDetail);
+        ContractDetail? result = _repository!.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -42,6 +48,6 @@ public class ContractDetailRepositoryTests : BaseRepositoryTests<ContractDetail>
             EndDate = DateTime.Today.AddMonths(1)
         };
 
-        Assert.Throws<SqlException>(() => Repository.Insert(contractDetail));
+        Assert.Throws<SqlException>(() => _repository!.Insert(contractDetail));
     }
 }

@@ -6,7 +6,13 @@ namespace Warehouse.Repositories.Tests;
 
 public class UserRepositoryTests : BaseRepositoryTests<User>
 {
-    public IUserRepository Repository => new UnitOfWork(_connection!).UserRepository;
+    private IUserRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.UserRepository;
+    }
 
     [Test]
     public void TestInsert_ShouldInsert()
@@ -20,8 +26,8 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
             UserRole = 1
         };
 
-        int id = (int)Repository.Insert(user);
-        User? result = Repository.Get(id);
+        int id = (int)_repository!.Insert(user);
+        User? result = _repository!.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -41,23 +47,23 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
             UserRole = 1
         };
 
-        Assert.Throws<SqlException>(() => Repository.Insert(user));
+        Assert.Throws<SqlException>(() => _repository!.Insert(user));
     }
 
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        User? current = Repository.Get(Constants.UpdateTestId);
+        User? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         byte[] pass = { 1, 1, 1, 2 };
         current!.Username = "Updated " + current.Username;
         current!.UserRole = 2;
         current!.Password = pass;
- 
-        Repository.Update(current);
 
-        User? updated = Repository.Get(Constants.UpdateTestId);
+        _repository!.Update(current);
+
+        User? updated = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.Username, updated!.Username);
         Assert.AreEqual(current.UserRole, updated!.UserRole);
@@ -67,37 +73,37 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        User? current = Repository.Get(Constants.UpdateTestId);
+        User? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Username = "Updated " + current.Username;
         current!.UserRole = 1;
         current!.Password = null;
 
-        Assert.Throws<SqlException>(() => Repository.Update(current));
+        Assert.Throws<SqlException>(() => _repository!.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        User? current = Repository.Get(Constants.DeleteTestId);
+        User? current = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId);
-        User? deleted = Repository.Get(Constants.DeleteTestId);
+        _repository!.Delete(Constants.DeleteTestId);
+        User? deleted = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        User? current = Repository.Get(Constants.DeleteTestId2);
+        User? current = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId2);
-        User? deleted = Repository.Get(Constants.DeleteTestId2);
+        _repository!.Delete(Constants.DeleteTestId2);
+        User? deleted = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => Repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
 }

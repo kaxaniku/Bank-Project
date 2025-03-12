@@ -1,14 +1,22 @@
 ﻿using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories.Tests;
 
 public class ProductRepositoryTests : BaseRepositoryTests<Product>
 {
+    private IProductRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.ProductRepository;
+    }
+
     [Test]
     public void TestInsert_ShouldInsert()
     {
-        ProductRepository repository = new(_connection!);
         Product product = new()
         {
             CategoryId = 1,
@@ -19,8 +27,8 @@ public class ProductRepositoryTests : BaseRepositoryTests<Product>
             Weight = 2.5f
         };
 
-        int id = (int)repository.Insert(product);
-        Product? result = repository.Get(id);
+        int id = (int)_repository!.Insert(product);
+        Product? result = _repository!.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -52,8 +60,7 @@ public class ProductRepositoryTests : BaseRepositoryTests<Product>
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        ProductRepository repository = new(_connection!);
-        Product? current = repository.Get(Constants.UpdateTestId);
+        Product? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.CategoryId = 2;
@@ -62,9 +69,9 @@ public class ProductRepositoryTests : BaseRepositoryTests<Product>
         current.Description = "Updated " + current.Description;
         current.Dimensions = "20x20x20";
         current.Weight = 5.0f;
-        repository.Update(current);
+        _repository!.Update(current);
 
-        Product? updated = repository.Get(Constants.UpdateTestId);
+        Product? updated = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.CategoryId, updated!.CategoryId);
         Assert.AreEqual(current.Barcode, updated!.Barcode);
@@ -77,38 +84,35 @@ public class ProductRepositoryTests : BaseRepositoryTests<Product>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        ProductRepository repository = new(_connection!);
-        Product? current = repository.Get(Constants.UpdateTestId);
+        Product? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Barcode = null; // Invalid update, should fail
 
-        Assert.Throws<SqlException>(() => repository.Update(current));
+        Assert.Throws<SqlException>(() => _repository!.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        ProductRepository repository = new(_connection!);
-        Product? current = repository.Get(Constants.DeleteTestId);
+        Product? current = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        repository.Delete(Constants.DeleteTestId);
-        Product? deleted = repository.Get(Constants.DeleteTestId);
+        _repository!.Delete(Constants.DeleteTestId);
+        Product? deleted = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        ProductRepository repository = new(_connection!);
-        Product? current = repository.Get(Constants.DeleteTestId2);
+        Product? current = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        repository.Delete(Constants.DeleteTestId2);
-        Product? deleted = repository.Get(Constants.DeleteTestId2);
+        _repository!.Delete(Constants.DeleteTestId2);
+        Product? deleted = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
 }

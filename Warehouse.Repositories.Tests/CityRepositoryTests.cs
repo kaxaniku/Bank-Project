@@ -6,7 +6,13 @@ namespace Warehouse.Repositories.Tests;
 
 public class CityRepositoryTests : BaseRepositoryTests<City>
 {
-    public ICityRepository Repository => new UnitOfWork(_connection!).CityRepository;
+    private ICityRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.CityRepository;
+    }
 
     [Test]
     public void TestInsert_ShouldInsert()
@@ -19,8 +25,8 @@ public class CityRepositoryTests : BaseRepositoryTests<City>
             CountryId = 1
         };
 
-        int id = (int)Repository.Insert(city);
-        City? result = Repository.Get(id);
+        int id = (int)_repository!.Insert(city);
+        City? result = _repository!.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -39,21 +45,21 @@ public class CityRepositoryTests : BaseRepositoryTests<City>
             CountryId = 1
         };
 
-        Assert.Throws<SqlException>(() => Repository.Insert(city));
+        Assert.Throws<SqlException>(() => _repository!.Insert(city));
     }
 
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        City? current = Repository.Get(Constants.UpdateTestId);
+        City? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Name = "Updated " + current.Name;
         current.PostCode = "Updated " + current.PostCode;
         current.CountryId = 2;
-        Repository.Update(current);
+        _repository!.Update(current);
 
-        City? updated = Repository.Get(Constants.UpdateTestId);
+        City? updated = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.Name, updated!.Name);
         Assert.AreEqual(current.PostCode, updated!.PostCode);
@@ -63,37 +69,37 @@ public class CityRepositoryTests : BaseRepositoryTests<City>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        City? current = Repository.Get(Constants.UpdateTestId);
+        City? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Name = null;
         current.PostCode = "Updated " + current.PostCode;
         current.CountryId = 2;
 
-        Assert.Throws<SqlException>(() => Repository.Update(current));
+        Assert.Throws<SqlException>(() => _repository!.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        City? current = Repository.Get(Constants.DeleteTestId);
+        City? current = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId);
-        City? deleted = Repository.Get(Constants.DeleteTestId);
+        _repository!.Delete(Constants.DeleteTestId);
+        City? deleted = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        City? current = Repository.Get(Constants.DeleteTestId2);
+        City? current = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId2);
-        City? deleted = Repository.Get(Constants.DeleteTestId2);
+        _repository!.Delete(Constants.DeleteTestId2);
+        City? deleted = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => Repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
 }

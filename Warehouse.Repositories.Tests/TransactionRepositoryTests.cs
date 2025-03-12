@@ -6,7 +6,13 @@ namespace Warehouse.Repositories.Tests;
 
 public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
 {
-    public ITransactionRepository Repository => new UnitOfWork(_connection!).TransactionRepository;
+    private ITransactionRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.TransactionRepository;
+    }
 
     [Test]
     public void TestInsert_ShouldInsert()
@@ -21,8 +27,8 @@ public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
             TransactionType = "Import"
         };
 
-        int id = (int)Repository.Insert(transaction);
-        Transaction? result = Repository.Get(id);
+        int id = (int)_repository!.Insert(transaction);
+        Transaction? result = _repository!.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -47,6 +53,6 @@ public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
             TransactionType = "Test"
         };
 
-        Assert.Throws<SqlException>(() => Repository.Insert(transaction));
+        Assert.Throws<SqlException>(() => _repository!.Insert(transaction));
     }
 }

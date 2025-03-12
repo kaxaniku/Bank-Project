@@ -1,22 +1,30 @@
 ﻿using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories.Tests;
 
 public class ProductTagRepositoryTests : BaseRepositoryTests<ProductTag>
 {
+    private IProductTagRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.ProductTagRepository;
+    }
+
     [Test]
     public void TestInsert_ShouldInsert()
     {
-        ProductTagRepository repository = new(_connection!);
         ProductTag productTag = new()
         {
             TagId = 3,
             ProductId = 2
         };
 
-        repository.Insert(productTag);
-        ProductTag? result = repository.Get(productTag);
+        _repository!.Insert(productTag);
+        ProductTag? result = _repository!.Get(productTag);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(productTag.TagId, result!.TagId);
@@ -26,51 +34,48 @@ public class ProductTagRepositoryTests : BaseRepositoryTests<ProductTag>
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        ProductTagRepository repository = new(_connection!);
         ProductTag productTag = new()
         {
             TagId = 0, // Invalid ID, should fail
             ProductId = 1
         };
 
-        Assert.Throws<SqlException>(() => repository.Insert(productTag));
+        Assert.Throws<SqlException>(() => _repository!.Insert(productTag));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        ProductTagRepository repository = new(_connection!);
         ProductTag productTag = new ProductTag()
         {
             TagId = 2,
             ProductId = 3
         };
 
-        ProductTag? current = repository.Get(productTag);
+        ProductTag? current = _repository!.Get(productTag);
         Assert.IsNotNull(current, $"Record doesn't exist");
 
-        repository.Delete(productTag);
-        ProductTag? deleted = repository.Get(productTag);
+        _repository!.Delete(productTag);
+        ProductTag? deleted = _repository!.Get(productTag);
         Assert.IsNull(deleted, $"Record should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        ProductTagRepository repository = new(_connection!);
         ProductTag productTag = new ProductTag()
         {
             TagId = 1,
             ProductId = 2
         };
 
-        ProductTag? current = repository.Get(productTag);
+        ProductTag? current = _repository!.Get(productTag);
         Assert.IsNotNull(current, $"Record doesn't exist");
 
-        repository.Delete(productTag);
-        ProductTag? deleted = repository.Get(productTag);
+        _repository!.Delete(productTag);
+        ProductTag? deleted = _repository!.Get(productTag);
         Assert.IsNull(deleted, $"Record should not be retried");
 
-        Assert.Throws<SqlException>(() => repository.Delete(productTag));
+        Assert.Throws<SqlException>(() => _repository!.Delete(productTag));
     }
 }

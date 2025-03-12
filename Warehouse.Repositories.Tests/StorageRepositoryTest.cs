@@ -1,14 +1,22 @@
 ﻿using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories.Tests;
 
 public class StorageRepositoryTests : BaseRepositoryTests<Tag>
 {
+    private IStorageRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.StorageRepository;
+    }
+
     [Test]
     public void TestInsert_ShouldInsert()
     {
-        StorageRepository repository = new(_connection!);
         Storage storage = new()
         {
             Name = "Test Storage",
@@ -18,8 +26,8 @@ public class StorageRepositoryTests : BaseRepositoryTests<Tag>
             Description = "Test Description"
 
         };
-        int id = (int)repository.Insert(storage);
-        Storage? result = repository.Get(id);
+        int id = (int)_repository!.Insert(storage);
+        Storage? result = _repository!.Get(id);
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
         Assert.AreEqual(storage.Name, result!.Name);
@@ -33,7 +41,6 @@ public class StorageRepositoryTests : BaseRepositoryTests<Tag>
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        StorageRepository repository = new(_connection!);
         Storage storage = new()
         {
             Name = null,
@@ -42,28 +49,26 @@ public class StorageRepositoryTests : BaseRepositoryTests<Tag>
             CityId = 0,
             Description = "Test Description"
         };
-        Assert.Throws<SqlException>(() => repository.Insert(storage));
+        Assert.Throws<SqlException>(() => _repository!.Insert(storage));
 
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        StorageRepository repository = new(_connection!);
-        Storage? current = repository.Get(Constants.DeleteTestId);
+        Storage? current = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
-        repository.Delete(Constants.DeleteTestId);
-        Storage? deleted = repository.Get(Constants.DeleteTestId);
+        _repository!.Delete(Constants.DeleteTestId);
+        Storage? deleted = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        StorageRepository repository = new(_connection!);
-        Storage? current = repository.Get(Constants.DeleteTestId2);
+        Storage? current = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
-        repository.Delete(Constants.DeleteTestId2);
-        Storage? deleted = repository.Get(Constants.DeleteTestId2);
+        _repository!.Delete(Constants.DeleteTestId2);
+        Storage? deleted = _repository!.Get(Constants.DeleteTestId2);
     }
 }

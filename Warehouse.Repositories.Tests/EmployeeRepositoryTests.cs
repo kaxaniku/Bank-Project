@@ -6,7 +6,13 @@ namespace Warehouse.Repositories.Tests;
 
 public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
 {
-    public IEmployeeRepository Repository => new UnitOfWork(_connection!).EmployeeRepository;
+    private IEmployeeRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.EmployeeRepository;
+    }
 
     [Test]
     public void TestInsert_ShouldInsert()
@@ -26,8 +32,8 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
             ReportsTo = 1,
         };
 
-        int id = (int)Repository.Insert(employee);
-        Employee? result = Repository.Get(id);
+        int id = (int)_repository!.Insert(employee);
+        Employee? result = _repository!.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -62,13 +68,13 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
             ReportsTo = 1,
         };
 
-        Assert.Throws<SqlException>(() => Repository.Insert(employee));
+        Assert.Throws<SqlException>(() => _repository!.Insert(employee));
     }
 
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        Employee? current = Repository.Get(Constants.UpdateTestId);
+        Employee? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.FirstName = "Updated " + current.FirstName;
@@ -79,9 +85,9 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
         current.PhoneNumber = "Updated " + current.PhoneNumber;
         current.BirthDate = current.BirthDate.AddYears(-15);
         current.HireDate = current.HireDate.AddMonths(-4);
-        Repository.Update(current);
+        _repository!.Update(current);
 
-        Employee? updated = Repository.Get(Constants.UpdateTestId);
+        Employee? updated = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.FirstName, updated!.FirstName);
         Assert.AreEqual(current.LastName, updated!.LastName);
@@ -95,7 +101,7 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        Employee? current = Repository.Get(Constants.UpdateTestId);
+        Employee? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.FirstName = "Updated " + current.FirstName;
@@ -107,30 +113,30 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
         current.BirthDate = current.BirthDate.AddYears(-15);
         current.HireDate = current.HireDate.AddMonths(-4);
 
-        Assert.Throws<SqlException>(() => Repository.Update(current));
+        Assert.Throws<SqlException>(() => _repository!.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        Employee? current = Repository.Get(Constants.DeleteTestId);
+        Employee? current = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId);
-        Employee? deleted = Repository.Get(Constants.DeleteTestId);
+        _repository!.Delete(Constants.DeleteTestId);
+        Employee? deleted = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        Employee? current = Repository.Get(Constants.DeleteTestId2);
+        Employee? current = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId2);
-        Employee? deleted = Repository.Get(Constants.DeleteTestId2);
+        _repository!.Delete(Constants.DeleteTestId2);
+        Employee? deleted = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => Repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
 }

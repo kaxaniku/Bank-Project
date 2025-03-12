@@ -6,7 +6,13 @@ namespace Warehouse.Repositories.Tests;
 
 public class CategoryRepositoryTests : BaseRepositoryTests<Category>
 {
-    public ICategoryRepository Repository => new UnitOfWork(_connection!).CategoryRepository;
+    private ICategoryRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.CategoryRepository;
+    }
 
     [Test]
     public void TestInsert_ShouldInsert()
@@ -17,8 +23,8 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
             Description = "Test Description"
         };
 
-        int id = (int)Repository.Insert(category);
-        Category? result = Repository.Get(id);
+        int id = (int)_repository!.Insert(category);
+        Category? result = _repository.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -35,20 +41,20 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
             Description = "Test Description"
         };
 
-        Assert.Throws<SqlException>(() => Repository.Insert(category));
+        Assert.Throws<SqlException>(() => _repository!.Insert(category));
     }
 
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        Category? current = Repository.Get(Constants.UpdateTestId);
+        Category? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Name = "Updated " + current.Name;
         current.Description = "Updated " + current.Description;
-        Repository.Update(current);
+        _repository.Update(current);
 
-        Category? updated = Repository.Get(Constants.UpdateTestId);
+        Category? updated = _repository.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.Name, updated!.Name);
         Assert.AreEqual(current.Description, updated!.Description);
@@ -57,36 +63,36 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        Category? current = Repository.Get(Constants.UpdateTestId);
+        Category? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Name = null;
         current.Description = "Updated " + current.Description;
 
-        Assert.Throws<SqlException>(() => Repository.Update(current));
+        Assert.Throws<SqlException>(() => _repository.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        Category? current = Repository.Get(Constants.DeleteTestId);
+        Category? current = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId);
-        Category? deleted = Repository.Get(Constants.DeleteTestId);
+        _repository.Delete(Constants.DeleteTestId);
+        Category? deleted = _repository.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        Category? current = Repository.Get(Constants.DeleteTestId2);
+        Category? current = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId2);
-        Category? deleted = Repository.Get(Constants.DeleteTestId2);
+        _repository.Delete(Constants.DeleteTestId2);
+        Category? deleted = _repository.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => Repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => _repository.Delete(Constants.DeleteTestId2));
     }
 }

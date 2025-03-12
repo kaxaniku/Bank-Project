@@ -6,7 +6,13 @@ namespace Warehouse.Repositories.Tests;
 
 public class ContractRepositoryTests : BaseRepositoryTests<Contract>
 {
-    public IContractRepository Repository => new UnitOfWork(_connection!).ContractRepository;
+    private IContractRepository? _repository;
+
+    [SetUp]
+    public void Setup()
+    {
+        _repository = _unitOfWork!.ContractRepository;
+    }
 
     [Test]
     public void TestInsert_ShouldInsert()
@@ -20,8 +26,8 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
             Price = 100
         };
 
-        int id = (int)Repository.Insert(contract);
-        Contract? result = Repository.Get(id);
+        int id = (int)_repository!.Insert(contract);
+        Contract? result = _repository!.Get(id);
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
@@ -44,13 +50,13 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
             Price = 100
         };
 
-        Assert.Throws<SqlException>(() => Repository.Insert(contract));
+        Assert.Throws<SqlException>(() => _repository!.Insert(contract));
     }
 
     [Test]
     public void TestUpdate_ShouldUpdate()
     {
-        Contract? current = Repository.Get(Constants.UpdateTestId);
+        Contract? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Name = "Updated " + current.Name;
@@ -58,9 +64,9 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
         current.CustomerId = 2;
         current.EmployeeId = 2;
         current.Price = 200;
-        Repository.Update(current);
+        _repository!.Update(current);
 
-        Contract? updated = Repository.Get(Constants.UpdateTestId);
+        Contract? updated = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.Name, updated!.Name);
         Assert.AreEqual(current.Description, updated!.Description);
@@ -72,7 +78,7 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
     [Test]
     public void TestUpdate_ShouldNotUpdate()
     {
-        Contract? current = Repository.Get(Constants.UpdateTestId);
+        Contract? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
         current!.Name = null;
@@ -81,30 +87,30 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
         current.EmployeeId = 2;
         current.Price = 200;
 
-        Assert.Throws<SqlException>(() => Repository.Update(current));
+        Assert.Throws<SqlException>(() => _repository!.Update(current));
     }
 
     [Test]
     public void TestDelete_ShouldDelete()
     {
-        Contract? current = Repository.Get(Constants.DeleteTestId);
+        Contract? current = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId);
-        Contract? deleted = Repository.Get(Constants.DeleteTestId);
+        _repository!.Delete(Constants.DeleteTestId);
+        Contract? deleted = _repository!.Get(Constants.DeleteTestId);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId} should not be retried");
     }
 
     [Test]
     public void TestDelete_ShouldNotDelete()
     {
-        Contract? current = Repository.Get(Constants.DeleteTestId2);
+        Contract? current = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNotNull(current, $"Record with ID {Constants.DeleteTestId2} doesn't exist");
 
-        Repository.Delete(Constants.DeleteTestId2);
-        Contract? deleted = Repository.Get(Constants.DeleteTestId2);
+        _repository!.Delete(Constants.DeleteTestId2);
+        Contract? deleted = _repository!.Get(Constants.DeleteTestId2);
         Assert.IsNull(deleted, $"Record with ID {Constants.DeleteTestId2} should not be retried");
 
-        Assert.Throws<SqlException>(() => Repository.Delete(Constants.DeleteTestId2));
+        Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
 }

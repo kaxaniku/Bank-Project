@@ -6,11 +6,13 @@ public abstract class BaseRepositoryTests<T>
 {
     private readonly string _connectionString = ConfigurationManager.ConnectionString;
     protected SqlConnection? _connection;
+    protected UnitOfWork? _unitOfWork;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
         _connection = new SqlConnection(_connectionString);
+        _unitOfWork = new UnitOfWork(_connection);
         SeedDatabase();
     }
 
