@@ -21,6 +21,7 @@ public abstract class BaseRepositoryTests<T>
     {
         ClearDatabase();
         _connection?.Dispose();
+        _unitOfWork?.Dispose();
     }
 
     private void ClearDatabase()

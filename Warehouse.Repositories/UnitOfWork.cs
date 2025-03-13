@@ -1,10 +1,17 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public interface IUnitOfWork
+public interface IUnitOfWork : IDisposable
 {
+    IDbTransaction Transaction { get; }
+
+    void BeginTransaction();
+    void Commit();
+    void Rollback();
+
     ICategoryRepository CategoryRepository { get; }
     ICityRepository CityRepository { get; }
     IContractDetailRepository ContractDetailRepository { get; }
@@ -22,12 +29,12 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
 }
 
-// TODO: Implement Transaction functionality in UnitOfWork.
-// We should support begin transaction, commit and rollback.
-// Also we need to add UnitTests to check if transaction is working correctly.
 public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly IDbConnection _connection;
+    private IDbTransaction _transaction;
+    private bool _disposed;
+
     private readonly Lazy<ICategoryRepository> _categoryRepository;
     private readonly Lazy<ICityRepository> _cityRepository;
     private readonly Lazy<IContractDetailRepository> _contractDetailRepository;
@@ -47,6 +54,8 @@ public sealed class UnitOfWork : IUnitOfWork
     public UnitOfWork(IDbConnection connection)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+        _connection.Open();
+
         _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection));
         _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection));
         _cityRepository = new Lazy<ICityRepository>(() => new CityRepository(_connection));
@@ -62,6 +71,47 @@ public sealed class UnitOfWork : IUnitOfWork
         _tagRepository = new Lazy<ITagRepository>(() => new TagRepository(_connection));
         _transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(_connection));
         _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_connection));
+
+    }
+
+    public IDbTransaction Transaction => _transaction;
+
+    public void BeginTransaction()
+    {
+        _transaction ??= _connection.BeginTransaction();
+    }
+
+    public void Commit()
+    {
+        try
+        {
+            _transaction?.Commit();
+            _transaction?.Dispose();
+            _transaction = null;
+        }
+        catch
+        {
+            Rollback();
+            throw;
+        }
+    }
+
+    public void Rollback()
+    {
+        _transaction?.Rollback();
+        _transaction?.Dispose();
+        _transaction = null;
+    }
+
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            _transaction?.Dispose();
+            _connection?.Dispose();
+            _disposed = true;
+        }
+        GC.SuppressFinalize(this);
     }
 
     public ICategoryRepository CategoryRepository => _categoryRepository.Value;
