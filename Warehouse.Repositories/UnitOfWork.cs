@@ -54,7 +54,6 @@ public sealed class UnitOfWork : IUnitOfWork
     public UnitOfWork(IDbConnection connection)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-        _connection.Open();
 
         _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection));
         _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection));
