@@ -9,8 +9,8 @@ public interface IUnitOfWork : IDisposable
     IDbTransaction Transaction { get; }
 
     void BeginTransaction();
-    void Commit();
-    void Rollback();
+    int Commit();
+    int Rollback();
 
     ICategoryRepository CategoryRepository { get; }
     ICityRepository CityRepository { get; }
@@ -77,29 +77,28 @@ public sealed class UnitOfWork : IUnitOfWork
 
     public void BeginTransaction()
     {
+        _connection.Open();
         _transaction ??= _connection.BeginTransaction();
     }
 
-    public void Commit()
+    public int Commit()
     {
-        try
-        {
-            _transaction?.Commit();
-            _transaction?.Dispose();
-            _transaction = null;
-        }
-        catch
-        {
-            Rollback();
-            throw;
-        }
+        _transaction?.Commit();
+        _transaction?.Dispose();
+        _transaction = null;
+        _connection.Close();
+
+        return 0;
     }
 
-    public void Rollback()
+    public int Rollback()
     {
         _transaction?.Rollback();
         _transaction?.Dispose();
         _transaction = null;
+        _connection.Close();
+
+        return 1;
     }
 
     public void Dispose()
