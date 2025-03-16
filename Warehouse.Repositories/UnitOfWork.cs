@@ -109,7 +109,6 @@ public sealed class UnitOfWork : IUnitOfWork
             _connection?.Dispose();
             _disposed = true;
         }
-        GC.SuppressFinalize(this);
     }
 
     public ICategoryRepository CategoryRepository => _categoryRepository.Value;
