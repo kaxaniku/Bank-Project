@@ -14,7 +14,7 @@ internal abstract class BaseRepository<T> : IRepository<T>
     protected IDbTransaction _transaction;
 
     private IEnumerable<string> InsertIgnoredProperties =>
-        new[] { "IsActive", "CreateDate", "UpdateDate", $"{ _entityName }Id" };
+        new[] { "IsActive", "CreateDate", "UpdateDate", $"{_entityName}Id" };
 
     private IEnumerable<string> UpdateIgnoredProperties =>
         new[] { "IsActive", "CreateDate", "UpdateDate" };
