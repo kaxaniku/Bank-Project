@@ -95,4 +95,20 @@ public class CountryRepositoryTests : BaseRepositoryTests<Country>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Country> countries = _repository!.Query(c => c.IsActive == true && c.CountryId > 2);
+
+        Assert.IsNotNull(countries);
+        Assert.IsNotEmpty(countries);
+
+        foreach (var country in countries)
+        {
+            Assert.IsTrue(country.IsActive, $"Country {country.Name} is not active.");
+            Assert.Greater(country.CountryId, 2, $"Country {country.Name} does not have a CountryId greater than 2.");
+        }
+    }
+
 }

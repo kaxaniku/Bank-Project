@@ -113,4 +113,20 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Contract> contracts = _repository!.Query(c => c.IsActive == true && c.Price > 300);
+
+        Assert.IsNotNull(contracts);
+        Assert.IsNotEmpty(contracts);
+
+        foreach (var contract in contracts)
+        {
+            Assert.IsTrue(contract.IsActive, $"Contract {contract.Name} is not active.");
+            Assert.Greater(contract.Price, 300, $"Contract {contract.Name} does not have a price greater than 300.");
+        }
+    }
+
 }

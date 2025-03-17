@@ -95,4 +95,20 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
 
         Assert.Throws<SqlException>(() => _repository.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Category> categories = _repository!.Query(c => c.IsActive == true && c.CategoryId > 3);
+
+        Assert.IsNotNull(categories);
+        Assert.IsNotEmpty(categories);
+
+        foreach (var category in categories)
+        {
+            Assert.IsTrue(category.IsActive, $"Category {category.CategoryId} is not active.");
+            Assert.Greater(category.CategoryId, 3, $"Category {category.CategoryId} does not have an ID greater than 3.");
+        }
+    }
+
 }

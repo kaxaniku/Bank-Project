@@ -43,7 +43,6 @@ public class ProductRepositoryTests : BaseRepositoryTests<Product>
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        ProductRepository repository = new(_connection!);
         Product product = new()
         {
             CategoryId = 1,
@@ -54,7 +53,7 @@ public class ProductRepositoryTests : BaseRepositoryTests<Product>
             Weight = 2.5f
         };
 
-        Assert.Throws<SqlException>(() => repository.Insert(product));
+        Assert.Throws<SqlException>(() => _repository!.Insert(product));
     }
 
     [Test]

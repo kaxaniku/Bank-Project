@@ -102,4 +102,19 @@ public class CityRepositoryTests : BaseRepositoryTests<City>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<City> cities = _repository!.Query(c => c.IsActive == true && c.CityId > 3);
+
+        Assert.IsNotNull(cities);
+        Assert.IsNotEmpty(cities);
+
+        foreach (var city in cities)
+        {
+            Assert.IsTrue(city.IsActive, $"City {city.CityId} is not active.");
+            Assert.Greater(city.CityId, 3, $"City {city.CityId} does not have an ID greater than 3.");
+        }
+    }
 }
