@@ -1,7 +1,9 @@
 ﻿using System.Data;
+using System.Linq.Expressions;
 using System.Reflection;
 using Dapper;
 using Warehouse.Repositories.Interfaces;
+using Humanizer;
 
 namespace Warehouse.Repositories;
 
@@ -33,9 +35,12 @@ internal abstract class BaseRepository<T> : IRepository<T>
             commandType: CommandType.StoredProcedure);
     }
 
-    public virtual IEnumerable<T> Query()
+    public virtual IEnumerable<T> Query(Expression<Func<T, bool>> predicate)
     {
-        throw new NotImplementedException();
+        string query = $"SELECT * FROM {_entityName.Pluralize()} WHERE ";
+        query += ExpressionToSqlConverter.ConvertExpressionToSql(predicate);
+
+        return _connection.Query<T>(query);
     }
 
     public virtual object Insert(T value)
