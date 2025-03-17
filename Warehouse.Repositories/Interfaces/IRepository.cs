@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Data;
+using System.Linq.Expressions;
 
 namespace Warehouse.Repositories.Interfaces;
 
@@ -9,4 +10,5 @@ public interface IRepository<T>
     object Insert(T value);
     void Update(T value);
     void Delete(object id);
+    void SetTransaction(IDbTransaction transaction);
 }
