@@ -10,5 +10,4 @@ public interface IRepository<T>
     object Insert(T value);
     void Update(T value);
     void Delete(object id);
-    void SetTransaction(IDbTransaction transaction);
 }

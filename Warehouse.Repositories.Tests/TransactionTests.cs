@@ -1,3 +1,4 @@
+using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
 using Warehouse.Repositories.Interfaces;
 
@@ -10,8 +11,7 @@ public class TransactionTests : BaseRepositoryTests<Category>
     [SetUp]
     public void Setup()
     {
-        _repository = _unitOfWork!.CategoryRepository;
-        _repository.SetTransaction(_unitOfWork.Transaction);
+        _unitOfWork = new UnitOfWork(_connection!);
     }
 
     [Test]
@@ -23,8 +23,10 @@ public class TransactionTests : BaseRepositoryTests<Category>
             Description = "Test Description"
         };
 
+        _connection!.Open();
+        _unitOfWork!.BeginTransaction();
+        _repository = _unitOfWork!.CategoryRepository;
 
-        _unitOfWork.BeginTransaction();
         int id = (int)_repository!.Insert(category);
 
         Assert.DoesNotThrow(() => _unitOfWork.Commit());
@@ -33,29 +35,24 @@ public class TransactionTests : BaseRepositoryTests<Category>
         Assert.IsNotNull(result);
         Assert.AreEqual(category.Name, result!.Name);
         Assert.AreEqual(category.Description, result!.Description);
+        _connection!.Close();
     }
 
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        int code;
-
         Category category = new()
         {
             Name = null,
             Description = "Test Description"
         };
-        try
-        {
-            _repository!.Insert(category);
 
-            code = _unitOfWork.Commit();
-        }
-        catch
-        {
-            code = _unitOfWork.Rollback();
-        }
+        _connection!.Open();
+        _unitOfWork!.BeginTransaction();
+        _repository = _unitOfWork!.CategoryRepository;
 
-        Assert.AreEqual(code, 1);
+        Assert.Throws<SqlException>(() => _repository!.Insert(category));
+        Assert.DoesNotThrow(() => _unitOfWork.Rollback());
+        _connection!.Close();
     }
 }

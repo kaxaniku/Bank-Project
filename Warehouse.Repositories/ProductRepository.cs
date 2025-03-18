@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class ProductRepository : BaseRepository<Product>, IProductRepository
 {
-    public ProductRepository(IDbConnection connection) : base(connection)
+    public ProductRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {
     }
 }

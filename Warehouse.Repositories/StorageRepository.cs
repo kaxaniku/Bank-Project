@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class StorageRepository : BaseRepository<Storage>, IStorageRepository
 {
-    public StorageRepository(IDbConnection connection) : base(connection)
+    public StorageRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {
     }
 }

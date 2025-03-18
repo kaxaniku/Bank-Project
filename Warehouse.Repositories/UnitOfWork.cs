@@ -28,21 +28,21 @@ public sealed class UnitOfWork : IUnitOfWork
     public UnitOfWork(IDbConnection connection)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-        _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection));
-        _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection));
-        _cityRepository = new Lazy<ICityRepository>(() => new CityRepository(_connection));
-        _contractDetailRepository = new Lazy<IContractDetailRepository>(() => new ContractDetailRepository(_connection));
-        _contractRepository = new Lazy<IContractRepository>(() => new ContractRepository(_connection));
-        _customerRepository = new Lazy<ICustomerRepository>(() => new CustomerRepository(_connection));
-        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(_connection));
-        _positionRepository = new Lazy<IPositionRepository>(() => new PositionRepository(_connection));
-        _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_connection));
-        _productTagRepository = new Lazy<IProductTagRepository>(() => new ProductTagRepository(_connection));
-        _slotRepository = new Lazy<ISlotRepository>(() => new SlotRepository(_connection));
-        _storageRepository = new Lazy<IStorageRepository>(() => new StorageRepository(_connection));
-        _tagRepository = new Lazy<ITagRepository>(() => new TagRepository(_connection));
-        _transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(_connection));
-        _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_connection));
+        _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection, _transaction));
+        _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection, _transaction));
+        _cityRepository = new Lazy<ICityRepository>(() => new CityRepository(_connection, _transaction));
+        _contractDetailRepository = new Lazy<IContractDetailRepository>(() => new ContractDetailRepository(_connection, _transaction));
+        _contractRepository = new Lazy<IContractRepository>(() => new ContractRepository(_connection, _transaction));
+        _customerRepository = new Lazy<ICustomerRepository>(() => new CustomerRepository(_connection, _transaction));
+        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(_connection, _transaction));
+        _positionRepository = new Lazy<IPositionRepository>(() => new PositionRepository(_connection, _transaction));
+        _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_connection, _transaction));
+        _productTagRepository = new Lazy<IProductTagRepository>(() => new ProductTagRepository(_connection, _transaction));
+        _slotRepository = new Lazy<ISlotRepository>(() => new SlotRepository(_connection, _transaction));
+        _storageRepository = new Lazy<IStorageRepository>(() => new StorageRepository(_connection, _transaction));
+        _tagRepository = new Lazy<ITagRepository>(() => new TagRepository(_connection, _transaction));
+        _transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(_connection, _transaction));
+        _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_connection, _transaction));
     }
 
     public void BeginTransaction()

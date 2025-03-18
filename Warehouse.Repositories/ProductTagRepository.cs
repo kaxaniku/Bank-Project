@@ -7,7 +7,7 @@ namespace Warehouse.Repositories;
 
 internal class ProductTagRepository : BaseRepository<ProductTag>, IProductTagRepository
 {
-    public ProductTagRepository(IDbConnection connection) : base(connection)
+    public ProductTagRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {    
     }
     public override ProductTag? Get(object id)

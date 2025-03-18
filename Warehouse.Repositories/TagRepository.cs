@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class TagRepository : BaseRepository<Tag>, ITagRepository
 {
-    public TagRepository(IDbConnection connection) : base(connection)
+    public TagRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {
     }
 }

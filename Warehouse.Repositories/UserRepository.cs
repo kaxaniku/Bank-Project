@@ -7,7 +7,7 @@ namespace Warehouse.Repositories;
 
 internal class UserRepository : BaseRepository<User>, IUserRepository
 {
-    public UserRepository(IDbConnection connection) : base(connection)
+    public UserRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {
     }
 
