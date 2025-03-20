@@ -78,4 +78,19 @@ public class ProductTagRepositoryTests : BaseRepositoryTests<ProductTag>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(productTag));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<ProductTag> productTags = _repository!.Query(pt => pt.ProductId == 2);
+
+        Assert.IsNotNull(productTags);
+        Assert.IsNotEmpty(productTags);
+
+        foreach (var productTag in productTags)
+        {
+            Assert.AreEqual(2, productTag.ProductId, $"ProductTag with ID {productTag.TagId} does not have the expected ProductId.");
+        }
+    }
+
 }

@@ -106,4 +106,18 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery_ShouldReturnUsersWithSpecificRole()
+    {
+        IEnumerable<User> users = _repository!.Query(user => user.UserRole == 1);
+
+        Assert.IsNotNull(users);
+
+        foreach (var user in users)
+        {
+            Assert.AreEqual(1, user.UserRole, $"User with Username {user.Username} does not have the expected UserRole.");
+        }
+    }
+
 }

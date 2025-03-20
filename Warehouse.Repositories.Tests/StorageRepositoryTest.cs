@@ -71,4 +71,19 @@ public class StorageRepositoryTests : BaseRepositoryTests<Tag>
         _repository!.Delete(Constants.DeleteTestId2);
         Storage? deleted = _repository!.Get(Constants.DeleteTestId2);
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Storage> storages = _repository!.Query(storage => storage.CityId == 1);
+
+        Assert.IsNotNull(storages);
+        Assert.IsNotEmpty(storages);
+
+        foreach (var storage in storages)
+        {
+            Assert.AreEqual(1, storage.CityId, $"Storage with Name {storage.Name} does not have the expected CityId.");
+        }
+    }
+
 }

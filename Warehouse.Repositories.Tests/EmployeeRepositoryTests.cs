@@ -139,4 +139,19 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Employee> employees = _repository!.Query(e => e.IsActive == true && e.EmployeeId > 1);
+
+        Assert.IsNotNull(employees);
+        Assert.IsNotEmpty(employees);
+
+        foreach (var employee in employees)
+        {
+            Assert.IsTrue(employee.IsActive, $"Employee {employee.EmployeeId} is not active.");
+            Assert.Greater(employee.EmployeeId, 1, $"Employee {employee.EmployeeId} does not have an ID greater than 1.");
+        }
+    }
 }

@@ -55,4 +55,19 @@ public class TransactionRepositoryTests : BaseRepositoryTests<Employee>
 
         Assert.Throws<SqlException>(() => _repository!.Insert(transaction));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Transaction> transactions = _repository!.Query(transaction => transaction.EmployeeId == 5);
+
+        Assert.IsNotNull(transactions);
+        Assert.IsNotEmpty(transactions);
+
+        foreach (var transaction in transactions)
+        {
+            Assert.AreEqual(5, transaction.EmployeeId, $"Transaction with ID {transaction.TransactionId} does not have the expected EmployeeId.");
+        }
+    }
+
 }

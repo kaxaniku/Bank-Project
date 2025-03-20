@@ -67,4 +67,19 @@ public class SlotRepositoryTests : BaseRepositoryTests<Slot>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Slot> slots = _repository!.Query(slot => slot.StorageId == 1);
+
+        Assert.IsNotNull(slots);
+        Assert.IsNotEmpty(slots);
+
+        foreach (var slot in slots)
+        {
+            Assert.AreEqual(1, slot.StorageId, $"Slot with SlotCode {slot.SlotCode} does not have the expected StorageId.");
+        }
+    }
+
 }

@@ -68,4 +68,18 @@ public class TagRepositoryTests : BaseRepositoryTests<Tag>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Tag> tags = _repository!.Query(tag => tag.Name == "Electronics");
+
+        Assert.IsNotNull(tags);
+
+        foreach (var tag in tags)
+        {
+            Assert.AreEqual("Electronics", tag.Name, $"Tag with ID {tag.TagId} does not have the expected Name.");
+        }
+    }
+
 }

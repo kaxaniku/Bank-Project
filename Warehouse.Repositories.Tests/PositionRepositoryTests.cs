@@ -100,4 +100,18 @@ public class PositionRepositoryTests : BaseRepositoryTests<Position>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Position> positions = _repository!.Query(p => p.Salary > 4000);
+
+        Assert.IsNotNull(positions);
+        
+        foreach (var position in positions)
+        {
+            Assert.Greater(position.Salary, 4000, $"Position {position.Name} does not have a salary greater than 40000.");
+        }
+    }
+
 }

@@ -114,4 +114,18 @@ public class ProductRepositoryTests : BaseRepositoryTests<Product>
 
         Assert.Throws<SqlException>(() => _repository!.Delete(Constants.DeleteTestId2));
     }
+
+    [Test]
+    public void TestQuery()
+    {
+        IEnumerable<Product> products = _repository!.Query(p => p.Weight > 2.0);
+
+        Assert.IsNotNull(products);
+
+        foreach (var product in products)
+        {
+            Assert.Greater(product.Weight, 2.0, $"Product {product.Name} does not have a weight greater than 2.0.");
+        }
+    }
+
 }
