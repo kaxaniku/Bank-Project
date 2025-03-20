@@ -25,20 +25,30 @@ internal class ExpressionToSqlConverter
 
     public static string GetName(Expression expression)
     {
-        if (expression is MemberExpression)
-        {
-            return ((MemberExpression)expression).Member.Name;
-        }
-        if (expression is ConstantExpression)
-        {
-            object? value = ((ConstantExpression)expression).Value;
+        if (expression is MemberExpression memberExpression)
+            return memberExpression.Member.Name;
 
-            if(value is bool boolean)
-                return boolean ? "1" : "0";
+        if (expression is ConstantExpression constantExpression)
+            return ConstantExpressionToString(constantExpression);
 
-            return value.ToString();
+        if (expression is UnaryExpression unaryExpression) {
+            return GetName(unaryExpression.Operand);
         }
-        return expression.NodeType.ToString();
+
+        throw new NotImplementedException();
+    }
+
+    private static string ConstantExpressionToString(ConstantExpression constantExpression)
+    {
+        object? value = constantExpression.Value;
+
+        if (value is bool boolean)
+            return boolean ? "1" : "0";
+
+        if (value is string text)
+            return $"'{text}'";
+
+        return value.ToString();
     }
 
     private static string GetSqlOperator(ExpressionType type)
