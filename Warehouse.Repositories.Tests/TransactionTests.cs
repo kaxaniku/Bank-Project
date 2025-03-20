@@ -11,63 +11,48 @@ public class TransactionTests : BaseRepositoryTests<Category>
     [SetUp]
     public void Setup()
     {
-        _repository = _unitOfWork!.CategoryRepository;
-        _unitOfWork.BeginTransaction();
-        _repository.SetTransaction(_unitOfWork.Transaction);
+        _unitOfWork = new UnitOfWork(_connection!);
     }
 
     [Test]
     public void TestInsert_ShouldInsert()
     {
-        int code;
-
         Category category = new()
         {
             Name = "Test Category",
             Description = "Test Description"
         };
 
-        try
-        {
-            int id = (int)_repository!.Insert(category);
-            Category? result = _repository.Get(id);
+        _connection!.Open();
+        _unitOfWork!.BeginTransaction();
+        _repository = _unitOfWork!.CategoryRepository;
 
-            Assert.Greater(id, 0);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(category.Name, result!.Name);
-            Assert.AreEqual(category.Description, result!.Description);
+        int id = (int)_repository!.Insert(category);
 
-            code = _unitOfWork.Commit();
-        }
-        catch
-        {
-            code = _unitOfWork.Rollback();
-        }
-
-        Assert.AreEqual(code, 0);
+        Assert.DoesNotThrow(() => _unitOfWork.Commit());
+        Category? result = _repository.Get(id);
+        Assert.Greater(id, 0);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(category.Name, result!.Name);
+        Assert.AreEqual(category.Description, result!.Description);
+        _connection!.Close();
     }
 
     [Test]
     public void TestInsert_ShouldNotInsert()
     {
-        int code;
-
         Category category = new()
         {
             Name = null,
             Description = "Test Description"
         };
-        try
-        {
-            _repository!.Insert(category);
 
-            code = _unitOfWork.Commit();
-        }
-        catch
-        {
-            code = _unitOfWork.Rollback();
-        }
+        _connection!.Open();
+        _unitOfWork!.BeginTransaction();
+        _repository = _unitOfWork!.CategoryRepository;
 
-        Assert.AreEqual(code, 1);
+        Assert.Throws<SqlException>(() => _repository!.Insert(category));
+        Assert.DoesNotThrow(() => _unitOfWork.Rollback());
+        _connection!.Close();
     }
 }

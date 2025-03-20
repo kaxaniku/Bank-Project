@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class CountryRepository : BaseRepository<Country>, ICountryRepository
 {
-    public CountryRepository(IDbConnection connection) : base(connection)
+    public CountryRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {
     }
 }

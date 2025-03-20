@@ -1,38 +1,12 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Warehouse.Repositories.Interfaces;
 
 namespace Warehouse.Repositories;
 
-public interface IUnitOfWork : IDisposable
-{
-    IDbTransaction Transaction { get; }
-
-    void BeginTransaction();
-    int Commit();
-    int Rollback();
-
-    ICategoryRepository CategoryRepository { get; }
-    ICityRepository CityRepository { get; }
-    IContractDetailRepository ContractDetailRepository { get; }
-    IContractRepository ContractRepository { get; }
-    ICountryRepository CountryRepository { get; }
-    ICustomerRepository CustomerRepository { get; }
-    IEmployeeRepository EmployeeRepository { get; }
-    IPositionRepository PositionRepository { get; }
-    IProductRepository ProductRepository { get; }
-    IProductTagRepository ProductTagRepository { get; }
-    ISlotRepository SlotRepository { get; }
-    IStorageRepository StorageRepository { get; }
-    ITagRepository TagRepository { get; }
-    ITransactionRepository TransactionRepository { get; }
-    IUserRepository UserRepository { get; }
-}
-
 public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly IDbConnection _connection;
-    private IDbTransaction _transaction;
+    private IDbTransaction? _transaction;
     private bool _disposed;
 
     private readonly Lazy<ICategoryRepository> _categoryRepository;
@@ -54,51 +28,49 @@ public sealed class UnitOfWork : IUnitOfWork
     public UnitOfWork(IDbConnection connection)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-
-        _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection));
-        _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection));
-        _cityRepository = new Lazy<ICityRepository>(() => new CityRepository(_connection));
-        _contractDetailRepository = new Lazy<IContractDetailRepository>(() => new ContractDetailRepository(_connection));
-        _contractRepository = new Lazy<IContractRepository>(() => new ContractRepository(_connection));
-        _customerRepository = new Lazy<ICustomerRepository>(() => new CustomerRepository(_connection));
-        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(_connection));
-        _positionRepository = new Lazy<IPositionRepository>(() => new PositionRepository(_connection));
-        _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_connection));
-        _productTagRepository = new Lazy<IProductTagRepository>(() => new ProductTagRepository(_connection));
-        _slotRepository = new Lazy<ISlotRepository>(() => new SlotRepository(_connection));
-        _storageRepository = new Lazy<IStorageRepository>(() => new StorageRepository(_connection));
-        _tagRepository = new Lazy<ITagRepository>(() => new TagRepository(_connection));
-        _transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(_connection));
-        _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_connection));
-
+        _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection, _transaction));
+        _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection, _transaction));
+        _cityRepository = new Lazy<ICityRepository>(() => new CityRepository(_connection, _transaction));
+        _contractDetailRepository = new Lazy<IContractDetailRepository>(() => new ContractDetailRepository(_connection, _transaction));
+        _contractRepository = new Lazy<IContractRepository>(() => new ContractRepository(_connection, _transaction));
+        _customerRepository = new Lazy<ICustomerRepository>(() => new CustomerRepository(_connection, _transaction));
+        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(_connection, _transaction));
+        _positionRepository = new Lazy<IPositionRepository>(() => new PositionRepository(_connection, _transaction));
+        _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_connection, _transaction));
+        _productTagRepository = new Lazy<IProductTagRepository>(() => new ProductTagRepository(_connection, _transaction));
+        _slotRepository = new Lazy<ISlotRepository>(() => new SlotRepository(_connection, _transaction));
+        _storageRepository = new Lazy<IStorageRepository>(() => new StorageRepository(_connection, _transaction));
+        _tagRepository = new Lazy<ITagRepository>(() => new TagRepository(_connection, _transaction));
+        _transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(_connection, _transaction));
+        _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_connection, _transaction));
     }
-
-    public IDbTransaction Transaction => _transaction;
 
     public void BeginTransaction()
     {
-        _connection.Open();
-        _transaction ??= _connection.BeginTransaction();
+        if (_transaction != null)
+            throw new InvalidOperationException("Transaction is already started.");
+
+        _transaction = _connection.BeginTransaction();
     }
 
-    public int Commit()
+    public void Commit()
     {
+        if (_transaction == null)
+            throw new InvalidOperationException("Transaction is not started.");
+
         _transaction?.Commit();
         _transaction?.Dispose();
         _transaction = null;
-        _connection.Close();
-
-        return 0;
     }
 
-    public int Rollback()
+    public void Rollback()
     {
+        if (_transaction == null)
+            throw new InvalidOperationException("Transaction is not started.");
+
         _transaction?.Rollback();
         _transaction?.Dispose();
         _transaction = null;
-        _connection.Close();
-
-        return 1;
     }
 
     public void Dispose()
@@ -106,7 +78,6 @@ public sealed class UnitOfWork : IUnitOfWork
         if (!_disposed)
         {
             _transaction?.Dispose();
-            _connection?.Dispose();
             _disposed = true;
         }
     }

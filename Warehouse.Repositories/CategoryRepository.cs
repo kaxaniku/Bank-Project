@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class CategoryRepository : BaseRepository<Category>, ICategoryRepository
 {
-    public CategoryRepository(IDbConnection connection) : base(connection)
+    public CategoryRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {
     }
 }

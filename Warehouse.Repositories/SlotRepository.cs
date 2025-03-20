@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class SlotRepository : BaseRepository<Slot>, ISlotRepository
 {
-    public SlotRepository(IDbConnection connection) : base(connection)
+    public SlotRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
     {
     }
 }

@@ -11,22 +11,18 @@ internal abstract class BaseRepository<T> : IRepository<T>
 {
     protected readonly IDbConnection _connection;
     protected readonly string _entityName;
-    protected IDbTransaction _transaction;
+    protected IDbTransaction? _transaction;
 
     private IEnumerable<string> InsertIgnoredProperties =>
-        new[] { "IsActive", "CreateDate", "UpdateDate", $"{ _entityName }Id" };
+        new[] { "IsActive", "CreateDate", "UpdateDate", $"{_entityName}Id" };
 
     private IEnumerable<string> UpdateIgnoredProperties =>
         new[] { "IsActive", "CreateDate", "UpdateDate" };
 
-    protected BaseRepository(IDbConnection connection)
+    protected BaseRepository(IDbConnection connection, IDbTransaction? transaction)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
         _entityName = typeof(T).Name;
-    }
-
-    public void SetTransaction(IDbTransaction transaction)
-    {
         _transaction = transaction;
     }
 
