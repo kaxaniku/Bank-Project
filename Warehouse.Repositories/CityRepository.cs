@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class CityRepository : BaseRepository<City>, ICityRepository
 {
-    public CityRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
+    public CityRepository(IDbConnection connection, Func<IDbTransaction>? transaction) : base(connection, transaction)
     {
     }
 }

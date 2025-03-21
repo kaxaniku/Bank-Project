@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class ContractDetailRepository : BaseRepository<ContractDetail>, IContractDetailRepository
 {
-    public ContractDetailRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
+    public ContractDetailRepository(IDbConnection connection, Func<IDbTransaction>? transaction) : base(connection, transaction)
     {
     }
 }

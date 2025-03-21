@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 {
-    public EmployeeRepository(IDbConnection connection, IDbTransaction? transaction) : base(connection, transaction)
+    public EmployeeRepository(IDbConnection connection, Func<IDbTransaction>? transaction) : base(connection, transaction)
     {
     }
 }

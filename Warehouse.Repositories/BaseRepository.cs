@@ -11,15 +11,15 @@ internal abstract class BaseRepository<T> : IRepository<T>
 {
     protected readonly IDbConnection _connection;
     protected readonly string _entityName;
-    protected IDbTransaction? _transaction;
-
+    protected Func<IDbTransaction>? _transaction;
+    
     private IEnumerable<string> InsertIgnoredProperties =>
         new[] { "IsActive", "CreateDate", "UpdateDate", $"{_entityName}Id" };
 
     private IEnumerable<string> UpdateIgnoredProperties =>
         new[] { "IsActive", "CreateDate", "UpdateDate" };
 
-    protected BaseRepository(IDbConnection connection, IDbTransaction? transaction)
+    protected BaseRepository(IDbConnection connection, Func<IDbTransaction>? transaction)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
         _entityName = typeof(T).Name;
@@ -34,7 +34,7 @@ internal abstract class BaseRepository<T> : IRepository<T>
         return _connection.QueryFirstOrDefault<T>(
             $"sp_Get{_entityName}",
             parameters,
-            commandType: CommandType.StoredProcedure, transaction: _transaction);
+            commandType: CommandType.StoredProcedure, transaction: _transaction?.Invoke());
     }
 
     public virtual IEnumerable<T> Query(Expression<Func<T, bool>> predicate)
@@ -49,7 +49,7 @@ internal abstract class BaseRepository<T> : IRepository<T>
     {
         var parameters = new DynamicParameters();
         SetInsertParameters(value, parameters);
-        _connection.Execute($"sp_Insert{_entityName}", parameters, commandType: CommandType.StoredProcedure, transaction: _transaction);
+        _connection.Execute($"sp_Insert{_entityName}", parameters, commandType: CommandType.StoredProcedure, transaction: _transaction?.Invoke());
 
         return parameters.Get<object>($"{_entityName}Id");
     }
@@ -58,7 +58,7 @@ internal abstract class BaseRepository<T> : IRepository<T>
     {
         var parameters = new DynamicParameters();
         SetUpdateParameters(value, parameters);
-        _connection.Execute($"sp_Update{_entityName}", parameters, commandType: CommandType.StoredProcedure, transaction: _transaction);
+        _connection.Execute($"sp_Update{_entityName}", parameters, commandType: CommandType.StoredProcedure, transaction: _transaction?.Invoke());
     }
 
     public virtual void Delete(object id)
@@ -66,7 +66,7 @@ internal abstract class BaseRepository<T> : IRepository<T>
         var parameters = new DynamicParameters();
         parameters.Add($"{_entityName}Id", id);
 
-        _connection.Execute($"sp_Delete{_entityName}", parameters, commandType: CommandType.StoredProcedure, transaction: _transaction);
+        _connection.Execute($"sp_Delete{_entityName}", parameters, commandType: CommandType.StoredProcedure, transaction: _transaction?.Invoke());
     }
 
     private void SetInsertParameters(T value, DynamicParameters parameters)

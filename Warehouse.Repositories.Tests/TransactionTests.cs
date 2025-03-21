@@ -11,7 +11,7 @@ public class TransactionTests : BaseRepositoryTests<Category>
     [SetUp]
     public void Setup()
     {
-        _unitOfWork = new UnitOfWork(_connection!);
+        _repository = _unitOfWork!.CategoryRepository;
     }
 
     [Test]
@@ -25,7 +25,6 @@ public class TransactionTests : BaseRepositoryTests<Category>
 
         _connection!.Open();
         _unitOfWork!.BeginTransaction();
-        _repository = _unitOfWork!.CategoryRepository;
 
         int id = (int)_repository!.Insert(category);
 
@@ -49,7 +48,6 @@ public class TransactionTests : BaseRepositoryTests<Category>
 
         _connection!.Open();
         _unitOfWork!.BeginTransaction();
-        _repository = _unitOfWork!.CategoryRepository;
 
         Assert.Throws<SqlException>(() => _repository!.Insert(category));
         Assert.DoesNotThrow(() => _unitOfWork.Rollback());
