@@ -28,27 +28,22 @@ public sealed class UnitOfWork : IUnitOfWork
     public UnitOfWork(IDbConnection connection)
     {
         _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-        Func<IDbTransaction>? TransactionDelegate = GetTransaction;
 
-        _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection, TransactionDelegate));
-        _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection, TransactionDelegate));
-        _cityRepository = new Lazy<ICityRepository>(() => new CityRepository(_connection, TransactionDelegate));
-        _contractDetailRepository = new Lazy<IContractDetailRepository>(() => new ContractDetailRepository(_connection, TransactionDelegate));
-        _contractRepository = new Lazy<IContractRepository>(() => new ContractRepository(_connection, TransactionDelegate));
-        _customerRepository = new Lazy<ICustomerRepository>(() => new CustomerRepository(_connection, TransactionDelegate));
-        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(_connection, TransactionDelegate));
-        _positionRepository = new Lazy<IPositionRepository>(() => new PositionRepository(_connection, TransactionDelegate));
-        _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_connection, TransactionDelegate));
-        _productTagRepository = new Lazy<IProductTagRepository>(() => new ProductTagRepository(_connection, TransactionDelegate));
-        _slotRepository = new Lazy<ISlotRepository>(() => new SlotRepository(_connection, TransactionDelegate));
-        _storageRepository = new Lazy<IStorageRepository>(() => new StorageRepository(_connection, TransactionDelegate));
-        _tagRepository = new Lazy<ITagRepository>(() => new TagRepository(_connection, TransactionDelegate));
-        _transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(_connection, TransactionDelegate));
-        _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_connection, TransactionDelegate));
-    }
-    private IDbTransaction? GetTransaction()
-    {
-        return _transaction;
+        _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(_connection, GetTransaction));
+        _countryRepository = new Lazy<ICountryRepository>(() => new CountryRepository(_connection, GetTransaction));
+        _cityRepository = new Lazy<ICityRepository>(() => new CityRepository(_connection, GetTransaction));
+        _contractDetailRepository = new Lazy<IContractDetailRepository>(() => new ContractDetailRepository(_connection, GetTransaction));
+        _contractRepository = new Lazy<IContractRepository>(() => new ContractRepository(_connection, GetTransaction));
+        _customerRepository = new Lazy<ICustomerRepository>(() => new CustomerRepository(_connection, GetTransaction));
+        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(_connection, GetTransaction));
+        _positionRepository = new Lazy<IPositionRepository>(() => new PositionRepository(_connection, GetTransaction));
+        _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(_connection, GetTransaction));
+        _productTagRepository = new Lazy<IProductTagRepository>(() => new ProductTagRepository(_connection, GetTransaction));
+        _slotRepository = new Lazy<ISlotRepository>(() => new SlotRepository(_connection, GetTransaction));
+        _storageRepository = new Lazy<IStorageRepository>(() => new StorageRepository(_connection, GetTransaction));
+        _tagRepository = new Lazy<ITagRepository>(() => new TagRepository(_connection, GetTransaction));
+        _transactionRepository = new Lazy<ITransactionRepository>(() => new TransactionRepository(_connection, GetTransaction));
+        _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_connection, GetTransaction));
     }
 
     public void BeginTransaction()
@@ -103,4 +98,6 @@ public sealed class UnitOfWork : IUnitOfWork
     public ITagRepository TagRepository => _tagRepository.Value;
     public ITransactionRepository TransactionRepository => _transactionRepository.Value;
     public IUserRepository UserRepository => _userRepository.Value;
+
+    private IDbTransaction? GetTransaction() => _transaction;
 }
