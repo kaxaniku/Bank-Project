@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class SlotRepository : BaseRepository<Slot>, ISlotRepository
 {
-    public SlotRepository(IDbConnection connection, Func<IDbTransaction>? transaction) : base(connection, transaction)
+    public SlotRepository(IDbConnection connection, Func<IDbTransaction?>? getTransaction) : base(connection, getTransaction)
     {
     }
 }

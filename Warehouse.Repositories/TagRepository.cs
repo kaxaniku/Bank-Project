@@ -6,7 +6,7 @@ namespace Warehouse.Repositories;
 
 internal class TagRepository : BaseRepository<Tag>, ITagRepository
 {
-    public TagRepository(IDbConnection connection, Func<IDbTransaction>? transaction) : base(connection, transaction)
+    public TagRepository(IDbConnection connection, Func<IDbTransaction?>? getTransaction) : base(connection, getTransaction)
     {
     }
 }
