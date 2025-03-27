@@ -15,7 +15,7 @@ public class ProductService : IProductService
 
     public void AddCategory(Category category)
     {
-        ArgumentNullException.ThrowIfNull(category, nameof(category));
+        ArgumentNullException.ThrowIfNull(category);
         _unitOfWork.CategoryRepository.Insert(category);
     }
 

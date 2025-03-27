@@ -30,16 +30,16 @@ public class ContractDetailRepositoryTests : BaseRepositoryTests<ContractDetail>
 
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
-        Assert.AreEqual(contractDetail.SlotId, result!.SlotId);
-        Assert.AreEqual(contractDetail.ContractId, result!.ContractId);
-        Assert.AreEqual(contractDetail.StartDate, result!.StartDate);
-        Assert.AreEqual(contractDetail.EndDate, result!.EndDate);
+        Assert.That(result!.SlotId, Is.EqualTo(contractDetail.SlotId));
+        Assert.That(result.ContractId, Is.EqualTo(contractDetail.ContractId));
+        Assert.That(result.StartDate, Is.EqualTo(contractDetail.StartDate));
+        Assert.That(result.EndDate, Is.EqualTo(contractDetail.EndDate));
     }
 
     [Test]
-    public void TestInsert_ShouldNotInsert() 
+    public void TestInsert_ShouldNotInsert()
     {
-    
+
         ContractDetail contractDetail = new()
         {
             SlotId = -1,
