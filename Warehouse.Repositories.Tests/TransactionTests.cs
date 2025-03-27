@@ -89,4 +89,47 @@ public class TransactionTests : BaseRepositoryTests<Category>
         Assert.DoesNotThrow(() => _unitOfWork.Rollback());
         _connection!.Close();
     }
+    [Test]
+    public void TestInsert_ShouldRollback()
+    {
+        Category category1 = new()
+        {
+            Name = "Rollback Category 1",
+            Description = "Should not persist"
+        };
+
+        Category category2 = new()
+        {
+            Name = "Rollback Category 2",
+            Description = "Should not persist"
+        };
+
+        Product product = new()
+        {
+            Name = "Rollback Product",
+            Description = "Should not persist",
+            Barcode = "ROLLBACK123",
+            Dimensions = "5x5x5",
+            CategoryId = 1  // Valid ID to avoid exception
+        };
+
+        _connection!.Open();
+        _unitOfWork!.BeginTransaction();
+
+        int id1 = (int)_categoryRepository!.Insert(category1);
+        int id2 = (int)_categoryRepository!.Insert(category2);
+        int id3 = (int)_productRepository!.Insert(product);
+
+        _unitOfWork.Rollback();
+
+        Category? result1 = _categoryRepository.Get(id1);
+        Category? result2 = _categoryRepository.Get(id2);
+        Product? result3 = _productRepository.Get(id3);
+
+        Assert.IsNull(result1, "Rollback should remove first inserted category");
+        Assert.IsNull(result2, "Rollback should remove second inserted category");
+        Assert.IsNull(result3, "Rollback should remove inserted product");
+
+        _connection!.Close();
+    }
 }
