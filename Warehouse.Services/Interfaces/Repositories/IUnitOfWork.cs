@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Warehouse.Repositories.Interfaces;
+namespace Warehouse.Services.Interfaces.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {

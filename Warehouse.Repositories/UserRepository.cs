@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using System.Data;
 using Warehouse.DTO;
-using Warehouse.Repositories.Interfaces;
+using Warehouse.Services.Interfaces.Repositories;
 
 namespace Warehouse.Repositories;
 

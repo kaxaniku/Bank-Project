@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using Warehouse.Repositories.Interfaces;
+using Warehouse.Services.Interfaces.Repositories;
 
 namespace Warehouse.Repositories;
 
@@ -59,8 +59,8 @@ public sealed class UnitOfWork : IUnitOfWork
         if (_transaction == null)
             throw new InvalidOperationException("Transaction is not started.");
 
-        _transaction?.Commit();
-        _transaction?.Dispose();
+        _transaction.Commit();
+        _transaction.Dispose();
         _transaction = null;
     }
 
@@ -69,8 +69,8 @@ public sealed class UnitOfWork : IUnitOfWork
         if (_transaction == null)
             throw new InvalidOperationException("Transaction is not started.");
 
-        _transaction?.Rollback();
-        _transaction?.Dispose();
+        _transaction.Rollback();
+        _transaction.Dispose();
         _transaction = null;
     }
 

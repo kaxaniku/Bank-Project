@@ -2,8 +2,8 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Dapper;
-using Warehouse.Repositories.Interfaces;
 using Humanizer;
+using Warehouse.Services.Interfaces.Repositories;
 
 namespace Warehouse.Repositories;
 

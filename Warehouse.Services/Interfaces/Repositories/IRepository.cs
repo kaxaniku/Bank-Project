@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Linq.Expressions;
 
-namespace Warehouse.Repositories.Interfaces;
+namespace Warehouse.Services.Interfaces.Repositories;
 
 public interface IRepository<T>
 {

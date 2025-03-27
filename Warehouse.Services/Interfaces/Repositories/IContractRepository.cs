@@ -1,5 +1,5 @@
 ﻿using Warehouse.DTO;
 
-namespace Warehouse.Repositories.Interfaces;
+namespace Warehouse.Services.Interfaces.Repositories;
 
 public interface IContractRepository : IRepository<Contract> { }

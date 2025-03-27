@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Warehouse.DTO\Warehouse.DTO.csproj" />
+    <ProjectReference Include="..\Warehouse.Services\Warehouse.Services.csproj" />
   </ItemGroup>
 
 </Project>

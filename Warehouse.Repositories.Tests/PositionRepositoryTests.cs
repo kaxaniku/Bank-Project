@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
-using Warehouse.Repositories.Interfaces;
+using Warehouse.Services.Interfaces.Repositories;
 
 namespace Warehouse.Repositories.Tests;
 

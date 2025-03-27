@@ -1,5 +1,5 @@
 ﻿using Warehouse.DTO;
 
-namespace Warehouse.Repositories.Interfaces;
+namespace Warehouse.Services.Interfaces.Repositories;
 
 public interface ICountryRepository : IRepository<Country> { }
