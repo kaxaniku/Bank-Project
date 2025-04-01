@@ -21,44 +21,47 @@ public class ProductService : IProductService
 
     public void EditCategory(Category category)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(category);
+        _unitOfWork.CategoryRepository.Update(category);
     }
 
     public void DeleteCategory(int id)
     {
-        throw new NotImplementedException();
+        _unitOfWork.CategoryRepository.Delete(id);
     }
 
     public IEnumerable<Category> GetCategories()
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CategoryRepository.Query(x => x.IsActive);
     }
 
-    public Category GetCategory(int id)
+    public Category? GetCategory(int id)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CategoryRepository.Get(id);
     }
 
     public void AddProduct(Product product)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(product);
+        _unitOfWork.ProductRepository.Insert(product);
     }
 
     public void EditProduct(Product product)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(product);
+        _unitOfWork.ProductRepository.Update(product);
     }
     public void DeleteProduct(int id)
     {
-        throw new NotImplementedException();
+        _unitOfWork.ProductRepository.Delete(id);
     }
-    public Product GetProduct(int id)
+    public Product? GetProduct(int id)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.ProductRepository.Get(id);
     }
 
     public IEnumerable<Product> GetProducts()
     {
-        throw new NotImplementedException();
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive);
     }
 }
