@@ -7,7 +7,7 @@ public sealed class Transaction
     public int ProductId { get; set; }
     public int SlotId { get; set; }
     public int Quantity { get; set; }
-    public string TransactionType { get; set; } = null!;
+    public string TransactionType { get; set; } = null!; //TODO: Enum will be better
     public DateTime CreateDate { get; set; }
     public string? CustomerAgent { get; set; }
 }

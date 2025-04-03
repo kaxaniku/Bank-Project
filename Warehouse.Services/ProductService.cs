@@ -4,7 +4,7 @@ using Warehouse.Services.Interfaces.Services;
 
 namespace Warehouse.Services;
 
-public class ProductService : IProductService
+public sealed class ProductService : IProductService
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -30,9 +30,9 @@ public class ProductService : IProductService
         _unitOfWork.CategoryRepository.Delete(id);
     }
 
-    public IEnumerable<Category> GetCategories()
+    public IEnumerable<Category> GetCategories(string? name = "")
     {
-        return _unitOfWork.CategoryRepository.Query(x => x.IsActive);
+        return _unitOfWork.CategoryRepository.Query(x => x.IsActive && x.Name.StartsWith(name ?? ""));
     }
 
     public Category? GetCategory(int id)
@@ -51,17 +51,34 @@ public class ProductService : IProductService
         ArgumentNullException.ThrowIfNull(product);
         _unitOfWork.ProductRepository.Update(product);
     }
+
     public void DeleteProduct(int id)
     {
         _unitOfWork.ProductRepository.Delete(id);
     }
+
     public Product? GetProduct(int id)
     {
         return _unitOfWork.ProductRepository.Get(id);
     }
 
-    public IEnumerable<Product> GetProducts()
+    public Product? GetProductByBarcode(string barcode)
     {
-        return _unitOfWork.ProductRepository.Query(x => x.IsActive);
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.Barcode.Equals(barcode)).FirstOrDefault();
+    }
+
+    public IEnumerable<Product> GetProductsByCategory(int categoryId)
+    {
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.CategoryId == categoryId);
+    }
+
+    public IEnumerable<Product> GetProductsByName(string? name = "")
+    {
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.Name.StartsWith(name ?? ""));
+    }
+
+    public IEnumerable<Transaction> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        throw new NotImplementedException();
     }
 }

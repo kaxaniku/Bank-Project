@@ -7,11 +7,16 @@ public interface IProductService
     void AddCategory(Category category);
     void EditCategory(Category category);
     void DeleteCategory(int id);
+    IEnumerable<Category> GetCategories(string? name = "");
     Category? GetCategory(int id);
-    IEnumerable<Category> GetCategories();
+
     void AddProduct(Product product);
     void EditProduct(Product product);
     void DeleteProduct(int id);
     Product? GetProduct(int id);
-    IEnumerable<Product> GetProducts();
+    Product? GetProductByBarcode(string barcode);
+    IEnumerable<Product> GetProductsByCategory(int categoryId);
+    IEnumerable<Product> GetProductsByName(string? name = "");
+
+    IEnumerable<Transaction> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null);
 }
