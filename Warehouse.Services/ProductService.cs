@@ -84,8 +84,8 @@ public sealed class ProductService : IProductService
         IEnumerable<Transaction> transaction = _unitOfWork.TransactionRepository.Query(x => x.ProductId == productId);
         foreach (var item in transaction)
         {
-            Contract? contract = _unitOfWork.ContractRepository.Get(item.ContractId);
-            IEnumerable<ContractDetail> contractDetail = _unitOfWork.ContractDetailRepository.Query(x => x.StartDate == startDate && x.EndDate == endDate && x.ContractId == contract.ContractId);
+            Contract contract = _unitOfWork.ContractRepository.Get(item.ContractId)!;
+            IEnumerable<ContractDetail> contractDetail = _unitOfWork.ContractDetailRepository.Query(x => x.StartDate >= startDate && x.EndDate <= endDate && x.ContractId == contract.ContractId);
             foreach (var item1 in contractDetail)
             {
                 transactionResponses.Add(new TransactionResponse
