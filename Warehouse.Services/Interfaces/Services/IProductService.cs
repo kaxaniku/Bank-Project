@@ -1,4 +1,5 @@
 ﻿using Warehouse.DTO;
+using Warehouse.Services.Models;
 
 namespace Warehouse.Services.Interfaces.Services;
 
@@ -18,5 +19,5 @@ public interface IProductService
     IEnumerable<Product> GetProductsByCategory(int categoryId);
     IEnumerable<Product> GetProductsByName(string? name = "");
 
-    IEnumerable<Transaction> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null);
+    IEnumerable<TransactionResponse> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null);
 }

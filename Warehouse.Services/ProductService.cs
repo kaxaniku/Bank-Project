@@ -1,6 +1,7 @@
 ﻿using Warehouse.DTO;
 using Warehouse.Services.Interfaces.Repositories;
 using Warehouse.Services.Interfaces.Services;
+using Warehouse.Services.Models;
 
 namespace Warehouse.Services;
 
@@ -77,8 +78,31 @@ public sealed class ProductService : IProductService
         return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.Name.StartsWith(name ?? ""));
     }
 
-    public IEnumerable<Transaction> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null)
+    public IEnumerable<TransactionResponse> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null)
     {
-        throw new NotImplementedException();
+        List<TransactionResponse> transactionResponses = new List<TransactionResponse>();
+        IEnumerable<Transaction> transaction = _unitOfWork.TransactionRepository.Query(x => x.ProductId == productId);
+        foreach (var item in transaction)
+        {
+            Contract? contract = _unitOfWork.ContractRepository.Get(item.ContractId);
+            IEnumerable<ContractDetail> contractDetail = _unitOfWork.ContractDetailRepository.Query(x => x.StartDate == startDate && x.EndDate == endDate && x.ContractId == contract.ContractId);
+            foreach (var item1 in contractDetail)
+            {
+                transactionResponses.Add(new TransactionResponse
+                (
+                    item.TransactionId,
+                    item.ContractId,
+                    item.EmployeeId,
+                    item.ProductId,
+                    item.SlotId,
+                    item.Quantity,
+                    item.TransactionType,
+                    item.CreateDate,
+                    item.CustomerAgent
+                ));
+            }
+        }
+
+        return transactionResponses;
     }
 }
