@@ -32,7 +32,7 @@ BEGIN
     DECLARE @ProductID1 INT, @ProductID2 INT, @ProductID3 INT;
     EXEC sp_InsertProduct @CategoryID1, @ProductID1 OUTPUT, 'LP1000', 'Laptop', 'High performance laptop', '15-inch screen, 1.8kg', 1.8; -- ProductID = 1
     EXEC sp_InsertProduct @CategoryID1, @ProductID2 OUTPUT, 'SP500', 'Smartphone', 'Latest smartphone', '6-inch screen, 0.2kg', 0.2;     -- ProductID = 2
-    EXEC sp_InsertProduct @CategoryID2, @ProductID3 OUTPUT, 'TSHIRT20', 'T-shirt', 'Comfortable cotton t-shirt', 'Medium size', 0.3;     -- ProductID = 3
+    EXEC sp_InsertProduct @CategoryID5, @ProductID3 OUTPUT, 'TSHIRT20', 'T-shirt', 'Comfortable cotton t-shirt', 'Medium size', 0.3;     -- ProductID = 3
 
     -- Insert Positions
     DECLARE @PositionID1 INT, @PositionID2 INT, @PositionID3 INT, @PositionID4 INT, @PositionID5 INT;

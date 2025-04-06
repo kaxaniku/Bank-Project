@@ -33,7 +33,7 @@ public sealed class ProductService : IProductService
 
     public IEnumerable<Category> GetCategories(string? name = "")
     {
-        return _unitOfWork.CategoryRepository.Query(x => x.IsActive && x.Name.StartsWith(name ?? ""));
+        return _unitOfWork.CategoryRepository.Query(x => x.IsActive == true && x.Name.StartsWith(name ?? ""));
     }
 
     public Category? GetCategory(int id)
@@ -65,27 +65,27 @@ public sealed class ProductService : IProductService
 
     public Product? GetProductByBarcode(string barcode)
     {
-        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.Barcode.Equals(barcode)).FirstOrDefault();
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive == true && x.Barcode.Equals(barcode)).FirstOrDefault();
     }
 
     public IEnumerable<Product> GetProductsByCategory(int categoryId)
     {
-        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.CategoryId == categoryId);
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive == true && x.CategoryId.Equals(categoryId));
     }
 
     public IEnumerable<Product> GetProductsByName(string? name = "")
     {
-        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.Name.StartsWith(name ?? ""));
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive == true && x.Name.StartsWith(name ?? ""));
     }
 
     public IEnumerable<TransactionResponse> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null)
     {
         List<TransactionResponse> transactionResponses = new List<TransactionResponse>();
-        IEnumerable<Transaction> transaction = _unitOfWork.TransactionRepository.Query(x => x.ProductId == productId);
+        IEnumerable<Transaction> transaction = _unitOfWork.TransactionRepository.Query(x => x.ProductId.Equals(productId));
         foreach (var item in transaction)
         {
             Contract contract = _unitOfWork.ContractRepository.Get(item.ContractId)!;
-            IEnumerable<ContractDetail> contractDetail = _unitOfWork.ContractDetailRepository.Query(x => x.StartDate >= startDate && x.EndDate <= endDate && x.ContractId == contract.ContractId);
+            IEnumerable<ContractDetail> contractDetail = _unitOfWork.ContractDetailRepository.Query(x => x.StartDate >= startDate && x.EndDate <= endDate && x.ContractId.Equals(contract.ContractId));
             foreach (var item1 in contractDetail)
             {
                 transactionResponses.Add(new TransactionResponse

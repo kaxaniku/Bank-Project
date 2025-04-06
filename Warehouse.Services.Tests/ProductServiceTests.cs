@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using Warehouse.DTO;
 using Warehouse.Services.Interfaces.Repositories;
 using Warehouse.Services.Interfaces.Services;
@@ -143,8 +144,8 @@ namespace Warehouse.Services.Tests
             Assert.IsNotNull(current);
 
             current!.CategoryId = 3;
-            current.Barcode = "987654321";
-            current.Name = "Updated " + current.Name;
+            current.Barcode = "TSHIRT20";
+            current.Name = current.Name;
             current.Description = "Updated " + current.Description;
             current.Dimensions = "20x20x20";
             current.Weight = 5.0f;
@@ -213,7 +214,7 @@ namespace Warehouse.Services.Tests
         public void TestGetProducts_ShouldReturnProductsByCategory()
         {
             IEnumerable<Product> products = _service!.GetProductsByCategory(1);
-            Assert.IsNotNull(products);
+            Assert.IsNotEmpty(products);
         }
 
         [Test]
@@ -226,8 +227,9 @@ namespace Warehouse.Services.Tests
         [Test]
         public void TestGetProducts_ShouldReturnProductsByName()
         {
-            IEnumerable<Product> products = _service!.GetProductsByName("Electronics");
+            IEnumerable<Product> products = _service!.GetProductsByName("T-shirt");
             Assert.IsNotNull(products);
+            Assert.IsNotEmpty(products);
         }
 
         [Test]
