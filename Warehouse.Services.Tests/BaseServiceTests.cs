@@ -4,7 +4,7 @@ using Warehouse.Repositories.Tests;
 
 namespace Warehouse.Services.Tests;
 
-public abstract class BaseServiceTests<T>
+public abstract class BaseServiceTests
 {
     private readonly string _connectionString = ConfigurationManager.ConnectionString;
     protected SqlConnection? _connection;

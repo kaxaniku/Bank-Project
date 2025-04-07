@@ -17,7 +17,7 @@ public sealed class ProductService : IProductService
     public void AddCategory(Category category)
     {
         ArgumentNullException.ThrowIfNull(category);
-        _unitOfWork.CategoryRepository.Insert(category);
+        category.CategoryId = (int)_unitOfWork.CategoryRepository.Insert(category);
     }
 
     public void EditCategory(Category category)

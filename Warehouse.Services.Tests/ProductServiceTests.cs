@@ -1,15 +1,14 @@
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
 using Warehouse.DTO;
-using Warehouse.Services.Interfaces.Repositories;
 using Warehouse.Services.Interfaces.Services;
 using Warehouse.Services.Models;
 
 namespace Warehouse.Services.Tests
 {
-    public class ProductServiceTests : BaseServiceTests<ProductService>
+    public class ProductServiceTests : BaseServiceTests
     {
         private IProductService? _service;
+
         [SetUp]
         public void Setup()
         {
@@ -19,15 +18,19 @@ namespace Warehouse.Services.Tests
         [Test]
         public void TestAddCategory_ShouldAddCategory()
         {
-            Category category = new()
+            Category newCategory = new()
             {
                 Name = "Test Category",
                 Description = "Test Description"
             };
 
-            _service!.AddCategory(category);
+            Assert.DoesNotThrow(() => _service!.AddCategory(newCategory));
+            Assert.That(newCategory.CategoryId, Is.GreaterThan(0));
 
-            Assert.Pass();
+            Category? insertedCategory = _service!.GetCategory(newCategory.CategoryId);
+            Assert.That(insertedCategory, Is.Not.Null);
+            Assert.That(insertedCategory!.Name, Is.EqualTo(newCategory.Name));
+            Assert.That(insertedCategory.Description, Is.EqualTo(newCategory.Description));
         }
 
         [Test]
