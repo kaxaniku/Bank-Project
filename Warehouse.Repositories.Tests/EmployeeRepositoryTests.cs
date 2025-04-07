@@ -143,7 +143,7 @@ public class EmployeeyRepositoryTests : BaseRepositoryTests<Employee>
     [Test]
     public void TestQuery()
     {
-        IEnumerable<Employee> employees = _repository!.Query(e => e.IsActive == true && e.EmployeeId > 1);
+        IEnumerable<Employee> employees = _repository!.Query(e => e.IsActive && e.EmployeeId > 1);
 
         Assert.IsNotNull(employees);
         Assert.IsNotEmpty(employees);

@@ -99,7 +99,7 @@ public class CategoryRepositoryTests : BaseRepositoryTests<Category>
     [Test]
     public void TestQuery()
     {
-        IEnumerable<Category> categories = _repository!.Query(c => c.IsActive == true && c.CategoryId > 3);
+        IEnumerable<Category> categories = _repository!.Query(c => c.IsActive && c.CategoryId > 3);
 
         Assert.IsNotNull(categories);
         Assert.IsNotEmpty(categories);

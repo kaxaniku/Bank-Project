@@ -106,7 +106,7 @@ public class CityRepositoryTests : BaseRepositoryTests<City>
     [Test]
     public void TestQuery()
     {
-        IEnumerable<City> cities = _repository!.Query(c => c.IsActive == true && c.CityId > 3);
+        IEnumerable<City> cities = _repository!.Query(c => c.IsActive && c.CityId > 3);
 
         Assert.IsNotNull(cities);
         Assert.IsNotEmpty(cities);

@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using Dapper;
 using Humanizer;
 using Warehouse.Services.Interfaces.Repositories;
@@ -39,10 +40,12 @@ internal abstract class BaseRepository<T> : IRepository<T>
 
     public virtual IEnumerable<T> Query(Expression<Func<T, bool>> predicate)
     {
-        string query = $"SELECT * FROM {_entityName.Pluralize()} WHERE ";
-        query += ExpressionToSqlConverter.ConvertExpressionToSql(predicate);
+        var (sql, parameters) = SqlExpressionVisitor.ToSql(predicate);
 
-        return _connection.Query<T>(query);
+        StringBuilder query = new StringBuilder($"SELECT * FROM {_entityName.Pluralize()} WHERE ");
+        query.Append(sql);
+
+        return _connection.Query<T>(query.ToString(), parameters);
     }
 
     public virtual object Insert(T value)

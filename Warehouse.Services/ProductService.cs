@@ -33,7 +33,7 @@ public sealed class ProductService : IProductService
 
     public IEnumerable<Category> GetCategories(string? name = "")
     {
-        return _unitOfWork.CategoryRepository.Query(x => x.IsActive == true && x.Name.StartsWith(name ?? ""));
+        return _unitOfWork.CategoryRepository.Query(x => x.IsActive && x.Name.StartsWith(name ?? ""));
     }
 
     public Category? GetCategory(int id)
@@ -65,17 +65,17 @@ public sealed class ProductService : IProductService
 
     public Product? GetProductByBarcode(string barcode)
     {
-        return _unitOfWork.ProductRepository.Query(x => x.IsActive == true && x.Barcode.Equals(barcode)).FirstOrDefault();
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.Barcode.Equals(barcode)).FirstOrDefault();
     }
 
     public IEnumerable<Product> GetProductsByCategory(int categoryId)
     {
-        return _unitOfWork.ProductRepository.Query(x => x.IsActive == true && x.CategoryId.Equals(categoryId));
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.CategoryId.Equals(categoryId));
     }
 
     public IEnumerable<Product> GetProductsByName(string? name = "")
     {
-        return _unitOfWork.ProductRepository.Query(x => x.IsActive == true && x.Name.StartsWith(name ?? ""));
+        return _unitOfWork.ProductRepository.Query(x => x.IsActive && x.Name.StartsWith(name ?? ""));
     }
 
     public IEnumerable<TransactionResponse> GetTransactions(int productId, DateTime? startDate = null, DateTime? endDate = null)

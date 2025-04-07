@@ -117,7 +117,7 @@ public class ContractRepositoryTests : BaseRepositoryTests<Contract>
     [Test]
     public void TestQuery()
     {
-        IEnumerable<Contract> contracts = _repository!.Query(c => c.IsActive == true && c.Price > 300);
+        IEnumerable<Contract> contracts = _repository!.Query(c => c.IsActive && c.Price > 300);
 
         Assert.IsNotNull(contracts);
         Assert.IsNotEmpty(contracts);

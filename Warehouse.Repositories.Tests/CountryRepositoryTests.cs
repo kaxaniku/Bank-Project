@@ -99,7 +99,7 @@ public class CountryRepositoryTests : BaseRepositoryTests<Country>
     [Test]
     public void TestQuery()
     {
-        IEnumerable<Country> countries = _repository!.Query(c => c.IsActive == true && c.CountryId > 2);
+        IEnumerable<Country> countries = _repository!.Query(c => c.IsActive && c.CountryId > 2);
 
         Assert.IsNotNull(countries);
         Assert.IsNotEmpty(countries);
