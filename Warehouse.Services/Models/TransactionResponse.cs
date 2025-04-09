@@ -11,9 +11,3 @@ public record TransactionResponse(
     DateTime CreateDate,
     string? CustomerAgent
 );
-
-//TODO: Delete this class
-public record Person(string FirstName, string LastName)
-{
-    public string FullName => $"{FirstName} {LastName}";
-}
