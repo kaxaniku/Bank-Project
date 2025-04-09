@@ -44,7 +44,7 @@ public sealed class ProductService : IProductService
     public void AddProduct(Product product)
     {
         ArgumentNullException.ThrowIfNull(product);
-        _unitOfWork.ProductRepository.Insert(product);
+        product.ProductId = (int)_unitOfWork.ProductRepository.Insert(product);
     }
 
     public void EditProduct(Product product)

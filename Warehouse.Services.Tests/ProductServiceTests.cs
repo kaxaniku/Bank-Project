@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Services.Interfaces.Repositories;
 using Warehouse.Services.Interfaces.Services;
 using Warehouse.Services.Models;
 
@@ -54,7 +55,11 @@ namespace Warehouse.Services.Tests
             current!.Name = "Updated " + current.Name;
             current.Description = "Updated " + current.Description;
             _service!.EditCategory(current);
-            Assert.Pass();
+
+            Category? updated = _service.GetCategory(current.CategoryId);
+            Assert.IsNotNull(updated);
+            Assert.That(current.Name, Is.EqualTo(updated!.Name));
+            Assert.That(current.Description, Is.EqualTo(updated!.Description));
         }
 
         [Test]
@@ -71,22 +76,37 @@ namespace Warehouse.Services.Tests
         [Test]
         public void TestDeleteCategory_ShouldDeleteCategory()
         {
-            _service!.DeleteCategory(1);
-            Assert.Pass();
+            Category? current = _service!.GetCategory(1);
+            Assert.IsNotNull(current);
+
+            Assert.DoesNotThrow(() => _service!.DeleteCategory(current!.CategoryId));
+            Category? deleted = _service.GetCategory(current!.CategoryId);
+            Assert.IsNull(deleted);
         }
 
         [Test]
         public void TestDeleteCategory_ShouldNotDeleteCategory()
         {
-            _service!.DeleteCategory(2);
-            Assert.Throws<SqlException>(() => _service!.DeleteCategory(2));
+            Category? current = _service!.GetCategory(2);
+            Assert.IsNotNull(current);
+
+            Assert.DoesNotThrow(() => _service!.DeleteCategory(current!.CategoryId));
+            Category? deleted = _service.GetCategory(current!.CategoryId);
+            Assert.IsNull(deleted);
+
+            Assert.Throws<SqlException>(() => _service!.DeleteCategory(current!.CategoryId));
         }
 
         [Test]
         public void TestGetCategories_ShouldReturnCategories()
         {
             IEnumerable<Category> categories = _service!.GetCategories();
-            Assert.IsNotNull(categories);
+            Assert.IsNotEmpty(categories);
+            foreach (var item in categories)
+            {
+                Assert.IsNotNull(item);
+                Assert.IsNotEmpty(item.Name);
+            }
         }
 
         [Test]
@@ -113,7 +133,7 @@ namespace Warehouse.Services.Tests
         [Test]
         public void TestAddProduct_ShouldAddProduct()
         {
-            Product product = new()
+            Product newProduct = new()
             {
                 Name = "Test Product",
                 Description = "Test Description",
@@ -122,8 +142,16 @@ namespace Warehouse.Services.Tests
                 Dimensions = "10x10x10",
             };
 
-            _service!.AddProduct(product);
-            Assert.Pass();
+            Assert.DoesNotThrow(() => _service!.AddProduct(newProduct));
+            Assert.That(newProduct.ProductId, Is.GreaterThan(0));
+
+            Product? insertedProduct = _service!.GetProduct(newProduct.ProductId);
+            Assert.That(insertedProduct, Is.Not.Null);
+            Assert.That(insertedProduct!.Name, Is.EqualTo(newProduct.Name));
+            Assert.That(insertedProduct.Description, Is.EqualTo(newProduct.Description));
+            Assert.That(insertedProduct.CategoryId, Is.EqualTo(newProduct.CategoryId));
+            Assert.That(insertedProduct.Barcode, Is.EqualTo(newProduct.Barcode));
+            Assert.That(insertedProduct.Dimensions, Is.EqualTo(newProduct.Dimensions));
         }
 
         [Test]
@@ -152,8 +180,17 @@ namespace Warehouse.Services.Tests
             current.Description = "Updated " + current.Description;
             current.Dimensions = "20x20x20";
             current.Weight = 5.0f;
+
             _service!.EditProduct(current);
-            Assert.Pass();
+
+            Product? updated = _service.GetProduct(current.ProductId);
+            Assert.IsNotNull(updated);
+            Assert.That(current.Name, Is.EqualTo(updated!.Name));
+            Assert.That(current.Description, Is.EqualTo(updated!.Description));
+            Assert.That(current.Dimensions, Is.EqualTo(updated!.Dimensions));
+            Assert.That(current.Weight, Is.EqualTo(updated!.Weight));
+            Assert.That(current.Barcode, Is.EqualTo(updated!.Barcode));
+            Assert.That(current.CategoryId, Is.EqualTo(updated!.CategoryId));
         }
 
         [Test]
@@ -174,15 +211,24 @@ namespace Warehouse.Services.Tests
         [Test]
         public void TestDeleteProduct_ShouldDeleteProduct()
         {
-            _service!.DeleteProduct(1);
-            Assert.Pass();
+            Product? current = _service!.GetProduct(1);
+            Assert.IsNotNull(current);
+
+            Assert.DoesNotThrow(() => _service!.DeleteProduct(current!.ProductId));
+            Product? deleted = _service.GetProduct(current!.ProductId);
+            Assert.IsNull(deleted);
         }
 
         [Test]
         public void TestDeleteProduct_ShouldNotDeleteProduct()
         {
-            _service!.DeleteProduct(2);
-            Assert.Throws<SqlException>(() => _service!.DeleteProduct(2));
+            Product? current = _service!.GetProduct(2);
+            Assert.IsNotNull(current);
+
+            Assert.DoesNotThrow(() => _service!.DeleteProduct(current!.ProductId));
+            Product? deleted = _service.GetProduct(current!.ProductId);
+            Assert.IsNull(deleted);
+            Assert.Throws<SqlException>(() => _service!.DeleteProduct(current.ProductId));
         }
 
         [Test]
@@ -204,6 +250,7 @@ namespace Warehouse.Services.Tests
         {
             Product? product = _service!.GetProductByBarcode("TSHIRT20");
             Assert.IsNotNull(product);
+            Assert.That(product!.Barcode, Is.EqualTo("TSHIRT20"));
         }
 
         [Test]
@@ -218,6 +265,11 @@ namespace Warehouse.Services.Tests
         {
             IEnumerable<Product> products = _service!.GetProductsByCategory(1);
             Assert.IsNotEmpty(products);
+            foreach (var item in products)
+            {
+                Assert.IsNotNull(item);
+                Assert.That(item.CategoryId, Is.EqualTo(1));
+            }
         }
 
         [Test]
@@ -231,8 +283,12 @@ namespace Warehouse.Services.Tests
         public void TestGetProducts_ShouldReturnProductsByName()
         {
             IEnumerable<Product> products = _service!.GetProductsByName("T-shirt");
-            Assert.IsNotNull(products);
             Assert.IsNotEmpty(products);
+            foreach (var item in products)
+            {
+                Assert.IsNotNull(item);
+                Assert.That(item.Name, Is.EqualTo("T-shirt"));
+            }
         }
 
         [Test]
@@ -246,11 +302,18 @@ namespace Warehouse.Services.Tests
         public void TestGetTransactions_ShouldReturnTransactions()
         {
             IEnumerable<TransactionResponse> transactionResponses = _service!.GetTransactions(2, new DateTime(2025, 1, 1), new DateTime(2026, 4, 5));
-            Assert.IsNotNull(transactionResponses);
+            Assert.IsNotEmpty(transactionResponses);
             foreach (var item in transactionResponses)
             {
                 Assert.That(item.ProductId == 2);
             }
+        }
+
+        [Test]
+        public void TestGetTransactions_ShouldNotReturnTransactions()
+        {
+            IEnumerable<TransactionResponse> transactionResponses = _service!.GetTransactions(0, new DateTime(2025, 1, 1), new DateTime(2026, 4, 5));
+            Assert.IsEmpty(transactionResponses);
         }
     }
 }
