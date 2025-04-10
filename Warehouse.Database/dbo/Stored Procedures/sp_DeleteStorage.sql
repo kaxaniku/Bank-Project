@@ -4,9 +4,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS(SELECT 1 FROM Storages WHERE StorageID = @StorageID AND IsActive = 0)
+    IF NOT EXISTS(SELECT 1 FROM Storages WHERE StorageID = @StorageID AND IsActive = 1)
     BEGIN
-        RAISERROR('Storage is already not active.', 16, 1);
+		RAISERROR('Record was not found', 16, 1);
         RETURN 1;
     END
 
