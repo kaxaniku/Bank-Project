@@ -24,4 +24,15 @@ internal class UserRepository : BaseRepository<User>, IUserRepository
 
         return parameters.Get<object>($"{_entityName}Id");
     }
+
+    public int LoginUser(string username, string password)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("Username", username);
+        parameters.Add("Password", password);
+        parameters.Add("Id", DbType.Int32, direction: ParameterDirection.ReturnValue);
+        _connection.Execute("sp_UserLogin", parameters, commandType: CommandType.StoredProcedure);
+        var userId = parameters.Get<int>("Id");
+        return userId;
+    }
 }

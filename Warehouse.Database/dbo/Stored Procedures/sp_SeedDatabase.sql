@@ -124,9 +124,9 @@ BEGIN
     
     -- Insert Users
     DECLARE @UserID1 INT, @UserID2 INT, @UserID3 INT;
-    EXEC sp_InsertUser @EmployeeID1, 'admin', 0x123456789, 1, @UserID1 OUTPUT;    -- Creates a user for EmployeeID1
-    EXEC sp_InsertUser @EmployeeID2, 'operator', 0x987654321, 2, @UserID2 OUTPUT; -- Creates a user for EmployeeID2
-    EXEC sp_InsertUser @EmployeeID3, 'moderator', 0x135792468, 3, @UserID3 OUTPUT; -- Creates a user for EmployeeID3
+    EXEC sp_InsertUser @EmployeeID1, 'admin', 'admin123', 1, @UserID1 OUTPUT;    -- Creates a user for EmployeeID1
+    EXEC sp_InsertUser @EmployeeID2, 'operator', 'operator123', 2, @UserID2 OUTPUT; -- Creates a user for EmployeeID2
+    EXEC sp_InsertUser @EmployeeID3, 'moderator', 'moderator123', 3, @UserID3 OUTPUT; -- Creates a user for EmployeeID3
 
     -- Insert Tags
     DECLARE @TagID1 INT, @TagID2 INT, @TagID3 INT, @TagID4 INT, @TagID5 INT;

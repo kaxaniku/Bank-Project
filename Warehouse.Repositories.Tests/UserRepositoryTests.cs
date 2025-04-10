@@ -17,12 +17,11 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
     [Test]
     public void TestInsert_ShouldInsert()
     {
-        byte[] pass = {1, 1, 1, 1};
         User user = new()
         {
             UserId = 4,
             Username = "Test UserName",
-            Password = pass,
+            Password = "123Pass",
             UserRole = 1
         };
 
@@ -32,7 +31,6 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
         Assert.Greater(id, 0);
         Assert.IsNotNull(result);
         Assert.AreEqual(user.Username, result!.Username);
-        Assert.AreEqual(user.Password, result!.Password);
         Assert.AreEqual(user.UserRole, result!.UserRole);
     }
 
@@ -56,10 +54,9 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
         User? current = _repository!.Get(Constants.UpdateTestId);
         Assert.IsNotNull(current);
 
-        byte[] pass = { 1, 1, 1, 2 };
         current!.Username = "Updated " + current.Username;
         current!.UserRole = 2;
-        current!.Password = pass;
+        current!.Password = "123Pass++";
 
         _repository!.Update(current);
 
@@ -67,7 +64,6 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
         Assert.IsNotNull(updated);
         Assert.AreEqual(current.Username, updated!.Username);
         Assert.AreEqual(current.UserRole, updated!.UserRole);
-        Assert.AreEqual(current.Password, updated!.Password);
     }
 
     [Test]
@@ -120,4 +116,17 @@ public class UserRepositoryTests : BaseRepositoryTests<User>
         }
     }
 
+    [Test]
+    public void TestLogin_ShouldLoginUser()
+    {
+        int result = _repository!.LoginUser("admin", "admin123");
+        Assert.Greater(result, 0, "Login failed.");
+    }
+
+    [Test]
+    public void TestLogout_ShouldNotLoginUser()
+    {
+        int result = _repository!.LoginUser("admin", "wrongpassword");
+        Assert.AreEqual(-1, result, "Login should not be successful.");
+    }
 }

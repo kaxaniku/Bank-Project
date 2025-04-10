@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE sp_UpdateUser
     @UserID INT,
 	@Username VARCHAR(30),
-	@Password VARBINARY(64),
+	@Password VARCHAR(30),
 	@UserRole TINYINT
 AS
 BEGIN
@@ -15,7 +15,7 @@ BEGIN
 
 	UPDATE Users
 	SET Username = @Username,
-	    Password = @Password,
+	    Password = HASHBYTES('SHA2_256',@Password),
 		UserRole = @UserRole,
 		UpdateDate = GETDATE()
 	WHERE 
