@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
 using Warehouse.DTO;
+using Warehouse.Services.Exceptions;
 using Warehouse.Services.Interfaces.Repositories;
 using Warehouse.Services.Interfaces.Services;
 using Warehouse.Services.Models;
@@ -152,8 +153,7 @@ namespace Warehouse.Services.Tests
         [Test]
         public void TestLogout_ShouldNotLoginUser()
         {
-            int result = _service!.LoginUser("admin", "wrongpassword");
-            Assert.That(result, Is.EqualTo(-1), "Login should not be successful.");
+            Assert.Throws<LoginException>(() => _service!.LoginUser("admin", "wrongpassword"));
         }
     }
 }

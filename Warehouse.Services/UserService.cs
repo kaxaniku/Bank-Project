@@ -1,4 +1,5 @@
 ﻿using Warehouse.DTO;
+using Warehouse.Services.Exceptions;
 using Warehouse.Services.Interfaces.Repositories;
 using Warehouse.Services.Interfaces.Services;
 using Warehouse.Services.Models;
@@ -43,6 +44,12 @@ public sealed class UserService : IUserService
 
     public int LoginUser(string username, string password)
     {
-        return _unitOfWork.UserRepository.LoginUser(username, password);
+        ArgumentNullException.ThrowIfNull(username);
+        ArgumentNullException.ThrowIfNull(password);
+
+        int result = _unitOfWork.UserRepository.LoginUser(username, password);
+        if (result == -1)
+            throw new LoginException(username);
+        return result;
     }
 }

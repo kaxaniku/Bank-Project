@@ -1,5 +1,4 @@
 ﻿using Warehouse.DTO;
-using Warehouse.Services.Models;
 
 namespace Warehouse.Services.Interfaces.Services;
 
