@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Dapper;
 using Humanizer;
+using Warehouse.DTO;
 using Warehouse.Services.Interfaces.Repositories;
 
 namespace Warehouse.Repositories;
@@ -13,7 +14,7 @@ internal abstract class BaseRepository<T> : IRepository<T>
     protected readonly IDbConnection _connection;
     protected readonly string _entityName;
     private readonly Func<IDbTransaction?>? _getTransaction;
-    
+
     private IEnumerable<string> InsertIgnoredProperties =>
         new[] { "IsActive", "CreateDate", "UpdateDate", $"{_entityName}Id" };
 
@@ -42,7 +43,18 @@ internal abstract class BaseRepository<T> : IRepository<T>
     {
         var (sql, parameters) = SqlExpressionVisitor.ToSql(predicate);
 
-        StringBuilder query = new StringBuilder($"SELECT * FROM {_entityName.Pluralize()} WHERE ");
+        IEnumerable<string> properties = typeof(T)
+                            .GetProperties()
+                            .Select(p => p.Name);
+
+        string columns = string.Join(", ", properties);
+
+        if (typeof(T) == typeof(User))
+        {
+            columns = columns.Replace("Password", "HASHBYTES('SHA2_256', Password)");
+        }
+
+        StringBuilder query = new StringBuilder($"SELECT {columns} FROM {_entityName.Pluralize()} WHERE ");
         query.Append(sql);
 
         return _connection.Query<T>(query.ToString(), parameters);
