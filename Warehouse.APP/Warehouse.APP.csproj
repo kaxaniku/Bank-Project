@@ -13,4 +13,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Warehouse.DTO\Warehouse.DTO.csproj" />
+    <ProjectReference Include="..\Warehouse.Repositories\Warehouse.Repositories.csproj" />
+    <ProjectReference Include="..\Warehouse.Services\Warehouse.Services.csproj" />
+  </ItemGroup>
+
 </Project>
