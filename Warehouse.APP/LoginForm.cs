@@ -13,8 +13,9 @@ namespace Warehouse.APP
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            IUserService userService = new UserService(null);
-            int id = userService.LoginUser(txtUsername.Text, txtPassword.Text);
+            //IUserService userService = new UserService(null);
+            //int id = userService.LoginUser(txtUsername.Text, txtPassword.Text);
+            DialogResult = DialogResult.OK;
         }
     }
 }
