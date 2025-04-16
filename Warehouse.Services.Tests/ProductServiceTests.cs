@@ -13,7 +13,7 @@ namespace Warehouse.Services.Tests
         [SetUp]
         public void Setup()
         {
-            _service = new ProductService(_unitOfWork!);
+            _service = new ProductService(_unitOfWork!); 
         }
 
         [Test]
