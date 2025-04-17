@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Warehouse.DTO\Warehouse.DTO.csproj" />
-    <ProjectReference Include="..\Warehouse.Repositories\Warehouse.Repositories.csproj" />
+    <ProjectReference Include="..\Warehouse.Factories\Warehouse.Factories.csproj" />
     <ProjectReference Include="..\Warehouse.Services\Warehouse.Services.csproj" />
   </ItemGroup>
 
@@ -32,6 +32,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

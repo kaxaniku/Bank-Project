@@ -1,21 +1,30 @@
-﻿using Warehouse.Repositories;
-using Warehouse.Services;
+﻿using Warehouse.Factories;
+using Warehouse.Services.Exceptions;
 using Warehouse.Services.Interfaces.Services;
 
-namespace Warehouse.APP
+namespace Warehouse.APP;
+
+public partial class LoginForm : Form
 {
-    public partial class LoginForm : Form
+    public LoginForm()
     {
-        public LoginForm()
+        InitializeComponent();
+    }
+
+    private void btnLogin_Click(object sender, EventArgs e)
+    {
+        if (string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(txtPassword.Text))
         {
-            InitializeComponent();
+            this.ShowInfo("Please enter username and password.");
+            return;
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        IUserService userService = UserServiceFactory.Create();
+        Executor.Execute<LoginException>(() =>
         {
-            //IUserService userService = new UserService(null);
-            //int id = userService.LoginUser(txtUsername.Text, txtPassword.Text);
+            LocalStorage.UserId = userService.LoginUser(txtUsername.Text, txtPassword.Text);
+            LocalStorage.Username = txtUsername.Text;
             DialogResult = DialogResult.OK;
-        }
+        }, ex => this.ShowWarning(ex.Message));
     }
 }

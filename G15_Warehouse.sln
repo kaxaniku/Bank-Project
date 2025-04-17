@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Services.Tests", 
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Warehouse.Database", "Warehouse.Database\Warehouse.Database.sqlproj", "{D76CFF81-A763-4FC0-B43E-4D0C017A2865}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Factories", "Warehouse.Factories\Warehouse.Factories.csproj", "{A0914826-0891-44E1-95AC-6EF707A1819D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{D76CFF81-A763-4FC0-B43E-4D0C017A2865}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D76CFF81-A763-4FC0-B43E-4D0C017A2865}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D76CFF81-A763-4FC0-B43E-4D0C017A2865}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A0914826-0891-44E1-95AC-6EF707A1819D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0914826-0891-44E1-95AC-6EF707A1819D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0914826-0891-44E1-95AC-6EF707A1819D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0914826-0891-44E1-95AC-6EF707A1819D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

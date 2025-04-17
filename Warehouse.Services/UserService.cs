@@ -2,7 +2,6 @@
 using Warehouse.Services.Exceptions;
 using Warehouse.Services.Interfaces.Repositories;
 using Warehouse.Services.Interfaces.Services;
-using Warehouse.Services.Models;
 
 namespace Warehouse.Services;
 
