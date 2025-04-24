@@ -14,7 +14,7 @@ internal static class Executor
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            LogError(ex.Message);
         }
     }
     
@@ -26,7 +26,10 @@ internal static class Executor
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            LogError(ex);
         }
     }
+
+    private static void LogError(Exception exception) => 
+        MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 }

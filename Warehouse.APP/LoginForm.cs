@@ -13,12 +13,8 @@ public partial class LoginForm : Form
 
     private void btnLogin_Click(object sender, EventArgs e)
     {
-        if (string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(txtPassword.Text))
-        {
-            this.ShowInfo("Please enter username and password.");
-            return;
-        }
-
+        if (ValidateInputs()) return;
+        
         IUserService userService = UserServiceFactory.Create();
         Executor.Execute<LoginException>(() =>
         {
@@ -26,5 +22,16 @@ public partial class LoginForm : Form
             LocalStorage.Username = txtUsername.Text;
             DialogResult = DialogResult.OK;
         }, ex => this.ShowWarning(ex.Message));
+    }
+
+    private bool ValidateInputs()
+    {
+        if (string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(txtPassword.Text))
+        {
+            this.ShowInfo("Please enter username and password.");
+            return true;
+        }
+
+        return false;
     }
 }
