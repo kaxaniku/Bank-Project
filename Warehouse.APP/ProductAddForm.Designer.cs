@@ -32,12 +32,12 @@
             pictureBox1 = new PictureBox();
             label1 = new Label();
             pictureBox2 = new PictureBox();
-            comboBox2 = new ComboBox();
-            textBox1 = new TextBox();
-            textBox2 = new TextBox();
-            textBox3 = new TextBox();
-            textBox4 = new TextBox();
-            textBox5 = new TextBox();
+            category = new ComboBox();
+            height = new TextBox();
+            description = new TextBox();
+            barcode = new TextBox();
+            width = new TextBox();
+            name = new TextBox();
             label2 = new Label();
             label3 = new Label();
             label4 = new Label();
@@ -45,10 +45,10 @@
             label6 = new Label();
             label7 = new Label();
             label8 = new Label();
-            textBox6 = new TextBox();
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
+            weight = new TextBox();
+            saveAndExit = new Button();
+            discard = new Button();
+            clearAll = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
@@ -85,58 +85,58 @@
             pictureBox2.TabIndex = 2;
             pictureBox2.TabStop = false;
             // 
-            // comboBox2
+            // category
             // 
-            comboBox2.Cursor = Cursors.Hand;
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(56, 92);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(128, 23);
-            comboBox2.TabIndex = 3;
+            category.Cursor = Cursors.Hand;
+            category.FormattingEnabled = true;
+            category.Location = new Point(56, 92);
+            category.Name = "category";
+            category.Size = new Size(128, 23);
+            category.TabIndex = 3;
             // 
-            // textBox1
+            // height
             // 
-            textBox1.Cursor = Cursors.Hand;
-            textBox1.Location = new Point(56, 159);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "Height";
-            textBox1.Size = new Size(69, 23);
-            textBox1.TabIndex = 4;
+            height.Cursor = Cursors.Hand;
+            height.Location = new Point(56, 159);
+            height.Name = "height";
+            height.PlaceholderText = "Height";
+            height.Size = new Size(69, 23);
+            height.TabIndex = 4;
             // 
-            // textBox2
+            // description
             // 
-            textBox2.Cursor = Cursors.Hand;
-            textBox2.Location = new Point(56, 304);
-            textBox2.MaximumSize = new Size(524, 100);
-            textBox2.MinimumSize = new Size(524, 25);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(524, 25);
-            textBox2.TabIndex = 5;
+            description.Cursor = Cursors.Hand;
+            description.Location = new Point(56, 304);
+            description.MaximumSize = new Size(524, 100);
+            description.MinimumSize = new Size(524, 25);
+            description.Name = "description";
+            description.Size = new Size(524, 25);
+            description.TabIndex = 5;
             // 
-            // textBox3
+            // barcode
             // 
-            textBox3.Cursor = Cursors.Hand;
-            textBox3.Location = new Point(452, 92);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(128, 23);
-            textBox3.TabIndex = 6;
+            barcode.Cursor = Cursors.Hand;
+            barcode.Location = new Point(452, 92);
+            barcode.Name = "barcode";
+            barcode.Size = new Size(128, 23);
+            barcode.TabIndex = 6;
             // 
-            // textBox4
+            // width
             // 
-            textBox4.Cursor = Cursors.Hand;
-            textBox4.Location = new Point(165, 159);
-            textBox4.Name = "textBox4";
-            textBox4.PlaceholderText = "Width";
-            textBox4.Size = new Size(69, 23);
-            textBox4.TabIndex = 7;
+            width.Cursor = Cursors.Hand;
+            width.Location = new Point(165, 159);
+            width.Name = "width";
+            width.PlaceholderText = "Width";
+            width.Size = new Size(69, 23);
+            width.TabIndex = 7;
             // 
-            // textBox5
+            // name
             // 
-            textBox5.Cursor = Cursors.Hand;
-            textBox5.Location = new Point(249, 92);
-            textBox5.Name = "textBox5";
-            textBox5.Size = new Size(128, 23);
-            textBox5.TabIndex = 8;
+            name.Cursor = Cursors.Hand;
+            name.Location = new Point(249, 92);
+            name.Name = "name";
+            name.Size = new Size(128, 23);
+            name.TabIndex = 8;
             // 
             // label2
             // 
@@ -207,62 +207,63 @@
             label8.TabIndex = 15;
             label8.Text = "✖";
             // 
-            // textBox6
+            // weight
             // 
-            textBox6.Cursor = Cursors.Hand;
-            textBox6.Location = new Point(56, 230);
-            textBox6.Name = "textBox6";
-            textBox6.Size = new Size(128, 23);
-            textBox6.TabIndex = 16;
+            weight.Cursor = Cursors.Hand;
+            weight.Location = new Point(56, 230);
+            weight.Name = "weight";
+            weight.Size = new Size(128, 23);
+            weight.TabIndex = 16;
             // 
-            // button1
+            // saveAndExit
             // 
-            button1.BackColor = SystemColors.ActiveCaption;
-            button1.Cursor = Cursors.Hand;
-            button1.FlatStyle = FlatStyle.Popup;
-            button1.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            button1.Location = new Point(452, 376);
-            button1.Name = "button1";
-            button1.Size = new Size(126, 27);
-            button1.TabIndex = 17;
-            button1.Text = "Save and Exit";
-            button1.UseVisualStyleBackColor = false;
+            saveAndExit.BackColor = SystemColors.ActiveCaption;
+            saveAndExit.Cursor = Cursors.Hand;
+            saveAndExit.FlatStyle = FlatStyle.Popup;
+            saveAndExit.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            saveAndExit.Location = new Point(452, 376);
+            saveAndExit.Name = "saveAndExit";
+            saveAndExit.Size = new Size(126, 27);
+            saveAndExit.TabIndex = 17;
+            saveAndExit.Text = "Save and Exit";
+            saveAndExit.UseVisualStyleBackColor = false;
             // 
-            // button2
+            // discard
             // 
-            button2.BackColor = SystemColors.ActiveCaption;
-            button2.Cursor = Cursors.Hand;
-            button2.FlatStyle = FlatStyle.Popup;
-            button2.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            button2.Location = new Point(56, 376);
-            button2.Name = "button2";
-            button2.Size = new Size(126, 27);
-            button2.TabIndex = 18;
-            button2.Text = "Discard";
-            button2.UseVisualStyleBackColor = false;
+            discard.BackColor = SystemColors.ActiveCaption;
+            discard.Cursor = Cursors.Hand;
+            discard.FlatStyle = FlatStyle.Popup;
+            discard.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            discard.Location = new Point(56, 376);
+            discard.Name = "discard";
+            discard.Size = new Size(126, 27);
+            discard.TabIndex = 18;
+            discard.Text = "Discard";
+            discard.UseVisualStyleBackColor = false;
             // 
-            // button3
+            // clearAll
             // 
-            button3.BackColor = SystemColors.ActiveCaption;
-            button3.Cursor = Cursors.Hand;
-            button3.FlatStyle = FlatStyle.Popup;
-            button3.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            button3.Location = new Point(258, 376);
-            button3.Name = "button3";
-            button3.Size = new Size(119, 27);
-            button3.TabIndex = 19;
-            button3.Text = "Clear All";
-            button3.UseVisualStyleBackColor = false;
+            clearAll.BackColor = SystemColors.ActiveCaption;
+            clearAll.Cursor = Cursors.Hand;
+            clearAll.FlatStyle = FlatStyle.Popup;
+            clearAll.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            clearAll.Location = new Point(258, 376);
+            clearAll.Name = "clearAll";
+            clearAll.Size = new Size(119, 27);
+            clearAll.TabIndex = 19;
+            clearAll.Text = "Clear All";
+            clearAll.UseVisualStyleBackColor = false;
+            clearAll.Click += ClearAllBtn;
             // 
             // ProductAddForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(637, 450);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
-            Controls.Add(textBox6);
+            Controls.Add(clearAll);
+            Controls.Add(discard);
+            Controls.Add(saveAndExit);
+            Controls.Add(weight);
             Controls.Add(label8);
             Controls.Add(label7);
             Controls.Add(label6);
@@ -270,12 +271,12 @@
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
-            Controls.Add(textBox5);
-            Controls.Add(textBox4);
-            Controls.Add(textBox3);
-            Controls.Add(textBox2);
-            Controls.Add(textBox1);
-            Controls.Add(comboBox2);
+            Controls.Add(name);
+            Controls.Add(width);
+            Controls.Add(barcode);
+            Controls.Add(description);
+            Controls.Add(height);
+            Controls.Add(category);
             Controls.Add(pictureBox2);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
@@ -314,12 +315,12 @@
             public string Text { set; get; }
         }
 
-        private ComboBox comboBox2;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private TextBox textBox3;
-        private TextBox textBox4;
-        private TextBox textBox5;
+        private ComboBox category;
+        private TextBox height;
+        private TextBox description;
+        private TextBox barcode;
+        private TextBox width;
+        private TextBox name;
         private Label label2;
         private Label label3;
         private Label label4;
@@ -327,9 +328,9 @@
         private Label label6;
         private Label label7;
         private Label label8;
-        private TextBox textBox6;
-        private Button button1;
-        private Button button2;
-        private Button button3;
+        private TextBox weight;
+        private Button saveAndExit;
+        private Button discard;
+        private Button clearAll;
     }
 }

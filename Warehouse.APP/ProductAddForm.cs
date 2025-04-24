@@ -21,5 +21,16 @@ namespace Warehouse.APP
         {
 
         }
+
+        private void ClearAllBtn(object sender, EventArgs e)
+        {
+            category.Text = "";
+            name.Text = "";
+            barcode.Text = "";
+            height.Text = "";
+            width.Text = "";
+            weight.Text = "";
+            description.Text = "";
+        }
     }
 }
