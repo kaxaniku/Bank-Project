@@ -89,7 +89,7 @@
             // 
             category.Cursor = Cursors.Hand;
             category.FormattingEnabled = true;
-            category.Location = new Point(56, 92);
+            category.Location = new Point(12, 77);
             category.Name = "category";
             category.Size = new Size(128, 23);
             category.TabIndex = 3;
@@ -97,7 +97,7 @@
             // height
             // 
             height.Cursor = Cursors.Hand;
-            height.Location = new Point(56, 159);
+            height.Location = new Point(12, 121);
             height.Name = "height";
             height.PlaceholderText = "Height";
             height.Size = new Size(69, 23);
@@ -106,7 +106,7 @@
             // description
             // 
             description.Cursor = Cursors.Hand;
-            description.Location = new Point(56, 304);
+            description.Location = new Point(10, 209);
             description.MaximumSize = new Size(524, 100);
             description.MinimumSize = new Size(524, 25);
             description.Name = "description";
@@ -116,7 +116,7 @@
             // barcode
             // 
             barcode.Cursor = Cursors.Hand;
-            barcode.Location = new Point(452, 92);
+            barcode.Location = new Point(408, 77);
             barcode.Name = "barcode";
             barcode.Size = new Size(128, 23);
             barcode.TabIndex = 6;
@@ -124,7 +124,7 @@
             // width
             // 
             width.Cursor = Cursors.Hand;
-            width.Location = new Point(165, 159);
+            width.Location = new Point(121, 121);
             width.Name = "width";
             width.PlaceholderText = "Width";
             width.Size = new Size(69, 23);
@@ -133,7 +133,7 @@
             // name
             // 
             name.Cursor = Cursors.Hand;
-            name.Location = new Point(249, 92);
+            name.Location = new Point(205, 77);
             name.Name = "name";
             name.Size = new Size(128, 23);
             name.TabIndex = 8;
@@ -142,7 +142,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(56, 74);
+            label2.Location = new Point(12, 59);
             label2.Name = "label2";
             label2.Size = new Size(54, 15);
             label2.TabIndex = 9;
@@ -152,7 +152,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(56, 286);
+            label3.Location = new Point(10, 191);
             label3.Name = "label3";
             label3.Size = new Size(71, 15);
             label3.TabIndex = 10;
@@ -162,7 +162,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(56, 212);
+            label4.Location = new Point(12, 147);
             label4.Name = "label4";
             label4.Size = new Size(49, 15);
             label4.TabIndex = 11;
@@ -172,7 +172,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(56, 141);
+            label5.Location = new Point(12, 103);
             label5.Name = "label5";
             label5.Size = new Size(73, 15);
             label5.TabIndex = 12;
@@ -182,7 +182,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(452, 74);
+            label6.Location = new Point(408, 59);
             label6.Name = "label6";
             label6.Size = new Size(50, 15);
             label6.TabIndex = 13;
@@ -192,7 +192,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(249, 74);
+            label7.Location = new Point(205, 59);
             label7.Name = "label7";
             label7.Size = new Size(39, 15);
             label7.TabIndex = 14;
@@ -201,7 +201,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(136, 162);
+            label8.Location = new Point(91, 124);
             label8.Name = "label8";
             label8.Size = new Size(19, 15);
             label8.TabIndex = 15;
@@ -210,7 +210,7 @@
             // weight
             // 
             weight.Cursor = Cursors.Hand;
-            weight.Location = new Point(56, 230);
+            weight.Location = new Point(12, 165);
             weight.Name = "weight";
             weight.Size = new Size(128, 23);
             weight.TabIndex = 16;
@@ -221,12 +221,13 @@
             saveAndExit.Cursor = Cursors.Hand;
             saveAndExit.FlatStyle = FlatStyle.Popup;
             saveAndExit.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            saveAndExit.Location = new Point(452, 376);
+            saveAndExit.Location = new Point(408, 240);
             saveAndExit.Name = "saveAndExit";
             saveAndExit.Size = new Size(126, 27);
             saveAndExit.TabIndex = 17;
             saveAndExit.Text = "Save and Exit";
             saveAndExit.UseVisualStyleBackColor = false;
+            saveAndExit.Click += saveAndExit_Click;
             // 
             // discard
             // 
@@ -234,7 +235,7 @@
             discard.Cursor = Cursors.Hand;
             discard.FlatStyle = FlatStyle.Popup;
             discard.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            discard.Location = new Point(56, 376);
+            discard.Location = new Point(12, 240);
             discard.Name = "discard";
             discard.Size = new Size(126, 27);
             discard.TabIndex = 18;
@@ -247,7 +248,7 @@
             clearAll.Cursor = Cursors.Hand;
             clearAll.FlatStyle = FlatStyle.Popup;
             clearAll.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            clearAll.Location = new Point(258, 376);
+            clearAll.Location = new Point(214, 240);
             clearAll.Name = "clearAll";
             clearAll.Size = new Size(119, 27);
             clearAll.TabIndex = 19;
@@ -259,7 +260,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(637, 450);
+            ClientSize = new Size(553, 284);
             Controls.Add(clearAll);
             Controls.Add(discard);
             Controls.Add(saveAndExit);
