@@ -32,5 +32,10 @@ namespace Warehouse.APP
             weight.Text = "";
             description.Text = "";
         }
+
+        private void saveAndExit_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
