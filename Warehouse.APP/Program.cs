@@ -11,12 +11,13 @@ namespace Warehouse.APP
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
             LoginForm loginForm = new LoginForm();
             if (loginForm.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
-            Application.Run(new Form1());
+            Application.Run(new WarehouseMainForm());
         }
     }
 }

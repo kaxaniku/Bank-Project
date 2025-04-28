@@ -29,191 +29,213 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProductAddForm));
-            pictureBox1 = new PictureBox();
-            label1 = new Label();
-            pictureBox2 = new PictureBox();
-            category = new ComboBox();
-            height = new TextBox();
-            description = new TextBox();
-            barcode = new TextBox();
-            width = new TextBox();
-            name = new TextBox();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
-            label6 = new Label();
-            label7 = new Label();
-            label8 = new Label();
-            weight = new TextBox();
+            pbBackground = new PictureBox();
+            lblAddProduct = new Label();
+            pbLogo = new PictureBox();
+            cboCategory = new ComboBox();
+            txtHeight = new TextBox();
+            txtDescription = new TextBox();
+            txtBarcode = new TextBox();
+            txtWidth = new TextBox();
+            txtName = new TextBox();
+            lblCategory = new Label();
+            lblDescription = new Label();
+            lblWeight = new Label();
+            lblDimensions = new Label();
+            lblBarcode = new Label();
+            lblName = new Label();
+            lblSeparator1 = new Label();
+            txtWeight = new TextBox();
             saveAndExit = new Button();
-            discard = new Button();
+            btnCancel = new Button();
             clearAll = new Button();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            lblSeparator2 = new Label();
+            txtLength = new TextBox();
+            ((System.ComponentModel.ISupportInitialize)pbBackground).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbLogo).BeginInit();
             SuspendLayout();
             // 
-            // pictureBox1
+            // pbBackground
             // 
-            pictureBox1.BackColor = SystemColors.ActiveCaption;
-            pictureBox1.Location = new Point(0, 0);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(800, 50);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
+            pbBackground.BackColor = SystemColors.ActiveCaption;
+            pbBackground.Location = new Point(0, 0);
+            pbBackground.Margin = new Padding(3, 4, 3, 4);
+            pbBackground.Name = "pbBackground";
+            pbBackground.Size = new Size(550, 70);
+            pbBackground.TabIndex = 0;
+            pbBackground.TabStop = false;
             // 
-            // label1
+            // lblAddProduct
             // 
-            label1.AutoSize = true;
-            label1.BackColor = SystemColors.ActiveCaption;
-            label1.Font = new Font("Segoe UI Semibold", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.ForeColor = SystemColors.HotTrack;
-            label1.Location = new Point(58, 5);
-            label1.Name = "label1";
-            label1.Size = new Size(181, 40);
-            label1.TabIndex = 1;
-            label1.Text = "Add Product";
+            lblAddProduct.AutoSize = true;
+            lblAddProduct.BackColor = SystemColors.ActiveCaption;
+            lblAddProduct.Font = new Font("Segoe UI Semibold", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblAddProduct.ForeColor = SystemColors.HotTrack;
+            lblAddProduct.Location = new Point(66, 7);
+            lblAddProduct.Name = "lblAddProduct";
+            lblAddProduct.Size = new Size(228, 50);
+            lblAddProduct.TabIndex = 6;
+            lblAddProduct.Text = "Edit Product";
             // 
-            // pictureBox2
+            // pbLogo
             // 
-            pictureBox2.BackColor = SystemColors.Window;
-            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(0, 0);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(52, 50);
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox2.TabIndex = 2;
-            pictureBox2.TabStop = false;
+            pbLogo.BackColor = SystemColors.Window;
+            pbLogo.Image = (Image)resources.GetObject("pbLogo.Image");
+            pbLogo.Location = new Point(0, 0);
+            pbLogo.Margin = new Padding(3, 4, 3, 4);
+            pbLogo.Name = "pbLogo";
+            pbLogo.Size = new Size(59, 67);
+            pbLogo.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbLogo.TabIndex = 2;
+            pbLogo.TabStop = false;
             // 
-            // category
+            // cboCategory
             // 
-            category.Cursor = Cursors.Hand;
-            category.FormattingEnabled = true;
-            category.Location = new Point(56, 92);
-            category.Name = "category";
-            category.Size = new Size(128, 23);
-            category.TabIndex = 3;
+            cboCategory.Cursor = Cursors.Hand;
+            cboCategory.FormattingEnabled = true;
+            cboCategory.Location = new Point(153, 80);
+            cboCategory.Margin = new Padding(3, 4, 3, 4);
+            cboCategory.Name = "cboCategory";
+            cboCategory.Size = new Size(380, 28);
+            cboCategory.TabIndex = 0;
             // 
-            // height
+            // txtHeight
             // 
-            height.Cursor = Cursors.Hand;
-            height.Location = new Point(56, 159);
-            height.Name = "height";
-            height.PlaceholderText = "Height";
-            height.Size = new Size(69, 23);
-            height.TabIndex = 4;
+            txtHeight.Cursor = Cursors.Hand;
+            txtHeight.Location = new Point(437, 210);
+            txtHeight.Margin = new Padding(3, 4, 3, 4);
+            txtHeight.MaxLength = 10;
+            txtHeight.Name = "txtHeight";
+            txtHeight.PlaceholderText = "Height (m)";
+            txtHeight.Size = new Size(100, 27);
+            txtHeight.TabIndex = 5;
+            txtHeight.KeyPress += height_KeyPress;
             // 
-            // description
+            // txtDescription
             // 
-            description.Cursor = Cursors.Hand;
-            description.Location = new Point(56, 304);
-            description.MaximumSize = new Size(524, 100);
-            description.MinimumSize = new Size(524, 25);
-            description.Name = "description";
-            description.Size = new Size(524, 25);
-            description.TabIndex = 5;
+            txtDescription.Cursor = Cursors.Hand;
+            txtDescription.Location = new Point(153, 300);
+            txtDescription.Margin = new Padding(3, 4, 3, 4);
+            txtDescription.MaxLength = 1000;
+            txtDescription.MinimumSize = new Size(320, 100);
+            txtDescription.Multiline = true;
+            txtDescription.Name = "txtDescription";
+            txtDescription.ScrollBars = ScrollBars.Vertical;
+            txtDescription.Size = new Size(380, 150);
+            txtDescription.TabIndex = 7;
             // 
-            // barcode
+            // txtBarcode
             // 
-            barcode.Cursor = Cursors.Hand;
-            barcode.Location = new Point(452, 92);
-            barcode.Name = "barcode";
-            barcode.Size = new Size(128, 23);
-            barcode.TabIndex = 6;
+            txtBarcode.Cursor = Cursors.Hand;
+            txtBarcode.Location = new Point(153, 168);
+            txtBarcode.Margin = new Padding(3, 4, 3, 4);
+            txtBarcode.MaxLength = 100;
+            txtBarcode.Name = "txtBarcode";
+            txtBarcode.Size = new Size(380, 27);
+            txtBarcode.TabIndex = 2;
             // 
-            // width
+            // txtWidth
             // 
-            width.Cursor = Cursors.Hand;
-            width.Location = new Point(165, 159);
-            width.Name = "width";
-            width.PlaceholderText = "Width";
-            width.Size = new Size(69, 23);
-            width.TabIndex = 7;
+            txtWidth.Cursor = Cursors.Hand;
+            txtWidth.Location = new Point(295, 210);
+            txtWidth.Margin = new Padding(3, 4, 3, 4);
+            txtWidth.MaxLength = 10;
+            txtWidth.Name = "txtWidth";
+            txtWidth.PlaceholderText = "Width (m)";
+            txtWidth.Size = new Size(100, 27);
+            txtWidth.TabIndex = 4;
+            txtWidth.KeyPress += width_KeyPress;
             // 
-            // name
+            // txtName
             // 
-            name.Cursor = Cursors.Hand;
-            name.Location = new Point(249, 92);
-            name.Name = "name";
-            name.Size = new Size(128, 23);
-            name.TabIndex = 8;
+            txtName.Cursor = Cursors.Hand;
+            txtName.ImeMode = ImeMode.NoControl;
+            txtName.Location = new Point(153, 124);
+            txtName.Margin = new Padding(3, 4, 3, 4);
+            txtName.MaxLength = 100;
+            txtName.Name = "txtName";
+            txtName.Size = new Size(380, 27);
+            txtName.TabIndex = 1;
             // 
-            // label2
+            // lblCategory
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(56, 74);
-            label2.Name = "label2";
-            label2.Size = new Size(54, 15);
-            label2.TabIndex = 9;
-            label2.Text = "Category";
+            lblCategory.AutoSize = true;
+            lblCategory.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCategory.Location = new Point(10, 80);
+            lblCategory.Name = "lblCategory";
+            lblCategory.Size = new Size(92, 28);
+            lblCategory.TabIndex = 0;
+            lblCategory.Text = "Category";
             // 
-            // label3
+            // lblDescription
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(56, 286);
-            label3.Name = "label3";
-            label3.Size = new Size(71, 15);
-            label3.TabIndex = 10;
-            label3.Text = "Description:";
+            lblDescription.AutoSize = true;
+            lblDescription.Font = new Font("Segoe UI", 12F);
+            lblDescription.Location = new Point(10, 300);
+            lblDescription.Name = "lblDescription";
+            lblDescription.Size = new Size(116, 28);
+            lblDescription.TabIndex = 5;
+            lblDescription.Text = "Description:";
             // 
-            // label4
+            // lblWeight
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(56, 212);
-            label4.Name = "label4";
-            label4.Size = new Size(49, 15);
-            label4.TabIndex = 11;
-            label4.Text = "Weight:";
+            lblWeight.AutoSize = true;
+            lblWeight.Font = new Font("Segoe UI", 12F);
+            lblWeight.Location = new Point(10, 256);
+            lblWeight.Name = "lblWeight";
+            lblWeight.Size = new Size(79, 28);
+            lblWeight.TabIndex = 4;
+            lblWeight.Text = "Weight:";
             // 
-            // label5
+            // lblDimensions
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(56, 141);
-            label5.Name = "label5";
-            label5.Size = new Size(73, 15);
-            label5.TabIndex = 12;
-            label5.Text = "Dimensions:";
+            lblDimensions.AutoSize = true;
+            lblDimensions.Font = new Font("Segoe UI", 12F);
+            lblDimensions.Location = new Point(10, 212);
+            lblDimensions.Name = "lblDimensions";
+            lblDimensions.Size = new Size(117, 28);
+            lblDimensions.TabIndex = 3;
+            lblDimensions.Text = "Dimensions:";
             // 
-            // label6
+            // lblBarcode
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(452, 74);
-            label6.Name = "label6";
-            label6.Size = new Size(50, 15);
-            label6.TabIndex = 13;
-            label6.Text = "Barcode";
+            lblBarcode.AutoSize = true;
+            lblBarcode.Font = new Font("Segoe UI", 12F);
+            lblBarcode.Location = new Point(10, 168);
+            lblBarcode.Name = "lblBarcode";
+            lblBarcode.Size = new Size(83, 28);
+            lblBarcode.TabIndex = 2;
+            lblBarcode.Text = "Barcode";
             // 
-            // label7
+            // lblName
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(249, 74);
-            label7.Name = "label7";
-            label7.Size = new Size(39, 15);
-            label7.TabIndex = 14;
-            label7.Text = "Name";
+            lblName.AutoSize = true;
+            lblName.Font = new Font("Segoe UI", 12F);
+            lblName.Location = new Point(10, 124);
+            lblName.Name = "lblName";
+            lblName.Size = new Size(64, 28);
+            lblName.TabIndex = 1;
+            lblName.Text = "Name";
             // 
-            // label8
+            // lblSeparator1
             // 
-            label8.AutoSize = true;
-            label8.Location = new Point(136, 162);
-            label8.Name = "label8";
-            label8.Size = new Size(19, 15);
-            label8.TabIndex = 15;
-            label8.Text = "✖";
+            lblSeparator1.AutoSize = true;
+            lblSeparator1.Location = new Point(259, 213);
+            lblSeparator1.Name = "lblSeparator1";
+            lblSeparator1.Size = new Size(30, 20);
+            lblSeparator1.TabIndex = 15;
+            lblSeparator1.Text = "✖";
             // 
-            // weight
+            // txtWeight
             // 
-            weight.Cursor = Cursors.Hand;
-            weight.Location = new Point(56, 230);
-            weight.Name = "weight";
-            weight.Size = new Size(128, 23);
-            weight.TabIndex = 16;
+            txtWeight.Cursor = Cursors.Hand;
+            txtWeight.Location = new Point(153, 256);
+            txtWeight.Margin = new Padding(3, 4, 3, 4);
+            txtWeight.Name = "txtWeight";
+            txtWeight.PlaceholderText = "Weight (kg)";
+            txtWeight.Size = new Size(380, 27);
+            txtWeight.TabIndex = 6;
+            txtWeight.KeyPress += txtWeight_KeyPress;
             // 
             // saveAndExit
             // 
@@ -221,25 +243,28 @@
             saveAndExit.Cursor = Cursors.Hand;
             saveAndExit.FlatStyle = FlatStyle.Popup;
             saveAndExit.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            saveAndExit.Location = new Point(452, 376);
+            saveAndExit.Location = new Point(43, 469);
+            saveAndExit.Margin = new Padding(3, 4, 3, 4);
             saveAndExit.Name = "saveAndExit";
-            saveAndExit.Size = new Size(126, 27);
-            saveAndExit.TabIndex = 17;
+            saveAndExit.Size = new Size(144, 36);
+            saveAndExit.TabIndex = 8;
             saveAndExit.Text = "Save and Exit";
             saveAndExit.UseVisualStyleBackColor = false;
+            saveAndExit.Click += saveAndExit_Click;
             // 
-            // discard
+            // btnCancel
             // 
-            discard.BackColor = SystemColors.ActiveCaption;
-            discard.Cursor = Cursors.Hand;
-            discard.FlatStyle = FlatStyle.Popup;
-            discard.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            discard.Location = new Point(56, 376);
-            discard.Name = "discard";
-            discard.Size = new Size(126, 27);
-            discard.TabIndex = 18;
-            discard.Text = "Discard";
-            discard.UseVisualStyleBackColor = false;
+            btnCancel.BackColor = SystemColors.ActiveCaption;
+            btnCancel.Cursor = Cursors.Hand;
+            btnCancel.FlatStyle = FlatStyle.Popup;
+            btnCancel.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnCancel.Location = new Point(206, 469);
+            btnCancel.Margin = new Padding(3, 4, 3, 4);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(144, 36);
+            btnCancel.TabIndex = 9;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = false;
             // 
             // clearAll
             // 
@@ -247,65 +272,80 @@
             clearAll.Cursor = Cursors.Hand;
             clearAll.FlatStyle = FlatStyle.Popup;
             clearAll.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
-            clearAll.Location = new Point(258, 376);
+            clearAll.Location = new Point(369, 469);
+            clearAll.Margin = new Padding(3, 4, 3, 4);
             clearAll.Name = "clearAll";
-            clearAll.Size = new Size(119, 27);
-            clearAll.TabIndex = 19;
+            clearAll.Size = new Size(136, 36);
+            clearAll.TabIndex = 10;
             clearAll.Text = "Clear All";
             clearAll.UseVisualStyleBackColor = false;
             clearAll.Click += ClearAllBtn;
             // 
+            // lblSeparator2
+            // 
+            lblSeparator2.AutoSize = true;
+            lblSeparator2.Location = new Point(401, 213);
+            lblSeparator2.Name = "lblSeparator2";
+            lblSeparator2.Size = new Size(30, 20);
+            lblSeparator2.TabIndex = 16;
+            lblSeparator2.Text = "✖";
+            // 
+            // txtLength
+            // 
+            txtLength.Cursor = Cursors.Hand;
+            txtLength.Location = new Point(153, 210);
+            txtLength.Margin = new Padding(3, 4, 3, 4);
+            txtLength.MaxLength = 10;
+            txtLength.Name = "txtLength";
+            txtLength.PlaceholderText = "Length (m)";
+            txtLength.Size = new Size(100, 27);
+            txtLength.TabIndex = 3;
+            txtLength.KeyPress += txtLength_KeyPress;
+            // 
             // ProductAddForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AcceptButton = saveAndExit;
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(637, 450);
+            CancelButton = btnCancel;
+            ClientSize = new Size(545, 523);
+            Controls.Add(txtLength);
+            Controls.Add(lblSeparator2);
             Controls.Add(clearAll);
-            Controls.Add(discard);
+            Controls.Add(btnCancel);
             Controls.Add(saveAndExit);
-            Controls.Add(weight);
-            Controls.Add(label8);
-            Controls.Add(label7);
-            Controls.Add(label6);
-            Controls.Add(label5);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(name);
-            Controls.Add(width);
-            Controls.Add(barcode);
-            Controls.Add(description);
-            Controls.Add(height);
-            Controls.Add(category);
-            Controls.Add(pictureBox2);
-            Controls.Add(label1);
-            Controls.Add(pictureBox1);
+            Controls.Add(txtWeight);
+            Controls.Add(lblSeparator1);
+            Controls.Add(lblName);
+            Controls.Add(lblBarcode);
+            Controls.Add(lblDimensions);
+            Controls.Add(lblWeight);
+            Controls.Add(lblDescription);
+            Controls.Add(lblCategory);
+            Controls.Add(txtName);
+            Controls.Add(txtWidth);
+            Controls.Add(txtBarcode);
+            Controls.Add(txtDescription);
+            Controls.Add(txtHeight);
+            Controls.Add(cboCategory);
+            Controls.Add(pbLogo);
+            Controls.Add(lblAddProduct);
+            Controls.Add(pbBackground);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 4, 3, 4);
             Name = "ProductAddForm";
             Text = "Add Products";
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbBackground).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbLogo).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private PictureBox pictureBox1;
-        private Label label1;
-        private PictureBox pictureBox2;
-        private ComboBox comboBox1;
-        private void Init()
-        {
-            List<Item> items = new List<Item>();
-            items.Add(new Item() { Text = "displayText1", Value = "ValueText1" });
-            items.Add(new Item() { Text = "displayText2", Value = "ValueText2" });
-            items.Add(new Item() { Text = "displayText3", Value = "ValueText3" });
-
-            comboBox1.DataSource = items;
-            comboBox1.DisplayMember = "Text";
-            comboBox1.ValueMember = "Value";
-
-        }
+        private PictureBox pbBackground;
+        private Label lblAddProduct;
+        private PictureBox pbLogo;
 
         public class Item
         {
@@ -315,22 +355,24 @@
             public string Text { set; get; }
         }
 
-        private ComboBox category;
-        private TextBox height;
-        private TextBox description;
-        private TextBox barcode;
-        private TextBox width;
-        private TextBox name;
-        private Label label2;
-        private Label label3;
-        private Label label4;
-        private Label label5;
-        private Label label6;
-        private Label label7;
-        private Label label8;
-        private TextBox weight;
+        private ComboBox cboCategory;
+        private TextBox txtHeight;
+        private TextBox txtDescription;
+        private TextBox txtBarcode;
+        private TextBox txtWidth;
+        private TextBox txtName;
+        private Label lblCategory;
+        private Label lblDescription;
+        private Label lblWeight;
+        private Label lblDimensions;
+        private Label lblBarcode;
+        private Label lblName;
+        private Label lblSeparator1;
+        private TextBox txtWeight;
         private Button saveAndExit;
-        private Button discard;
+        private Button btnCancel;
         private Button clearAll;
+        private Label lblSeparator2;
+        private TextBox txtLength;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Warehouse.APP
 {
-    partial class Form1
+    partial class WarehouseMainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,19 +28,56 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WarehouseMainForm));
+            btnAddProduct = new Button();
+            btnViewProducts = new Button();
             SuspendLayout();
             // 
-            // Form1
+            // btnAddProduct
+            // 
+            btnAddProduct.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            btnAddProduct.Image = (Image)resources.GetObject("btnAddProduct.Image");
+            btnAddProduct.ImageAlign = ContentAlignment.MiddleLeft;
+            btnAddProduct.Location = new Point(25, 12);
+            btnAddProduct.Name = "btnAddProduct";
+            btnAddProduct.Size = new Size(260, 80);
+            btnAddProduct.TabIndex = 0;
+            btnAddProduct.Text = "Add Product";
+            btnAddProduct.TextAlign = ContentAlignment.MiddleRight;
+            btnAddProduct.UseVisualStyleBackColor = true;
+            btnAddProduct.Click += btnAddProduct_Click;
+            // 
+            // btnViewProducts
+            // 
+            btnViewProducts.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            btnViewProducts.Image = (Image)resources.GetObject("btnViewProducts.Image");
+            btnViewProducts.ImageAlign = ContentAlignment.MiddleLeft;
+            btnViewProducts.Location = new Point(309, 12);
+            btnViewProducts.Name = "btnViewProducts";
+            btnViewProducts.Size = new Size(260, 80);
+            btnViewProducts.TabIndex = 1;
+            btnViewProducts.Text = "View Products";
+            btnViewProducts.TextAlign = ContentAlignment.MiddleRight;
+            btnViewProducts.UseVisualStyleBackColor = true;
+            btnViewProducts.Click += btnViewProducts_Click;
+            // 
+            // WarehouseMainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Name = "Form1";
+            ClientSize = new Size(882, 453);
+            Controls.Add(btnViewProducts);
+            Controls.Add(btnAddProduct);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Name = "WarehouseMainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Form1";
+            Text = "Warehouse";
             ResumeLayout(false);
         }
 
         #endregion
+
+        private Button btnAddProduct;
+        private Button btnViewProducts;
     }
 }

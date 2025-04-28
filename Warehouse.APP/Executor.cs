@@ -14,7 +14,7 @@ internal static class Executor
         }
         catch (Exception ex)
         {
-            LogError(ex.Message);
+            LogError(ex);
         }
     }
     
