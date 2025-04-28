@@ -1,4 +1,5 @@
-﻿using Warehouse.Factories;
+﻿using System.Windows.Forms.VisualStyles;
+using Warehouse.Factories;
 using Warehouse.Services.Exceptions;
 using Warehouse.Services.Interfaces.Services;
 
@@ -9,6 +10,10 @@ public partial class LoginForm : Form
     public LoginForm()
     {
         InitializeComponent();
+#if DEBUG
+        txtUsername.Text = "admin";
+        txtPassword.Text = "admin123";
+#endif
     }
 
     private void btnLogin_Click(object sender, EventArgs e)
