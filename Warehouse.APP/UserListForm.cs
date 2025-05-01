@@ -11,17 +11,17 @@ using Warehouse.APP.Interfaces;
 
 namespace Warehouse.APP
 {
-    public partial class ProductListForm: Form, IListForm
+    public partial class UserListForm: Form, IListForm
     {
-        public ProductListForm()
+        public UserListForm()
         {
             InitializeComponent();
         }
 
         public void Add()
         {
-            ProductDetailsForm form = new ProductDetailsForm();
-            if(form.ShowDialog() == DialogResult.OK)
+            UserDetailsForm form = new UserDetailsForm();
+            if (form.ShowDialog() == DialogResult.OK)
             {
                 // Assuming you have a method to refresh the product list
             }

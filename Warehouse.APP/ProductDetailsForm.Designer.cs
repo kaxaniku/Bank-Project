@@ -1,6 +1,6 @@
 ﻿namespace Warehouse.APP
 {
-    partial class ProductAddForm
+    partial class ProductDetailsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProductAddForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProductDetailsForm));
             pictureBox1 = new PictureBox();
             label1 = new Label();
             pictureBox2 = new PictureBox();
@@ -281,7 +281,7 @@
             Controls.Add(pictureBox2);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
-            Name = "ProductAddForm";
+            Name = "ProductDetailsForm";
             Text = "Add Products";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
