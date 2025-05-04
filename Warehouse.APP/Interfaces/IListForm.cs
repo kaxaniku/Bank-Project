@@ -1,9 +1,8 @@
-﻿namespace Warehouse.APP.Interfaces
+﻿namespace Warehouse.APP.Interfaces;
+
+internal interface IListForm
 {
-    internal interface IListForm
-    {
-        void Add();
-        void Edit();
-        void Delete();
-    }
+    void Add();
+    void Edit();
+    void Delete();
 }

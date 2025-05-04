@@ -15,8 +15,14 @@ namespace Warehouse.APP
         private void searchToolStripMenuItem2_Click(object sender, EventArgs e)
             => ShowListForm<UserListForm>();
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void tsbAdd_Click(object sender, EventArgs e)
             => (ActiveMdiChild as IListForm)?.Add();
+
+        private void tsbEdit_Click(object sender, EventArgs e)
+            => (ActiveMdiChild as IListForm)?.Edit();
+
+        private void tsbDelete_Click(object sender, EventArgs e)
+            => (ActiveMdiChild as IListForm)?.Delete();
 
         private void ShowListForm<T>() where T : Form, new()
         {

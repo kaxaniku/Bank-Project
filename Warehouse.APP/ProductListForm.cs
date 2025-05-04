@@ -1,40 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Warehouse.APP.Interfaces;
+﻿using Warehouse.APP.Interfaces;
 
-namespace Warehouse.APP
+namespace Warehouse.APP;
+
+public partial class ProductListForm : Form, IListForm
 {
-    public partial class ProductListForm: Form, IListForm
+    public ProductListForm()
     {
-        public ProductListForm()
+        InitializeComponent();
+    }
+
+    public void Add()
+    {
+        ProductDetailsForm form = new ProductDetailsForm();
+        if (form.ShowDialog() == DialogResult.OK)
         {
-            InitializeComponent();
+            // Assuming you have a method to refresh the product list
         }
+    }
 
-        public void Add()
-        {
-            ProductDetailsForm form = new ProductDetailsForm();
-            if(form.ShowDialog() == DialogResult.OK)
-            {
-                // Assuming you have a method to refresh the product list
-            }
-        }
+    public void Edit()
+    {
 
-        public void Edit()
-        {
+    }
 
-        }
+    public void Delete()
+    {
 
-        public void Delete()
-        {
+    }
 
-        }
+    private void ProductListForm_Load(object sender, EventArgs e)
+    {
+
     }
 }

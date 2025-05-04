@@ -28,10 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "ProductListForm";
+            SuspendLayout();
+            // 
+            // ProductListForm
+            // 
+            AutoScaleDimensions = new SizeF(8F, 19F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Name = "ProductListForm";
+            Text = "ProductListForm";
+            Load += ProductListForm_Load;
+            ResumeLayout(false);
         }
 
         #endregion
