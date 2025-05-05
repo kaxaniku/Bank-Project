@@ -28,19 +28,82 @@
         /// </summary>
         private void InitializeComponent()
         {
+            dataGridView = new DataGridView();
+            ProductName = new DataGridViewTextBoxColumn();
+            Barcode = new DataGridViewTextBoxColumn();
+            Description = new DataGridViewTextBoxColumn();
+            Dimensions = new DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
+            // 
+            // dataGridView
+            // 
+            dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView.Columns.AddRange(new DataGridViewColumn[] { ProductName, Barcode, Description, Dimensions });
+            dataGridView.Dock = DockStyle.Fill;
+            dataGridView.Location = new Point(0, 0);
+            dataGridView.Name = "dataGridView";
+            dataGridView.ReadOnly = true;
+            dataGridView.RowHeadersWidth = 51;
+            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView.Size = new Size(800, 474);
+            dataGridView.TabIndex = 0;
+            // 
+            // ProductName
+            // 
+            ProductName.DataPropertyName = "Name";
+            ProductName.HeaderText = "Name";
+            ProductName.MinimumWidth = 6;
+            ProductName.Name = "ProductName";
+            ProductName.ReadOnly = true;
+            ProductName.Width = 125;
+            // 
+            // Barcode
+            // 
+            Barcode.DataPropertyName = "Barcode";
+            Barcode.HeaderText = "Barcode";
+            Barcode.MinimumWidth = 6;
+            Barcode.Name = "Barcode";
+            Barcode.ReadOnly = true;
+            Barcode.Width = 125;
+            // 
+            // Description
+            // 
+            Description.DataPropertyName = "Description";
+            Description.HeaderText = "Description";
+            Description.MinimumWidth = 6;
+            Description.Name = "Description";
+            Description.ReadOnly = true;
+            Description.Width = 125;
+            // 
+            // Dimensions
+            // 
+            Dimensions.DataPropertyName = "Dimensions";
+            Dimensions.HeaderText = "Dimensions";
+            Dimensions.MinimumWidth = 6;
+            Dimensions.Name = "Dimensions";
+            Dimensions.ReadOnly = true;
+            Dimensions.Width = 125;
             // 
             // ProductListForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 19F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 474);
+            Controls.Add(dataGridView);
             Name = "ProductListForm";
             Text = "ProductListForm";
             Load += ProductListForm_Load;
+            ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
+
+        private DataGridView dataGridView;
+        private DataGridViewTextBoxColumn ProductName;
+        private DataGridViewTextBoxColumn Barcode;
+        private DataGridViewTextBoxColumn Description;
+        private DataGridViewTextBoxColumn Dimensions;
     }
 }

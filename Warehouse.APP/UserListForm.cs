@@ -27,4 +27,9 @@ public partial class UserListForm: Form, IListForm
     {
 
     }
+
+    public void LoadData()
+    {
+        throw new NotImplementedException();
+    }
 }
