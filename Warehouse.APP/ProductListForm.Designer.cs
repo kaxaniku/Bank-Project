@@ -33,6 +33,7 @@
             Barcode = new DataGridViewTextBoxColumn();
             Description = new DataGridViewTextBoxColumn();
             Dimensions = new DataGridViewTextBoxColumn();
+            SearchBar = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
@@ -42,11 +43,12 @@
             dataGridView.Columns.AddRange(new DataGridViewColumn[] { ProductName, Barcode, Description, Dimensions });
             dataGridView.Dock = DockStyle.Fill;
             dataGridView.Location = new Point(0, 0);
+            dataGridView.Margin = new Padding(4);
             dataGridView.Name = "dataGridView";
             dataGridView.ReadOnly = true;
             dataGridView.RowHeadersWidth = 51;
             dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView.Size = new Size(800, 474);
+            dataGridView.Size = new Size(1000, 592);
             dataGridView.TabIndex = 0;
             // 
             // ProductName
@@ -85,17 +87,30 @@
             Dimensions.ReadOnly = true;
             Dimensions.Width = 125;
             // 
+            // SearchBar
+            // 
+            SearchBar.Location = new Point(783, 549);
+            SearchBar.Name = "SearchBar";
+            SearchBar.Size = new Size(217, 31);
+            SearchBar.TabIndex = 1;
+            SearchBar.Text = "Search Bar";
+            SearchBar.Enter += SearchBar_Enter;
+            SearchBar.KeyDown += SearchBar_KeyDown;
+            // 
             // ProductListForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 474);
+            ClientSize = new Size(1000, 592);
+            Controls.Add(SearchBar);
             Controls.Add(dataGridView);
+            Margin = new Padding(4);
             Name = "ProductListForm";
             Text = "ProductListForm";
             Load += ProductListForm_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -105,5 +120,6 @@
         private DataGridViewTextBoxColumn Barcode;
         private DataGridViewTextBoxColumn Description;
         private DataGridViewTextBoxColumn Dimensions;
+        private TextBox SearchBar;
     }
 }

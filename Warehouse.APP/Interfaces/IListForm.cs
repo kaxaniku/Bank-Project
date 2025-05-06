@@ -5,5 +5,5 @@ internal interface IListForm
     void Add();
     void Edit();
     void Delete();
-    void LoadData();
+    void LoadData(IEnumerable<object> data);
 }

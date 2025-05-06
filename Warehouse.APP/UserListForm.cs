@@ -28,7 +28,7 @@ public partial class UserListForm: Form, IListForm
 
     }
 
-    public void LoadData()
+    public void LoadData(IEnumerable<object> data)
     {
         throw new NotImplementedException();
     }

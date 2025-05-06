@@ -14,7 +14,7 @@ public partial class ProductListForm : Form, IListForm
         dataGridView.AutoGenerateColumns = false;
 
         _productService = ProductServiceFactory.Create();
-        LoadData();
+        LoadData(_productService.GetProductsByName());
     }
 
     public void Add()
@@ -36,14 +36,37 @@ public partial class ProductListForm : Form, IListForm
 
     }
 
-    public void LoadData()
+    public void LoadData(IEnumerable<object> data)
     {
-        var result = _productService.GetProductsByName();
-        dataGridView.DataSource = result.ToList();
+        dataGridView.DataSource = data.ToList();
     }
 
     private void ProductListForm_Load(object sender, EventArgs e)
     {
 
+    }
+
+    private void SearchBar_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Enter)
+        {
+            string searchText = SearchBar.Text;
+
+            var searchedItems = _productService.GetProductsByName()
+                .Where(item => new[]
+                {
+                item.Barcode,
+                item.Name,
+                item.Description ?? string.Empty,
+                item.Dimensions
+                }.Any(property => property.Contains(searchText)));
+
+            LoadData(searchedItems);
+        }
+    }
+
+    private void SearchBar_Enter(object sender, EventArgs e)
+    {
+        SearchBar.Clear();
     }
 }
