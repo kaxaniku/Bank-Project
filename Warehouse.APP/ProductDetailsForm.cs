@@ -1,4 +1,9 @@
-﻿namespace Warehouse.APP;
+﻿using System.Windows.Forms.VisualStyles;
+using Warehouse.Factories;
+using Warehouse.Services.Exceptions;
+using Warehouse.Services.Interfaces.Services;
+
+namespace Warehouse.APP;
 
 public partial class ProductDetailsForm : Form
 {
@@ -9,7 +14,21 @@ public partial class ProductDetailsForm : Form
 
     private void pictureBox3_Click(object sender, EventArgs e)
     {
+        try
+        {
+            IProductService productService = ProductServiceFactory.Create();
+            var categories = productService.GetCategories(); // List<Category>
 
+            foreach (var cat in categories)
+            {
+                category.Items.Add(cat.Name);
+            }
+        }
+        catch (Exception ex)
+        {
+            this.ShowWarning(ex.Message);
+        }
+            
     }
 
     private void ClearAllBtn(object sender, EventArgs e)

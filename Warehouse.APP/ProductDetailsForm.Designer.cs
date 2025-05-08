@@ -93,6 +93,7 @@
             category.Name = "category";
             category.Size = new Size(128, 23);
             category.TabIndex = 3;
+            category.DropDown += pictureBox3_Click;
             // 
             // height
             // 
@@ -256,7 +257,7 @@
             clearAll.UseVisualStyleBackColor = false;
             clearAll.Click += ClearAllBtn;
             // 
-            // ProductAddForm
+            // ProductDetailsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
