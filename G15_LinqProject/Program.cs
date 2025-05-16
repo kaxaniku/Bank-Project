@@ -26,5 +26,10 @@ internal class Program
         //    Console.ReadKey(true);
         //    Console.Clear();
         //}
+
+        List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+        List<int> numbers2 = new List<int> { 4, 5, 6, 7, 8 };
+
+        numbers.MyTakeWhile(x => x != 4).ToList().ForEach(Console.WriteLine);
     }
 }
