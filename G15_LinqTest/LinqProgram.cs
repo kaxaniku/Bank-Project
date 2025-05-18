@@ -9,7 +9,7 @@ namespace G15_Linq
     {
         private static void Main(string[] args)
         {
-            var numbers = new[] { 1, 2, 3, 4, 5, 6 };
+            var numbers = new[] { 1, 2, 3, 4, 5 };
             var evens = numbers.MyWhere(n => n % 2 == 0);
         }
 
