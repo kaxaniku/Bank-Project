@@ -15,7 +15,7 @@ namespace G15_Linq.Tests
             int pageNumber = 2;
             int pageSize = 10;
 
-            // Act
+            // Act 
             var result = LinqProgram.Paginate(products, pageNumber, pageSize).ToList();
 
             // Assert
