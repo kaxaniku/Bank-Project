@@ -30,10 +30,8 @@ public class CategoryController(IProductService productService) : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<Category> GetCategoryById(int id)
     {
-        if (id < 0)
-        {
-            return BadRequest("Id must be greater than 0.");
-        }
+        if (!IsValidId(id, out var errorResult))
+            return errorResult;
 
         var category = _productService.GetCategory(id);
 
@@ -49,11 +47,6 @@ public class CategoryController(IProductService productService) : ControllerBase
     [HttpPost]
     public ActionResult<CategoryDto> PostCategory(CategoryDto categoryDTO)
     {
-        if (string.IsNullOrWhiteSpace(categoryDTO.Name))
-        {
-            return BadRequest("Category name is null or empty.");
-        }
-
         var category = new Category
         {
             Name = categoryDTO.Name,
@@ -74,10 +67,8 @@ public class CategoryController(IProductService productService) : ControllerBase
     [HttpPut("{id}")]
     public IActionResult PutCategory(int id, CategoryDto categoryDTO)
     {
-        if (id < 0)
-        {
-            return BadRequest("Id must be greater than 0.");
-        }
+        if (!IsValidId(id, out var errorResult))
+            return errorResult;
 
         var category = _productService.GetCategory(id);
         if (category == null)
@@ -96,10 +87,8 @@ public class CategoryController(IProductService productService) : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeleteCategory(int id)
     {
-        if (id < 0)
-        {
-            return BadRequest("Id must be greater than 0.");
-        }
+        if (!IsValidId(id, out var errorResult))
+            return errorResult;
 
         var category = _productService.GetCategory(id);
         if (category == null)
@@ -110,5 +99,17 @@ public class CategoryController(IProductService productService) : ControllerBase
         _productService.DeleteCategory(id);
 
         return NoContent();
+    }
+
+    private bool IsValidId(int id, out ActionResult errorResult)
+    {
+        if (id <= 0)
+        {
+            errorResult = BadRequest("Id must be greater than 0.");
+            return false;
+        }
+
+        errorResult = null!;
+        return true;
     }
 }
