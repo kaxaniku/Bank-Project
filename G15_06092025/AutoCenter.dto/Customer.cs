@@ -19,6 +19,8 @@ namespace AutoCenter.dto
 
         public AddressInfo Address { get; set; } = new AddressInfo();
 
+        public bool IsActive { get; set; } = true;
+
         [Required]
         public City City { get; set; } = null!;
     }
