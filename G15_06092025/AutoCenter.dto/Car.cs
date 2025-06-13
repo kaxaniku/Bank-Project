@@ -9,7 +9,24 @@ namespace AutoCenter.dto
         [Required]
         [MaxLength(50)]
         public string Name { get; set; } = null!;
-        //TODO: Add rest of fields;
+
+        [Required]
+        [MaxLength(10)]
+        public string Color { get; set; } = null!;
+
+        [Required]
+        [MaxLength(100)]
+        public string Description { get; set; } = null!;
+
+        [Required]
+        [MaxLength(10)]
+        public string Number { get; set; } = null!;
+
+        [Required]
+        public int Horsepower { get; set; }
+
+        [Required]
+        public int Quantity { get; set; }
 
         public bool IsActive { get; set; } = true;
 

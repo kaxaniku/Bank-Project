@@ -13,6 +13,9 @@ namespace AutoCenter.dto
         [MaxLength(1000)]
         public string? Description { get; set; }
 
+        [Required]
+        public int Quantity { get; set; }
+
         public bool IsActive { get; set; } = true;
 
         public ICollection<Model>? Models { get; set; }

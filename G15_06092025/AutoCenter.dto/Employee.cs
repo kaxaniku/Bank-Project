@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AutoCenter.dto;
 
@@ -25,6 +26,7 @@ public abstract class Employee
     public City City { get; set; } = null!;
 }
 
+[Table("Drivers")]
 public class Driver : Employee
 {
     [Required]
@@ -35,6 +37,7 @@ public class Driver : Employee
     public DateTime LicenseExpiryDate { get; set; }
 }
 
+[Table("Admins")]
 public class Administrator : Employee
 {
     [Required]
@@ -45,6 +48,7 @@ public class Administrator : Employee
     public DateTime HireDate { get; set; }
 }
 
+[Table("Mechanics")]
 public class Mechanic : Employee
 {
     [Required]
