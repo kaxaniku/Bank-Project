@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14 d17.14
+VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.API", "Products.API\Products.API.csproj", "{82B1E1EF-44DF-4D01-B1C6-42C9D8060F4E}"
 EndProject
@@ -9,6 +9,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Products.sql = Products.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.Repositories", "..\..\..\Users\dell notebook\Desktop\APIPRO\Products.Repositories\Products.Repositories.csproj", "{BC5319EF-BF79-4083-5FDB-57D46098576F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.DTO", "..\..\..\Users\dell notebook\Desktop\APIPRO\Products.DTO\Products.DTO.csproj", "{2C6B7F73-9D51-2575-4B3D-0304560E7755}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Products.Database", "..\..\..\Users\dell notebook\Desktop\APIPRO\Products.Database\Products.Database.sqlproj", "{B9638E03-842D-47FA-9DE1-92DD66BB079C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +26,20 @@ Global
 		{82B1E1EF-44DF-4D01-B1C6-42C9D8060F4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82B1E1EF-44DF-4D01-B1C6-42C9D8060F4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82B1E1EF-44DF-4D01-B1C6-42C9D8060F4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC5319EF-BF79-4083-5FDB-57D46098576F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC5319EF-BF79-4083-5FDB-57D46098576F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC5319EF-BF79-4083-5FDB-57D46098576F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC5319EF-BF79-4083-5FDB-57D46098576F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C6B7F73-9D51-2575-4B3D-0304560E7755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C6B7F73-9D51-2575-4B3D-0304560E7755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C6B7F73-9D51-2575-4B3D-0304560E7755}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C6B7F73-9D51-2575-4B3D-0304560E7755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9638E03-842D-47FA-9DE1-92DD66BB079C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9638E03-842D-47FA-9DE1-92DD66BB079C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9638E03-842D-47FA-9DE1-92DD66BB079C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B9638E03-842D-47FA-9DE1-92DD66BB079C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9638E03-842D-47FA-9DE1-92DD66BB079C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9638E03-842D-47FA-9DE1-92DD66BB079C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
