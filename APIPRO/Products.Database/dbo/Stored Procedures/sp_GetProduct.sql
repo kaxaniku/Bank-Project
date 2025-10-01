@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE sp_GetProduct
-    @ProductID  INT
+    @ProductID INT
 AS
 BEGIN
     SELECT * 
