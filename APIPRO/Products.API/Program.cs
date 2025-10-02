@@ -1,4 +1,9 @@
 
+using Products.Repositories;
+using Products.Services;
+using Products.Services.Interfaces.Repositories;
+using Products.Services.Interfaces.Services;
+
 namespace Products.API
 {
     public class Program
@@ -10,6 +15,8 @@ namespace Products.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IProductService, ProductService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

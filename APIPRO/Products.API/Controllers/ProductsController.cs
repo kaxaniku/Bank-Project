@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Products.API.Models;
+using Products.Services.Interfaces.Services;
 
 namespace Products.API.Controllers;
 
@@ -8,17 +9,24 @@ namespace Products.API.Controllers;
 [Route("api/[controller]")]
 public sealed class ProductsController : ControllerBase
 {
+    private readonly IProductService _productService;   
     private readonly ILogger<ProductsController> _logger;
 
-    public ProductsController(ILogger<ProductsController> logger)
+    public ProductsController(IProductService productService, ILogger<ProductsController> logger)
     {
+        _productService = productService;
         _logger = logger;
     }
 
     [HttpGet]
     public IActionResult GetProductById(int id)
     {
-        throw new NotImplementedException();
+        var product = _productService.GetProduct(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+        return Ok(product);
     }
 
     [HttpPost]

@@ -6,9 +6,10 @@ using Products.Services.Interfaces.Repositories;
 
 namespace Products.Repositories
 {
-    internal class ProductRepository : IProductRepository
+    public class ProductRepository : IProductRepository
     {
         protected readonly IDbConnection _connection;
+
         protected ProductRepository(IDbConnection connection, Func<IDbTransaction?>? getTransaction)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));

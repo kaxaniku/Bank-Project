@@ -2,7 +2,7 @@
 
 namespace Products.Services.Interfaces.Services
 {
-    internal interface IProductService
+    public interface IProductService
     {
         void AddProduct(Product product);
         void EditProduct(Product product);
