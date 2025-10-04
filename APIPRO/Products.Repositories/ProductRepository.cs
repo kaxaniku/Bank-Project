@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Reflection;
 using Dapper;
 using Products.DTO;
 using Products.Services.Interfaces.Repositories;
@@ -52,21 +51,19 @@ namespace Products.Repositories
 
         private void SetInsertParameters(Product value, DynamicParameters parameters)
         {
-            PropertyInfo[] properties = typeof(Product).GetProperties();
             parameters.Add($"ProductId", DbType.Int32, direction: ParameterDirection.Output);
-            foreach (var property in properties)
-            {
-                parameters.Add(property.Name, property.GetValue(value));
-            }
+            parameters.Add($"Name", DbType.String);
+            parameters.Add($"Price", DbType.Decimal);
+            parameters.Add($"Stock", DbType.Int32);
+            parameters.Add($"Photo", DbType.Binary);
         }
 
         private void SetUpdateParameters(Product value, DynamicParameters parameters)
         {
-            PropertyInfo[] properties = typeof(Product).GetProperties();
-            foreach (var property in properties)
-            {
-                parameters.Add(property.Name, property.GetValue(value));
-            }
+            parameters.Add($"Name", DbType.String);
+            parameters.Add($"Price", DbType.Decimal);
+            parameters.Add($"Stock", DbType.Int32);
+            parameters.Add($"Photo", DbType.Binary);
         }
     }
 }
