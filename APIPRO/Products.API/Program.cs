@@ -1,4 +1,6 @@
 
+using System.Data;
+using Microsoft.Data.SqlClient;
 using Products.Repositories;
 using Products.Services;
 using Products.Services.Interfaces.Repositories;
@@ -11,15 +13,18 @@ namespace Products.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             // Add services to the container.
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
 

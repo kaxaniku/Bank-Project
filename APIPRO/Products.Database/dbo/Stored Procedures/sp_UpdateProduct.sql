@@ -8,9 +8,9 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF EXISTS(SELECT 1 FROM Products WHERE ProductID = @ProductID)
+	IF NOT EXISTS(SELECT 1 FROM Products WHERE ProductID = @ProductID)
 	BEGIN
-		RAISERROR('Record is inexistent', 16, 1);
+		RAISERROR('Record is inexistent which is %d', 16, 1, @ProductID);
 		RETURN 1;
 	END
 
