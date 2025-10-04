@@ -39,7 +39,7 @@ public sealed class ProductsController : ControllerBase
         }
 
         _productService.AddProduct(_mapper.Map<DTO.Product>(product));
-        return Ok();
+        return Ok(product);
     }
 
     [HttpPut("{id}")]
@@ -72,9 +72,22 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    public IActionResult UpdatePhoto(int id, [FromBody] IFormFile photo)
+    public IActionResult UpdatePhoto(int id, IFormFile photo)
     {
-        throw new NotImplementedException();
+        var existingProduct = _productService.GetProduct(id);
+        if (existingProduct == null)
+        {
+            return NotFound();
+        }
+
+        using (var memoryStream = new MemoryStream())
+        {
+            photo.CopyTo(memoryStream);
+            existingProduct.Photo = memoryStream.ToArray();
+        }
+
+        _productService.EditProduct(existingProduct);
+        return Ok(existingProduct);   
     }
 
     [HttpPatch("{id}/price")]
@@ -88,6 +101,6 @@ public sealed class ProductsController : ControllerBase
 
         existingProduct.Price = newPrice;
         _productService.EditProduct(existingProduct);
-        return Ok($"{existingProduct.ProductId}, {existingProduct.ProductName}, {existingProduct.Price}, {existingProduct.Stock}, {existingProduct.Photo}");
+        return Ok(existingProduct);
     }
 }
