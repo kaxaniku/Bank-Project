@@ -8,7 +8,7 @@ namespace Products.API.Controllers;
 [Route("api/[controller]")]
 public sealed class ProductsController : ControllerBase
 {
-    private readonly IProductService _productService;   
+    private readonly IProductService _productService;
     private readonly ILogger<ProductsController> _logger;
     private readonly IMapper _mapper;
 
@@ -22,12 +22,20 @@ public sealed class ProductsController : ControllerBase
     [HttpGet]
     public IActionResult GetProductById(int id)
     {
-        var product = _productService.GetProduct(id);
-        if (product == null)
+        try
         {
-            return NotFound();
+            var product = _productService.GetProduct(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
-        return Ok(product);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving the product with ID {ProductId}", id);
+            return StatusCode(500, "Internal server error");
+        }
     }
 
     [HttpPost]
@@ -35,7 +43,7 @@ public sealed class ProductsController : ControllerBase
     {
         if (product == null)
         {
-            return NotFound();
+            return BadRequest("Product is null");
         }
 
         _productService.AddProduct(_mapper.Map<DTO.Product>(product));
@@ -87,7 +95,7 @@ public sealed class ProductsController : ControllerBase
         }
 
         _productService.EditProduct(existingProduct);
-        return Ok(existingProduct);   
+        return Ok(existingProduct);
     }
 
     [HttpPatch("{id}/price")]
