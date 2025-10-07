@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 
-namespace Products.Services.Profiles;
+namespace Products.API.Profiles;
 
 public class ProductProfile : Profile
 {
     public ProductProfile()
     {
-        CreateMap<API.Models.GlobalExceptionHandlingMiddleware, DTO.Product>();
-        CreateMap<DTO.Product, API.Models.GlobalExceptionHandlingMiddleware>();
+        CreateMap<Models.Product, DTO.Product>().ReverseMap();
     }
 }
