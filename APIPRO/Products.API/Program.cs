@@ -1,6 +1,7 @@
 
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Products.API.Middlewares;
 using Products.Repositories;
 using Products.Services;
 using Products.Services.Interfaces.Repositories;
@@ -41,6 +42,8 @@ namespace Products.API
 
 
             app.MapControllers();
+
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
             app.Run();
         }

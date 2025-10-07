@@ -39,7 +39,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateProduct([FromBody] Models.GlobalExceptionHandlingMiddleware product)
+    public IActionResult CreateProduct([FromBody] Models.Product product)
     {
         if (product == null)
         {
@@ -51,7 +51,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateProduct(int id, [FromBody] Models.GlobalExceptionHandlingMiddleware product)
+    public IActionResult UpdateProduct(int id, [FromBody] Models.Product product)
     {
         var existingProduct = _productService.GetProduct(id);
         if (existingProduct == null)
