@@ -1,6 +1,6 @@
 ﻿namespace Products.API.Models
 {
-    public class Product
+    public class GlobalExceptionHandlingMiddleware
     {
         public string ProductName { get; set; } = null!;
         public decimal Price { get; set; }
