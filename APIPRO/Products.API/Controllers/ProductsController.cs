@@ -9,33 +9,23 @@ namespace Products.API.Controllers;
 public sealed class ProductsController : ControllerBase
 {
     private readonly IProductService _productService;
-    private readonly ILogger<ProductsController> _logger;
     private readonly IMapper _mapper;
 
-    public ProductsController(IProductService productService, ILogger<ProductsController> logger, IMapper mapper)
+    public ProductsController(IProductService productService, IMapper mapper)
     {
         _productService = productService;
-        _logger = logger;
         _mapper = mapper;
     }
 
     [HttpGet]
     public IActionResult GetProductById(int id)
     {
-        try
+        var product = _productService.GetProduct(id);
+        if (product == null)
         {
-            var product = _productService.GetProduct(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return Ok(product);
+            return NotFound();
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while retrieving the product with ID {ProductId}", id);
-            return StatusCode(500, "Internal server error");
-        }
+        return Ok(product);
     }
 
     [HttpPost]
