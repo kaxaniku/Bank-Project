@@ -1,11 +1,12 @@
 ﻿using Serilog;
 
 namespace Products.API.Middlewares;
+
 public class GlobalExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlingMiddleware> logger)
+    public GlobalExceptionHandlingMiddleware(RequestDelegate next)
     {
         _next = next;
         LoggerInitialization();

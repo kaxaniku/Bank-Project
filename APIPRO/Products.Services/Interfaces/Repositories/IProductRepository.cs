@@ -1,13 +1,11 @@
-﻿using System.Linq.Expressions;
-using Products.DTO;
+﻿using Products.DTO;
 
-namespace Products.Services.Interfaces.Repositories
+namespace Products.Services.Interfaces.Repositories;
+
+public interface IProductRepository
 {
-    public interface IProductRepository
-    {
-        Product? Get(object id);
-        object Insert(Product value);
-        void Update(Product value);
-        void Delete(object id);
-    }
+    Product? Get(object id);
+    object Insert(Product value);
+    void Update(Product value);
+    void Delete(object id);
 }
