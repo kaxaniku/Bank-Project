@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Products.API.Extensions;
 using Products.API.Middlewares;
 using Products.Repositories;
 using Products.Services;
@@ -16,6 +17,7 @@ public class Program
 
         // Add services to the container.
 
+        builder.ConfigureLogger();
         builder.Services.AddControllers();
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<IProductService, ProductService>();
