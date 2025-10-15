@@ -4,37 +4,26 @@ namespace Products.API.Middlewares;
 public class GlobalExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
 
     public GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlingMiddleware> logger)
     {
         _next = next;
-        LoggerInitialization();
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
-        Log.Information("Handling HTTP Request...");
+        _logger.LogInformation("Handling HTTP Request...");
         try
         {
             await _next(context);
         }
         catch (Exception ex)
         {
-            Log.Error(ex.Message, "An unhandled exception has occurred while executing the request.");
+            _logger.LogError(ex, "An unhandled exception has occurred while executing the request.");
             context.Response.StatusCode = 500;
             await context.Response.WriteAsync("Internal server error");
-            Log.Error("Failed.");
-            return;
         }
-        Log.Information("Success.");
-    }
-
-    static void LoggerInitialization()
-    {
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()
-            .WriteTo.File("Logs/ExceptionLogger.txt")
-            .CreateLogger();
     }
 }
