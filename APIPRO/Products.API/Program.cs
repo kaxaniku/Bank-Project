@@ -1,4 +1,3 @@
-
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Products.API.Extensions;
@@ -17,9 +16,11 @@ namespace Products.API
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            // Add services to the container.
-
             builder.ConfigureLogger();
+            builder.ConfigureAuth();
+            builder.ConfigureBearer();
+
+            // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
@@ -40,6 +41,7 @@ namespace Products.API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
