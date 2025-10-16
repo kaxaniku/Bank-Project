@@ -2,6 +2,7 @@
 using Serilog.Exceptions;
 
 namespace Products.API.Extensions;
+
 internal static class LoggerConfig
 {
     public static void ConfigureLogger(this WebApplicationBuilder builder)
