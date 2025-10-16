@@ -22,8 +22,8 @@ namespace Products.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            // ✅ Dummy validation - replace with your user check (e.g. DB)
-            if (request.Username != "admin" || request.Password != "cisco")
+
+            if (request.Username != "admin" || request.Password != "admin")
                 return Unauthorized("Invalid credentials");
 
             // Create token claims
