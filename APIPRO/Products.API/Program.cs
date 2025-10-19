@@ -1,4 +1,5 @@
 using System.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Products.API.Extensions;
 using Products.API.Middlewares;
