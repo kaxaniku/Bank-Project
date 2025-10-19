@@ -19,6 +19,7 @@ namespace Products.API.Controllers
             _config = config;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
