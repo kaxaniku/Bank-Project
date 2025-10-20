@@ -16,7 +16,7 @@ internal static class BearerConfig
                 Scheme = "bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Token pls"
+                Description = "Token Here"
             });
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement{

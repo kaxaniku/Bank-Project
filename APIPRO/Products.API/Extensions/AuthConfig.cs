@@ -7,6 +7,8 @@ internal static class AuthConfig
 {
     public static void ConfigureAuth(this WebApplicationBuilder builder)
     {
+        var jwtConfig = builder.Configuration.GetSection("JwtConfig");
+
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -15,9 +17,9 @@ internal static class AuthConfig
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = "https://iamtheissuer",
-                ValidAudience = "https://iamtheaudience",
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisIsTheGreatestKeyEverThatIsLongEnoughToWork"))
+                ValidIssuer = jwtConfig["Issuer"],
+                ValidAudience = jwtConfig["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig["Key"]!))
             };
         });
     }

@@ -5,7 +5,7 @@ using Products.Services.Interfaces.Services;
 
 namespace Products.API.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin,User")]
 [ApiController]
 [Route("api/[controller]")]
 public sealed class ProductsController : ControllerBase
@@ -30,6 +30,7 @@ public sealed class ProductsController : ControllerBase
         return Ok(product);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public IActionResult CreateProduct([FromBody] Models.Product product)
     {
@@ -42,6 +43,7 @@ public sealed class ProductsController : ControllerBase
         return Ok(product);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public IActionResult UpdateProduct(int id, [FromBody] Models.Product product)
     {
@@ -58,6 +60,7 @@ public sealed class ProductsController : ControllerBase
         return Ok(product);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public IActionResult DeleteProduct(int id)
     {
@@ -71,6 +74,7 @@ public sealed class ProductsController : ControllerBase
         return Ok();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{id}")]
     public IActionResult UpdatePhoto(int id, IFormFile photo)
     {
@@ -90,6 +94,7 @@ public sealed class ProductsController : ControllerBase
         return Ok(existingProduct);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{id}/price")]
     public IActionResult UpdatePrice(int id, [FromBody] decimal newPrice)
     {
