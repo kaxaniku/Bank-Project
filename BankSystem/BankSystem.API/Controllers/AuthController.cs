@@ -21,10 +21,11 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
-    //[HttpPost("login")]
-    //public async Task<IActionResult> Register([FromBody] RegistrationRequestDto request)
-    //{
-    //    var response = await _mediator.Send(new RegisterCommand(request.Username, request.Email, request.Password));
-    //    return Ok(response);
-    //}
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] RegistrationRequestDto request)
+    {
+        throw new NotImplementedException();
+        //var response = await _mediator.Send(new RegisterCommand(request.Username, request.Email, request.Password));
+        //return Ok(response);
+    }
 }
