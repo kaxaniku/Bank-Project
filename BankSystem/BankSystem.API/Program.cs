@@ -9,11 +9,11 @@ builder.Host.AddSerilog();
 
 builder.Services.AddInfrastructureLayer(builder.Configuration);
 builder.Services.AddApplicationLayer();
-builder.Services.AddPresentation(builder.Configuration);
+builder.Services.AddPresentation();
 
 var app = builder.Build();
 
 app.UseSwaggerUI(app.Environment);
 app.UsePresentation();
 
-app.Run();
+await app.RunAsync();

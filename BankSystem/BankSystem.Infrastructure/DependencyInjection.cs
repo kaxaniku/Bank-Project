@@ -44,8 +44,6 @@ public static class DependencyInjection
         })
         .AddJwtBearer(options =>
         {
-            var serviceProvider = services.BuildServiceProvider();
-
             options.Events = new JwtBearerEvents
             {
                 OnChallenge = context =>

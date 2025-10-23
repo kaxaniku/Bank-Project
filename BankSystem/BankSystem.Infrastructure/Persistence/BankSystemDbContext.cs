@@ -3,10 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Infrastructure.Persistence;
 
-public class BankSystemDbContext : IdentityDbContext
+public class BankSystemDbContext(DbContextOptions<BankSystemDbContext> options) : IdentityDbContext(options)
 {
-    public BankSystemDbContext(DbContextOptions<BankSystemDbContext> options)
-        : base(options)
-    {
-    }
 }
