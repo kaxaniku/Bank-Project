@@ -9,12 +9,14 @@ namespace BankSystem.Application;
 
 public static class ApplicationServiceExtensions
 {
-    public static void AddApplicationLayer(this IServiceCollection services)
+    public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<RegisterCommandValidator>();
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+        return services;
     }
 }

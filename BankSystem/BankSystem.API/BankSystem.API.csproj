@@ -22,10 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BankSystem.Application\BankSystem.Application.csproj" />
     <ProjectReference Include="..\BankSystem.Infrastructure\BankSystem.Infrastructure.csproj" />
   </ItemGroup>

@@ -15,17 +15,19 @@ public class AuthController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Register([FromBody] RegistrationRequestDto request)
+    public async Task<IActionResult> Register(RegistrationRequestDto request)
     {
         var response = await _mediator.Send(new RegisterCommand(request.Username, request.Email, request.Password));
         return Ok(response);
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] RegistrationRequestDto request)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> Login(LoginRequestDto request)
     {
-        throw new NotImplementedException();
-        //var response = await _mediator.Send(new RegisterCommand(request.Username, request.Email, request.Password));
-        //return Ok(response);
+        var response = await _mediator.Send(new LoginCommand(request.Username, request.Password));
+        return Ok(response);
     }
 }
