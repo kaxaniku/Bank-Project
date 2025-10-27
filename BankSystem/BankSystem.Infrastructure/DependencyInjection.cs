@@ -1,8 +1,9 @@
 ﻿using BankSystem.Application.Common.Interfaces;
+using BankSystem.Application.Common.Interfaces.Repositories;
 using BankSystem.Infrastructure.Configurations;
 using BankSystem.Infrastructure.Identity;
-using BankSystem.Infrastructure.MappingProfiles;
 using BankSystem.Infrastructure.Persistence;
+using BankSystem.Infrastructure.Repositories;
 using BankSystem.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -58,13 +59,13 @@ public static class DependencyInjection
         });
 
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<ICardRepository, CardRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IJwtService, JwtService>();
-
-        services.AddAutoMapper(cfg =>
-        {
-            cfg.AddProfile<InfrastructureMappingProfile>();
-        });
-
         services.AddScoped<IAuthService, AuthService>();
 
         return services;

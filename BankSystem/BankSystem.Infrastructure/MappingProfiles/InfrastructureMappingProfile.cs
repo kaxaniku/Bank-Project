@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BankSystem.Infrastructure.MappingProfiles;
 
-internal class InfrastructureMappingProfile : Profile
+public class InfrastructureMappingProfile : Profile
 {
     public InfrastructureMappingProfile()
     {
