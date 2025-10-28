@@ -32,7 +32,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
             {
                 Succeeded = false,
                 Code = 400,
-                Messages = [.. ex.Errors.Select(f => $"{f.PropertyName}: {f.ErrorMessage}")]
+                Messages = [.. ex.Errors.Select(f => $"{f.ErrorMessage}")]
             };
 
             var json = JsonSerializer.Serialize(response, _jsonOptions);

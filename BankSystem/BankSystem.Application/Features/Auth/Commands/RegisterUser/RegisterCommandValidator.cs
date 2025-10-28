@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace BankSystem.Application.Features.Auth.Commands;
+namespace BankSystem.Application.Features.Auth.Commands.RegisterUser;
 
 public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {

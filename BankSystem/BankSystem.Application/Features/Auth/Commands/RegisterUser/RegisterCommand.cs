@@ -3,7 +3,7 @@ using BankSystem.Application.Common.Interfaces;
 using BankSystem.Shared.Models;
 using MediatR;
 
-namespace BankSystem.Application.Features.Auth.Commands;
+namespace BankSystem.Application.Features.Auth.Commands.RegisterUser;
 
 public record RegisterCommand(string Username, string Email, string Password) : IRequest<Result<RegistrationResponseDto>>;
 

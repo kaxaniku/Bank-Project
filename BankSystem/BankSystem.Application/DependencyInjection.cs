@@ -1,7 +1,8 @@
 ﻿using BankSystem.Application.Common.Behaviors;
 using BankSystem.Application.Common.Interfaces.Services;
 using BankSystem.Application.Common.Services;
-using BankSystem.Application.Features.Auth.Commands;
+using BankSystem.Application.Features.Auth.Commands.CreateCustomer;
+using BankSystem.Application.Features.Auth.Commands.RegisterUser;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

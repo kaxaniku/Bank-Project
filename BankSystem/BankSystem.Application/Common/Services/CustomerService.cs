@@ -15,15 +15,12 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
     {
         _logger.LogInformation("Creating new customer with email: {Email}", customer.Email);
         var existingCustomer = await _unitOfWork.Customers.GetByEmailAsync(customer.Email, cancellationToken);
+        existingCustomer ??= await _unitOfWork.Customers.GetByNationalIdAsync(customer.NationalId, cancellationToken);
+
         if (existingCustomer != null)
         {
             _logger.LogInformation("Attempt to create duplicate customer with email: {Email}", customer.Email);
-            return new Result<Customer>
-            {
-                Succeeded = false,
-                Code = 409,
-                Messages = ["Customer with this email already exists."]
-            };
+            return BuildFailureResult<Customer>(409, ["Customer with this email or national id already exists."]);
         }
 
         await _unitOfWork.Customers.AddAsync(customer, cancellationToken);
@@ -31,18 +28,23 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
 
         _logger.LogInformation("Created customer with ID: {CustomerId}", customer.Id);
 
-        return new Result<Customer>
-        {
-            Succeeded = true,
-            Code = 200,
-            Data = customer
-        };
+        return BuildSuccessResult<Customer>(200, customer);
     }
 
-    public async Task<Customer?> GetCustomerWithAccountsAsync(int customerId, CancellationToken cancellationToken = default)
+    public async Task<Result<Customer?>> GetCustomerWithAccountsAsync(int customerId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Retrieving customer with ID: {CustomerId} and their accounts", customerId);
-        return await _unitOfWork.Customers.GetWithAccountsAsync(customerId, cancellationToken);
+        
+        var customer = await _unitOfWork.Customers.GetWithAccountsAsync(customerId, cancellationToken);
+        return customer == null ? BuildFailureResult<Customer?>(404, ["Customer not found."]) : BuildSuccessResult<Customer?>(200, customer);
+    }
+
+    public async Task<Result<Customer?>> GetCustomerWithAccountsAsync(string nationalId, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Retrieving customer with ID: {NationalId} and their accounts", nationalId);
+
+        var customer = await _unitOfWork.Customers.GetByNationalIdAsync(nationalId, cancellationToken);
+        return customer == null ? BuildFailureResult<Customer?>(404, ["Customer not found."]) : BuildSuccessResult<Customer?>(200, customer);
     }
 
     public async Task<(IEnumerable<Customer> Customers, int TotalCount)> GetCustomersPagedAsync(
@@ -54,20 +56,26 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         return await _unitOfWork.Customers.GetPagedAsync(pageNumber, pageSize, cancellationToken: cancellationToken);
     }
 
-    public async Task UpdateCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
+    public async Task<Result<Customer>> UpdateCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating customer with ID: {CustomerId}", customer.Id);
-        var existingCustomer = await _unitOfWork.Customers.GetByEmailAsync(customer.Email, cancellationToken);
-        if (existingCustomer != null)
+
+        var existingCustomer = await _unitOfWork.Customers.FirstOrDefaultAsync(c => c.Id == customer.Id, cancellationToken);
+
+        if (existingCustomer == null)
         {
-            _logger.LogInformation("Attempt to create duplicate customer with email: {Email}", customer.Email);
-            throw new InvalidOperationException($"Email {customer.Email} is already in use.");
+            _logger.LogWarning("Customer with ID {CustomerId} not found", customer.Id);
+            return BuildFailureResult<Customer>(404, [$"Customer with ID {customer.Id} not found."]);
         }
 
-        _unitOfWork.Customers.Update(customer);
+        ApplyCustomerUpdates(customer, existingCustomer);
+
+        _unitOfWork.Customers.Update(existingCustomer);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Updated customer with ID: {CustomerId}", customer.Id);
+        _logger.LogInformation("Successfully updated customer with ID: {CustomerId}", customer.Id);
+
+        return BuildSuccessResult(200, existingCustomer);
     }
 
     public async Task<bool> DeleteCustomerAsync(int customerId, CancellationToken cancellationToken = default)
@@ -92,5 +100,36 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
 
         _logger.LogInformation("Deleted customer with ID: {CustomerId}", customerId);
         return true;
+    }
+
+    private static Result<T> BuildFailureResult<T>(int code, List<string> messages)
+    {
+        return new Result<T>
+        {
+            Succeeded = false,
+            Code = code,
+            Messages = messages
+        };
+    }
+    
+    private static Result<T> BuildSuccessResult<T>(int code, T data)
+    {
+        return new Result<T>
+        {
+            Succeeded = true,
+            Code = code,
+            Data = data
+        };
+    }
+
+    private static void ApplyCustomerUpdates(Customer customer, Customer existingCustomer)
+    {
+        existingCustomer.FirstName = customer.FirstName;
+        existingCustomer.LastName = customer.LastName;
+        existingCustomer.PhoneNumber = customer.PhoneNumber;
+        existingCustomer.Address = customer.Address;
+        existingCustomer.DateOfBirth = customer.DateOfBirth;
+        existingCustomer.Email = customer.Email;
+        existingCustomer.UpdatedAt = DateTime.UtcNow;
     }
 }

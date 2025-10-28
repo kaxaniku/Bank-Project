@@ -15,6 +15,7 @@ public class AuthService(UserManager<IdentityUser> userManager, IJwtService jwtS
     public async Task<Result<RegistrationResponseDto>> RegisterUserAsync(string username, string email, string password)
     {
         var existingUser = await _userManager.FindByNameAsync(username);
+        existingUser ??= await _userManager.FindByEmailAsync(email);
 
         if (existingUser != null)
         {

@@ -10,6 +10,13 @@ public class ApplicationMappingProfile : Profile
     {
         CreateMap<CreateCustomerRequestDto, Customer>();
 
-        CreateMap<Customer, CreateCustomerResponseDto>();
+        CreateMap<UpdateCustomerRequestDto, Customer>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.NationalId, opt => opt.Ignore())
+            .ForMember(dest => dest.Type, opt => opt.Ignore());
+
+        CreateMap<Customer, CustomerResponseDto>();
+
+        CreateMap<Customer, GetCustomerResponseDto>();
     }
 }

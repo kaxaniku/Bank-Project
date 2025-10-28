@@ -2,7 +2,7 @@
 
 namespace BankSystem.Application.Common.DTOs;
 
-public class CreateCustomerResponseDto
+public class CustomerResponseDto
 {
     public int Id { get; set; }
     public string FirstName { get; set; } = null!;
