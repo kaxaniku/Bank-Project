@@ -15,13 +15,12 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
     public async Task<Result<Customer>> CreateCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Creating new customer with email: {Email}", customer.Email);
-        var existingCustomer = await _unitOfWork.Customers.GetByEmailAsync(customer.Email, cancellationToken);
-        existingCustomer ??= await _unitOfWork.Customers.GetByNationalIdAsync(customer.NationalId, cancellationToken);
+        var existingCustomer = await _unitOfWork.Customers.GetByEmailAndNationalIdAsync(customer.Email, customer.NationalId, cancellationToken);
 
         if (existingCustomer != null)
         {
             _logger.LogInformation("Attempt to create duplicate customer with email: {Email}", customer.Email);
-            return BuildResult<Customer>(409, false, messages: ["Customer with this email or national id already exists."]);
+            return BuildResult<Customer>(404, false, messages: ["Customer with this email or national id already exists."]);
         }
 
         await _unitOfWork.Customers.AddAsync(customer, cancellationToken);
@@ -29,7 +28,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
 
         _logger.LogInformation("Created customer with ID: {CustomerId}", customer.Id);
 
-        return BuildResult(200, true, customer);
+        return BuildResult(201, true, customer);
     }
 
     public async Task<Result<Customer?>> GetCustomerWithAccountsAsync(int customerId, CancellationToken cancellationToken = default)
@@ -86,7 +85,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         if (customer == null)
         {
             _logger.LogInformation("Attempt to delete non-existing customer with ID: {CustomerId}", customerId);
-            return BuildResult<Unit>(409, false, messages: ["Customer doesn't exist."]);
+            return BuildResult<Unit>(404, false, messages: ["Customer doesn't exist."]);
         }
 
         var accounts = await _unitOfWork.Accounts.GetCustomerAccountsAsync(customerId, cancellationToken);
@@ -110,7 +109,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         if (customer == null)
         {
             _logger.LogInformation("Attempt to soft delete non-existing customer with ID: {CustomerId}", customerId);
-            return BuildResult<Unit>(409, false, messages: ["Customer doesn't exist."]);
+            return BuildResult<Unit>(404, false, messages: ["Customer doesn't exist."]);
         }
 
         var activeAccounts = await _unitOfWork.Accounts.GetAllAsync(a => a.CustomerId == customerId && a.IsActive, cancellationToken: cancellationToken);
@@ -137,7 +136,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         var customer = await _unitOfWork.Customers.FirstOrDefaultAsync(c => c.Id == customerId, cancellationToken);
         if (customer == null)
         {
-            return BuildResult<Unit>(409, false, messages: ["Customer doesn't exist."]);
+            return BuildResult<Unit>(404, false, messages: ["Customer doesn't exist."]);
         }
 
         if (customer.IsActive)
@@ -158,7 +157,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         {
             Succeeded = succeeded,
             Code = code,
-            Data = data!,
+            Data = data ?? default!,
             Messages = messages ?? []
         };
     }
