@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BankSystem.Infrastructure;
 
@@ -37,6 +39,7 @@ public static class DependencyInjection
         })
         .AddEntityFrameworkStores<BankSystemDbContext>();
 
+        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
         services.AddAuthentication(options =>
         {
@@ -45,6 +48,21 @@ public static class DependencyInjection
         })
         .AddJwtBearer(options =>
         {
+            var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
+            var key = Encoding.UTF8.GetBytes(jwtSettings!.Key);
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwtSettings.Audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
             options.Events = new JwtBearerEvents
             {
                 OnChallenge = context =>
@@ -57,6 +75,8 @@ public static class DependencyInjection
                 }
             };
         });
+
+        services.AddAuthorization();
 
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 

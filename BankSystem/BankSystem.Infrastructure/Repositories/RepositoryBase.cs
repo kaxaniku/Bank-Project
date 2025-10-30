@@ -1,10 +1,11 @@
 ﻿using BankSystem.Application.Common.Interfaces.Repositories;
+using BankSystem.Domain.Common;
 using BankSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace BankSystem.Infrastructure.Repositories;
-public class RepositoryBase<T>(BankSystemDbContext context) : IRepositoryBase<T> where T : class
+public class RepositoryBase<T>(BankSystemDbContext context) : IRepositoryBase<T> where T : BaseEntity
 {
     protected readonly BankSystemDbContext Context = context;
     protected readonly DbSet<T> DbSet = context.Set<T>();
@@ -87,5 +88,63 @@ public class RepositoryBase<T>(BankSystemDbContext context) : IRepositoryBase<T>
     public virtual void RemoveRange(IEnumerable<T> entities)
     {
         DbSet.RemoveRange(entities);
+    }
+
+    public void SoftDelete(T entity)
+    {
+        entity.SoftDelete();
+        
+        DbSet.Update(entity);
+    }
+
+    public void SoftDeleteRange(IEnumerable<T> entities)
+    {
+        foreach (var entity in entities)
+        {
+            entity.SoftDelete();
+        }
+
+        DbSet.UpdateRange(entities);
+    }
+
+    public async Task<bool> SoftDeleteByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        if (entity == null)
+        {
+            return false;
+        }
+
+        SoftDelete(entity);
+
+        return true;
+    }
+
+    public void Restore(T entity)
+    {
+        entity.Restore();
+        DbSet.Update(entity);
+    }
+
+    public void RestoreRange(IEnumerable<T> entities)
+    {
+        foreach (var entity in entities)
+        {
+            entity.Restore();
+        }
+
+        DbSet.UpdateRange(entities);
+    }
+
+    public async Task<bool> RestoreByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        if (entity == null || entity.IsActive)
+        {
+            return false;
+        }
+
+        Restore(entity);
+        return true;
     }
 }

@@ -1,14 +1,18 @@
 ﻿using BankSystem.Application.Common.DTOs;
 using BankSystem.Application.Features.Auth.Commands.CreateCustomer;
+using BankSystem.Application.Features.Auth.Commands.DeleteCustomer;
 using BankSystem.Application.Features.Auth.Commands.GetCustomer;
+using BankSystem.Application.Features.Auth.Commands.RestoreCustomer;
 using BankSystem.Application.Features.Auth.Commands.UpdateCustomer;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankSystem.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+//[Authorize]
 public class CustomerController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
@@ -22,7 +26,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("national-id/{nationalId}")]
+    [HttpGet("{nationalId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCustomerByNationalId(string nationalId)
@@ -40,7 +44,16 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
-    [HttpPut("{customerId:int}")]
+    [HttpPost("{customerId:int:min(1)}/restore")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> RestoreCustomer(int customerId)
+    {
+        var response = await _mediator.Send(new RestoreCustomerCommand(customerId));
+        return Ok(response);
+    }
+
+    [HttpPut("{customerId:int:min(1)}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateCustomer(int customerId, UpdateCustomerRequestDto request)
@@ -49,12 +62,21 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
-    //[HttpDelete("{customerId:int}")]
-    //[ProducesResponseType(StatusCodes.Status201Created)]
-    //[ProducesResponseType(StatusCodes.Status409Conflict)]
-    //public async Task<IActionResult> DeleteCustomer(int customerId)
-    //{
-    //    var response = await _mediator.Send(new UpdateCustomerCommand(customerId));
-    //    return Ok(response);
-    //}
+    [HttpDelete("{customerId:int:min(1)}/soft")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteCustomer(int customerId)
+    {
+        var response = await _mediator.Send(new SoftDeleteCustomerCommand(customerId));
+        return Ok(response);
+    }
+
+    [HttpDelete("{customerId:int:min(1)}/permanent")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> PermanentlyDeleteCustomer(int customerId)
+    {
+        var response = await _mediator.Send(new DeleteCustomerCommand(customerId));
+        return Ok(response);
+    }
 }
