@@ -5,6 +5,22 @@ namespace MyBank.Domain;
 
 public class Card
 {
+    public enum CardTypeEnum
+    {
+        Visa,
+        MasterCard,
+        AmericanExpress
+    }
+
+    public enum CardLifecycleStatus
+    {
+        PendingActivation,
+        Active,
+        TemporarilySuspended,
+        Closed,
+        Replaced
+    }
+
     [Key]
     public int CardId { get; set; }
 
@@ -17,10 +33,15 @@ public class Card
     public CardTypeEnum CardType { get; set; }
 
     [Required]
-    public CardStatus Status { get; set; }
+    public CardLifecycleStatus Status { get; set; }
 
     [Required]
-    public DateTime ExpirationDate { get; set; }
+    [Range(1, 12)]
+    public int ExpiryMonth { get; set; }
+
+    [Required]
+    [Range(2025, 2100)]
+    public int ExpiryYear { get; set; }
 
     [Required]
     [MaxLength(3)]
@@ -30,18 +51,4 @@ public class Card
     public ActivityInfo Activity { get; set; } = null!;
 
     public Account? Account { get; set; }
-
-    public enum CardTypeEnum
-    {
-        Visa,
-        MasterCard,
-        AmericanExpress
-    }
-
-    public enum CardStatus
-    {
-        Active,
-        Inactive,
-        Suspended
-    }
 }
