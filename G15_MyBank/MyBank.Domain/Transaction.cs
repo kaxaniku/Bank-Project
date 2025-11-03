@@ -19,8 +19,19 @@ public class Transaction
     public string? Description { get; set; }
 
     [Required]
+    public TransactionStatus Status { get; set; }
+
+    [Required]
     public Account FromAccount { get; set; } = null!;
 
     [Required]
     public Account ToAccount { get; set; } = null!;
+
+    public enum TransactionStatus
+    {
+        Pending,
+        Completed,
+        Failed,
+        Blocked
+    }
 }
