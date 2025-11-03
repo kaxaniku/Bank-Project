@@ -3,35 +3,30 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyBank.Domain;
 
-public class Transaction
+public enum TransactionStatus : byte
+{
+    Pending = 0,
+    Completed = 1,
+    Failed = 2,
+    Blocked = 3
+}
+
+public sealed class Transaction
 {
     [Key]
     public int TransactionId { get; set; }
 
-    [Required]
     public DateTime TransactionDate { get; set; }
 
-    [Required]
     [Column(TypeName = "MONEY")]
     public decimal Amount { get; set; }
 
     [MaxLength(250)]
     public string? Description { get; set; }
 
-    [Required]
     public TransactionStatus Status { get; set; }
 
-    [Required]
     public Account FromAccount { get; set; } = null!;
 
-    [Required]
     public Account ToAccount { get; set; } = null!;
-
-    public enum TransactionStatus
-    {
-        Pending,
-        Completed,
-        Failed,
-        Blocked
-    }
 }
