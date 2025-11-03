@@ -10,6 +10,7 @@ public class Account
 
     [Required]
     [MaxLength(20)]
+    [Column(TypeName = "VARCHAR")]
     public string AccountNumber { get; set; } = null!;
 
     [Required]
