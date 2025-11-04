@@ -1,0 +1,5 @@
+1. Create base repository class for common data access methods.
+2. Create Repositories for all domains.
+3. Think about automatization soft delete functionality.
+4. Implement Unit of Work pattern for transaction management.
+5. Implement repository unit tests.

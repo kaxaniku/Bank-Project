@@ -1,0 +1,39 @@
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using MyBank.Infrastructure.Interfaces;
+
+namespace MyBank.Infrastructure;
+public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
+{
+    private readonly DbSet<T> _dbSet;
+
+    protected BaseRepository(BankDbContext context)
+    {
+        _dbSet = context.Set<T>();
+    }
+
+    public T? GetById(int id)
+    {
+        return _dbSet.Find(id);
+    }
+
+    public IQueryable<T> Query(Expression<Func<T, bool>> predicate)
+    {
+        return _dbSet.Where(predicate);
+    }
+
+    public void Insert(T entity)
+    {
+        _dbSet.Add(entity);
+    }
+
+    public void Update(T entity)
+    {
+        _dbSet.Update(entity);
+    }
+
+    public void Delete(T entity)
+    {
+        _dbSet.Remove(entity);
+    }
+}
