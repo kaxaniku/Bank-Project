@@ -10,5 +10,7 @@ public sealed class City
     [MaxLength(50)]
     public string Name { get; set; } = null!;
 
+    public ActivityInfo Activity { get; set; } = null!;
+
     public Country Country { get; set; } = null!;
 }

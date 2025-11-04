@@ -4,7 +4,7 @@ using MyBank.Domain;
 namespace MyBank.Infrastructure;
 public class BankDbContext : DbContext
 {
-    public DbSet<Account>? Account { get; set; }
+    public DbSet<Account>? Accounts { get; set; }
 
     public DbSet<Card>? Cards { get; set; }
 
