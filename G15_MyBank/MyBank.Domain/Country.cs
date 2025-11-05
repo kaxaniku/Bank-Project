@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MyBank.Domain.Interfaces;
 
 namespace MyBank.Domain;
 
-public sealed class Country
+public sealed class Country : IDisable
 {
     [Key]
     public int CountryId { get; set; }

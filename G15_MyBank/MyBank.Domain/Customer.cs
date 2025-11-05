@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MyBank.Domain.Interfaces;
 
 namespace MyBank.Domain;
 
@@ -10,7 +11,7 @@ public enum Gender : byte
     Other = 2,
 }
 
-public sealed class Customer
+public sealed class Customer : IDisable
 {
     [Key]
     public int CustomerId { get; set; }

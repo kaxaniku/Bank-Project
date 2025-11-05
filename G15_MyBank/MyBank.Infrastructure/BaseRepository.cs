@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using MyBank.Domain.Interfaces;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
@@ -34,6 +35,10 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
 
     public void Delete(T entity)
     {
+        if (entity is IDisable DEntity && DEntity.Activity.IsActive == false)
+        {
+           throw new DbUpdateConcurrencyException("Entity is already disabled.");
+        }
         _dbSet.Remove(entity);
     }
 }

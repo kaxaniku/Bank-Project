@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MyBank.Domain.Interfaces;
 
 namespace MyBank.Domain;
 
-public sealed class City
+public sealed class City : IDisable
 {
     [Key]
     public int CityId { get; set; }

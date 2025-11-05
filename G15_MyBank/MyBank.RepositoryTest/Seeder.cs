@@ -14,32 +14,32 @@ public class Seeder
 
     public void ClearDatabase()
     {
-        _context.Database.ExecuteSqlRaw("DELETE FROM Accounts");
-        _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Accounts', RESEED, 0)");
+        _context.Database.ExecuteSqlRaw("DELETE FROM Transactions");
+        _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Transactions', RESEED, 0)");
 
         _context.Database.ExecuteSqlRaw("DELETE FROM Cards");
         _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Cards', RESEED, 0)");
+
+        _context.Database.ExecuteSqlRaw("DELETE FROM Accounts");
+        _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Accounts', RESEED, 0)");
+
+        _context.Database.ExecuteSqlRaw("DELETE FROM Customers");
+        _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Customers', RESEED, 0)");
 
         _context.Database.ExecuteSqlRaw("DELETE FROM Cities");
         _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Cities', RESEED, 0)");
 
         _context.Database.ExecuteSqlRaw("DELETE FROM Countries");
         _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Countries', RESEED, 0)");
-
-        _context.Database.ExecuteSqlRaw("DELETE FROM Customers");
-        _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Customers', RESEED, 0)");
-
-        _context.Database.ExecuteSqlRaw("DELETE FROM Transactions");
-        _context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Transactions', RESEED, 0)");
     }
 
     public void SeedDatabase()
     {
-        AccountSeedBuilder();
-        CardSeedBuilder();
         CountrySeedBuilder();
         CitySeedBuilder();
         CustomerSeedBuilder();
+        AccountSeedBuilder();
+        CardSeedBuilder();
         TransactionSeedBuilder();
     }
 
@@ -101,6 +101,8 @@ public class Seeder
         {
             _context.Cities!.Add(city);
         }
+
+        _context.SaveChanges();
     }
 
     private void CustomerSeedBuilder()
