@@ -70,7 +70,7 @@ public class CityRepositoryTests : BaseRepositoryTests<City>
         City city = _repository!.GetById(Constants.UpdateTestID)!;
         Assert.IsNotNull(city);
         city.Name = null!;
-        Country country = _unitOfWork!.CountryRepository.GetById(0)!;
+        city.Country = _unitOfWork!.CountryRepository.GetById(0)!;
 
         Assert.Throws<DbUpdateException>(() =>
         {

@@ -18,7 +18,6 @@ public sealed class Customer : IDisable
 
     [StringLength(11, MinimumLength = 11)]
     [Column(TypeName = "VARCHAR")]
-    // TODO: We need to add unique validation for PersonalNumber in the DbContext configuration
     public string PersonalNumber { get; set; } = null!;
 
     [MaxLength(20)]

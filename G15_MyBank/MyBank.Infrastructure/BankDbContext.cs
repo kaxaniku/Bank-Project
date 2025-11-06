@@ -28,6 +28,13 @@ public class BankDbContext : DbContext
                 entity.Activity.IsActive = false;
             }
         }
+
+        foreach (var entry in ChangeTracker.Entries<Transaction>())
+        {
+            if (entry.Entity.Amount < 0)
+                throw new DbUpdateException("Amount cannot be negative.");
+        }
+
         return base.SaveChanges();
     }
 
@@ -44,6 +51,18 @@ public class BankDbContext : DbContext
             .WithMany(a => a.TransactionsReceived)
             .HasForeignKey(t => t.ToAccountId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Account>()
+        .HasIndex(a => a.AccountNumber)
+        .IsUnique();
+
+        modelBuilder.Entity<Card>()
+        .HasIndex(c => c.CardNumber)
+        .IsUnique();
+
+        modelBuilder.Entity<Customer>()
+        .HasIndex(c => c.PersonalNumber)
+        .IsUnique();
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

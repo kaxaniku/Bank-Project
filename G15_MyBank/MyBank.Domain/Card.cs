@@ -25,7 +25,6 @@ public sealed class Card : IDisable
 
     [MaxLength(16)]
     [Column(TypeName = "VARCHAR")]
-    // TODO: We need to add unique validation for CardNumber in the DbContext configuration
     public string CardNumber { get; set; } = null!;
 
     public CardType CardType { get; set; }

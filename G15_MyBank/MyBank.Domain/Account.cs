@@ -11,7 +11,6 @@ public sealed class Account : IDisable
 
     [MaxLength(20)]
     [Column(TypeName = "VARCHAR")]
-    // TODO: We need to add unique validation for AccountNumber in the DbContext configuration
     public string AccountNumber { get; set; } = null!;
 
     public Customer Customer { get; set; } = null!;
