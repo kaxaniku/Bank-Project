@@ -15,7 +15,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
     public async Task<Result<Customer>> CreateCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Creating new customer with email: {Email}", customer.Email);
-        var existingCustomer = await _unitOfWork.Customers.GetByEmailAndNationalIdAsync(customer.Email, customer.NationalId, cancellationToken);
+        var existingCustomer = await _unitOfWork.Customers.GetByEmailOrNationalIdAsync(customer.Email, customer.NationalId, cancellationToken);
 
         if (existingCustomer != null)
         {

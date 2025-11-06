@@ -1,6 +1,4 @@
-﻿using BankSystem.Domain.Enums;
-
-namespace BankSystem.Application.Common.DTOs;
+﻿namespace BankSystem.Application.Common.DTOs;
 
 public class CreateCustomerRequestDto
 {
@@ -11,5 +9,5 @@ public class CreateCustomerRequestDto
     public string Address { get; set; } = null!;
     public string NationalId { get; set; } = null!;
     public DateTime DateOfBirth { get; set; }
-    public CustomerType Type { get; set; }
+    public string Type { get; set; } = null!;
 }

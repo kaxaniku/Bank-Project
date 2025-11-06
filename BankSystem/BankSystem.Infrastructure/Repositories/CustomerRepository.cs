@@ -12,9 +12,9 @@ public class CustomerRepository(BankSystemDbContext context) : RepositoryBase<Cu
         return await DbSet.FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
     }
 
-    public async Task<Customer?> GetByEmailAndNationalIdAsync(string email, string nationalId, CancellationToken cancellationToken)
+    public async Task<Customer?> GetByEmailOrNationalIdAsync(string email, string nationalId, CancellationToken cancellationToken)
     {
-        return await DbSet.FirstOrDefaultAsync(c => c.NationalId == nationalId && c.Email == email, cancellationToken);
+        return await DbSet.FirstOrDefaultAsync(c => c.NationalId == nationalId || c.Email == email, cancellationToken);
     }
 
     public async Task<Customer?> GetByNationalIdAsync(string nationalId, CancellationToken cancellationToken = default)

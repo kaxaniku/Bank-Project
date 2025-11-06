@@ -69,11 +69,10 @@ public class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCo
             .WithMessage("Age must be less than 120 years.");
 
         RuleFor(x => x.Request.Type)
-            .IsInEnum()
-            .WithMessage("Invalid customer type.")
-            .NotEqual(CustomerType.Unknown)
-            .WithMessage("Customer type must be specified.")
-            .When(x => Enum.IsDefined(typeof(CustomerType), x.Request.Type));
+            .NotEmpty()
+            .WithMessage("Customer type is required.")
+            .Must(type => Enum.GetNames(typeof(CustomerType)).Contains(type))
+            .WithMessage($"Invalid customer type. Valid values are: {string.Join(", ", Enum.GetNames(typeof(CustomerType)))}");
     }
 
     private bool BeValidDateOfBirth(DateTime dateOfBirth)

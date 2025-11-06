@@ -28,12 +28,10 @@ public class AccountConfiguration : BaseEntityConfiguration<Account>
 
         builder.Property(e => e.Type)
             .IsRequired()
-            .HasConversion<string>()
             .HasMaxLength(50);
 
         builder.Property(e => e.Status)
             .IsRequired()
-            .HasConversion<string>()
             .HasMaxLength(50);
 
         builder.Property(e => e.CustomerId)

@@ -20,7 +20,6 @@ public class TransactionConfiguration : BaseEntityConfiguration<Transaction>
 
         builder.Property(e => e.Type)
             .IsRequired()
-            .HasConversion<string>()
             .HasMaxLength(50);
 
         builder.Property(e => e.Amount)
@@ -40,7 +39,6 @@ public class TransactionConfiguration : BaseEntityConfiguration<Transaction>
 
         builder.Property(e => e.Status)
             .IsRequired()
-            .HasConversion<string>()
             .HasMaxLength(50);
 
         builder.Property(e => e.Reference)

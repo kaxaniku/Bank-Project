@@ -42,7 +42,6 @@ public class CustomerConfiguration : BaseEntityConfiguration<Customer>
 
         builder.Property(e => e.Type)
             .IsRequired()
-            .HasConversion<string>()
             .HasMaxLength(50);
 
         builder.HasIndex(e => e.Email)

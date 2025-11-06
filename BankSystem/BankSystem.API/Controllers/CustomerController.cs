@@ -26,7 +26,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("{nationalId}")]
+    [HttpGet("by/{nationalId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCustomerByNationalId(string nationalId)
@@ -46,6 +46,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
 
     [HttpPost("{customerId:int:min(1)}/restore")]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> RestoreCustomer(int customerId)
     {
@@ -55,6 +56,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
 
     [HttpPut("{customerId:int:min(1)}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateCustomer(int customerId, UpdateCustomerRequestDto request)
     {
@@ -64,6 +66,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
 
     [HttpDelete("{customerId:int:min(1)}/soft")]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> DeleteCustomer(int customerId)
     {
@@ -73,6 +76,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
 
     [HttpDelete("{customerId:int:min(1)}/permanent")]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> PermanentlyDeleteCustomer(int customerId)
     {
