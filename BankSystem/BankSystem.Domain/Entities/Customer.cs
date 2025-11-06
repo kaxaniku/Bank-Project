@@ -14,5 +14,5 @@ public class Customer : BaseEntity
     public DateTime DateOfBirth { get; set; }
     public CustomerType Type { get; set; }
 
-    public virtual ICollection<Account> Accounts { get; set; } = [];
+    public ICollection<Account> Accounts { get; set; } = [];
 }

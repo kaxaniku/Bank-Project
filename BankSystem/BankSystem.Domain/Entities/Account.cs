@@ -12,6 +12,6 @@ public class Account : BaseEntity
     public AccountType Type { get; set; }
     public AccountStatus Status { get; set; }
 
-    public virtual Customer Customer { get; set; } = null!;
-    public virtual ICollection<Card> Cards { get; set; } = [];
+    public Customer Customer { get; set; } = null!;
+    public ICollection<Card> Cards { get; set; } = [];
 }

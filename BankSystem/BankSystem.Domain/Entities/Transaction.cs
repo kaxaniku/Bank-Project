@@ -18,6 +18,6 @@ public class Transaction : BaseEntity
     public TransactionStatus Status { get; set; }
     public TransactionType Type { get; set; }
 
-    public virtual Account? SourceAccount { get; set; }
-    public virtual Account? DestinationAccount { get; set; }
+    public Account? SourceAccount { get; set; }
+    public Account? DestinationAccount { get; set; }
 }

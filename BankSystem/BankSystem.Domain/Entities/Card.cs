@@ -13,5 +13,5 @@ public class Card : BaseEntity
     public CardType Type { get; set; }
     public CardStatus Status { get; set; }
 
-    public virtual Account Account { get; set; } = null!;
+    public Account Account { get; set; } = null!;
 }
