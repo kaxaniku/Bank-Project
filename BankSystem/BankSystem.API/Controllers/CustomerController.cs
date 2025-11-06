@@ -4,6 +4,7 @@ using BankSystem.Application.Features.Auth.Commands.DeleteCustomer;
 using BankSystem.Application.Features.Auth.Commands.GetCustomer;
 using BankSystem.Application.Features.Auth.Commands.RestoreCustomer;
 using BankSystem.Application.Features.Auth.Commands.UpdateCustomer;
+using BankSystem.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
     [HttpGet("{customerId:int:min(1)}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<GetCustomerResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCustomerById(int customerId)
     {
@@ -27,7 +28,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("by/{nationalId}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<GetCustomerResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCustomerByNationalId(string nationalId)
     {
@@ -55,7 +56,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{customerId:int:min(1)}")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Result<CustomerResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateCustomer(int customerId, UpdateCustomerRequestDto request)
