@@ -5,17 +5,12 @@ using MyBank.Domain.Interfaces;
 namespace MyBank.Infrastructure;
 public class BankDbContext : DbContext
 {
-    public DbSet<Account>? Accounts { get; set; }
-
-    public DbSet<Card>? Cards { get; set; }
-
-    public DbSet<City>? Cities { get; set; }
-
-    public DbSet<Country>? Countries { get; set; }
-
-    public DbSet<Customer>? Customers { get; set; }
-
-    public DbSet<Transaction>? Transactions { get; set; }
+    public DbSet<Account>? Accounts { get; }
+    public DbSet<Card>? Cards { get; }
+    public DbSet<City>? Cities { get; }
+    public DbSet<Country>? Countries { get; }
+    public DbSet<Customer>? Customers { get; }
+    public DbSet<Transaction>? Transactions { get; }
 
     public override int SaveChanges()
     {
@@ -24,15 +19,8 @@ public class BankDbContext : DbContext
             if (entry.State == EntityState.Deleted && entry.Entity is IDisable entity)
             {
                 entry.State = EntityState.Modified;
-
                 entity.Activity.IsActive = false;
             }
-        }
-
-        foreach (var entry in ChangeTracker.Entries<Transaction>())
-        {
-            if (entry.Entity.Amount < 0)
-                throw new DbUpdateException("Amount cannot be negative.");
         }
 
         return base.SaveChanges();
@@ -53,20 +41,22 @@ public class BankDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Account>()
-        .HasIndex(a => a.AccountNumber)
-        .IsUnique();
+            .HasIndex(a => a.AccountNumber)
+            .IsUnique();
 
         modelBuilder.Entity<Card>()
-        .HasIndex(c => c.CardNumber)
-        .IsUnique();
+            .HasIndex(c => c.CardNumber)
+            .IsUnique();
 
         modelBuilder.Entity<Customer>()
-        .HasIndex(c => c.PersonalNumber)
-        .IsUnique();
+            .HasIndex(c => c.PersonalNumber)
+            .IsUnique();
     }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
+        //TODO: Move connection string to configuration file
         optionsBuilder.UseSqlServer("Server=.;Database=KNBank;Integrated Security = true;TrustServerCertificate=true");
     }
 }
