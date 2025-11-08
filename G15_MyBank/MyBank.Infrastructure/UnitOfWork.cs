@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
-
 public class UnitOfWork : IUnitOfWork
 {
     private readonly BankDbContext _context;
@@ -24,7 +25,7 @@ public class UnitOfWork : IUnitOfWork
 
     public UnitOfWork(BankDbContext context)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _context = context;
 
         _account = new Lazy<IAccountRepository>(() => new AccountRepository(_context));
         _card = new Lazy<ICardRepository>(() => new CardRepository(_context));
@@ -70,5 +71,6 @@ public class UnitOfWork : IUnitOfWork
     public void Dispose()
     {
         _transaction?.Dispose();
+        _context.Dispose();
     }
 }
