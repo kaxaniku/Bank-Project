@@ -4,7 +4,7 @@ using MyBank.Domain.Interfaces;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
-public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
+internal abstract class BaseRepository<T> : IBaseRepository<T> where T : class
 {
     private readonly DbSet<T> _dbSet;
 

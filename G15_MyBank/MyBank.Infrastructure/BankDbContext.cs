@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBank.Domain;
 using MyBank.Domain.Interfaces;
+using MyBank.Infrastructure.EntityConfigurations;
 
 namespace MyBank.Infrastructure;
 public class BankDbContext : DbContext
@@ -28,29 +29,10 @@ public class BankDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Transaction>()
-            .HasOne(t => t.FromAccount)
-            .WithMany(a => a.TransactionsSent)
-            .HasForeignKey(t => t.FromAccountId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Transaction>()
-            .HasOne(t => t.ToAccount)
-            .WithMany(a => a.TransactionsReceived)
-            .HasForeignKey(t => t.ToAccountId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Account>()
-            .HasIndex(a => a.AccountNumber)
-            .IsUnique();
-
-        modelBuilder.Entity<Card>()
-            .HasIndex(c => c.CardNumber)
-            .IsUnique();
-
-        modelBuilder.Entity<Customer>()
-            .HasIndex(c => c.PersonalNumber)
-            .IsUnique();
+        modelBuilder.ApplyConfiguration(new AccountConfig());
+        modelBuilder.ApplyConfiguration(new CardConfig());
+        modelBuilder.ApplyConfiguration(new CustomerConfig());
+        modelBuilder.ApplyConfiguration(new TransactionConfig());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
