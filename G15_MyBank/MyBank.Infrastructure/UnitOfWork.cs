@@ -7,6 +7,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly BankDbContext _context;
     private IDbContextTransaction? _transaction;
+    private bool _disposed = false;
 
     private readonly Lazy<IAccountRepository> _account;
     private readonly Lazy<ICardRepository> _card;
@@ -69,6 +70,11 @@ public class UnitOfWork : IUnitOfWork
 
     public void Dispose()
     {
+        if (_disposed) return;
+
         _transaction?.Dispose();
+        _transaction = null;
+
+        _disposed = true;
     }
 }

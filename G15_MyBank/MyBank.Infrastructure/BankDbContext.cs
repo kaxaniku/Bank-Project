@@ -6,12 +6,12 @@ using MyBank.Infrastructure.EntityConfigurations;
 namespace MyBank.Infrastructure;
 public class BankDbContext : DbContext
 {
-    public DbSet<Account>? Accounts { get; }
-    public DbSet<Card>? Cards { get; }
-    public DbSet<City>? Cities { get; }
-    public DbSet<Country>? Countries { get; }
-    public DbSet<Customer>? Customers { get; }
-    public DbSet<Transaction>? Transactions { get; }
+    public DbSet<Account>? Accounts { get; set; }
+    public DbSet<Card>? Cards { get; set; }
+    public DbSet<City>? Cities { get; set; }
+    public DbSet<Country>? Countries { get; set; }
+    public DbSet<Customer>? Customers { get; set; }
+    public DbSet<Transaction>? Transactions { get; set; }
 
     public override int SaveChanges()
     {

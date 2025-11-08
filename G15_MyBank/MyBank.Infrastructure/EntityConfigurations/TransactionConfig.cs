@@ -18,5 +18,8 @@ internal class TransactionConfig : IEntityTypeConfiguration<Transaction>
             .WithMany(a => a.TransactionsReceived)
             .HasForeignKey(t => t.ToAccountId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .ToTable(ck => ck.HasCheckConstraint("CK_Transactions_Amount", "[Amount] >= 0"));
     }
 }
