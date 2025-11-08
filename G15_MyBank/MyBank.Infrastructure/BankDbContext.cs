@@ -38,7 +38,6 @@ public class BankDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        //TODO: Move connection string to configuration file
-        optionsBuilder.UseSqlServer("Server=.;Database=KNBank;Integrated Security = true;TrustServerCertificate=true");
+        optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionString);
     }
 }
