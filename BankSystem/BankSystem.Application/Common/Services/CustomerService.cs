@@ -28,7 +28,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
 
         _logger.LogInformation("Created customer with ID: {CustomerId}", customer.Id);
 
-        return BuildResult(201, true, customer);
+        return BuildResult(201, true, customer, ["Customer created successfully."]);
     }
 
     public async Task<Result<Customer?>> GetCustomerWithAccountsAsync(int customerId, CancellationToken cancellationToken = default)
@@ -36,7 +36,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         _logger.LogInformation("Retrieving customer with ID: {CustomerId} and their accounts", customerId);
         
         var customer = await _unitOfWork.Customers.GetWithAccountsAsync(customerId, cancellationToken);
-        return customer == null ? BuildResult<Customer?>(404, false, messages: ["Customer not found."]) : BuildResult<Customer?>(200, true, customer);
+        return customer == null ? BuildResult<Customer?>(404, false, messages: ["Customer not found."]) : BuildResult<Customer?>(200, true, customer, ["Customer retrieved successfully."]);
     }
 
     public async Task<Result<Customer?>> GetCustomerWithAccountsAsync(string nationalId, CancellationToken cancellationToken = default)
@@ -44,23 +44,14 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         _logger.LogInformation("Retrieving customer with ID: {NationalId} and their accounts", nationalId);
 
         var customer = await _unitOfWork.Customers.GetByNationalIdAsync(nationalId, cancellationToken);
-        return customer == null ? BuildResult<Customer?>(404, false, messages: ["Customer not found."]) : BuildResult<Customer?>(200, true, customer);
-    }
-
-    public async Task<(IEnumerable<Customer> Customers, int TotalCount)> GetCustomersPagedAsync(
-        int pageNumber,
-        int pageSize,
-        CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Retrieving customers page {PageNumber} with page size {PageSize}", pageNumber, pageSize);
-        return await _unitOfWork.Customers.GetPagedAsync(pageNumber, pageSize, cancellationToken: cancellationToken);
+        return customer == null ? BuildResult<Customer?>(404, false, messages: ["Customer not found."]) : BuildResult<Customer?>(200, true, customer, ["Customer retrieved successfully."]);
     }
 
     public async Task<Result<Customer>> UpdateCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating customer with ID: {CustomerId}", customer.Id);
 
-        var existingCustomer = await _unitOfWork.Customers.FirstOrDefaultAsync(c => c.Id == customer.Id, cancellationToken);
+        var existingCustomer = await _unitOfWork.Customers.FirstOrDefaultAsync(c => c.Id == customer.Id && c.IsActive, cancellationToken);
 
         if (existingCustomer == null)
         {
@@ -75,41 +66,23 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
 
         _logger.LogInformation("Successfully updated customer with Id: {CustomerId}", customer.Id);
 
-        return BuildResult(200, true, existingCustomer);
-    }
-
-    public async Task<Result<Unit>> HardDeleteCustomerAsync(int customerId, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Deleting customer with ID: {CustomerId}", customerId);
-        var customer = await _unitOfWork.Customers.FirstOrDefaultAsync(c => c.Id == customerId, cancellationToken);
-        if (customer == null)
-        {
-            _logger.LogInformation("Attempt to delete non-existing customer with ID: {CustomerId}", customerId);
-            return BuildResult<Unit>(404, false, messages: ["Customer doesn't exist."]);
-        }
-
-        var accounts = await _unitOfWork.Accounts.GetCustomerAccountsAsync(customerId, cancellationToken);
-        if (accounts.Any())
-        {
-            _logger.LogInformation("Attempt to delete customer with existing accounts. Customer ID: {CustomerId}", customerId);
-            return BuildResult<Unit>(409, false, messages: ["Can't delete customer with existing accounts."]);
-        }
-
-        _unitOfWork.Customers.Remove(customer);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        _logger.LogInformation("Deleted customer with ID: {CustomerId}", customerId);
-        return BuildResult(200, true, new Unit());
+        return BuildResult(200, true, existingCustomer, ["Customer updated successfully."]);
     }
 
     public async Task<Result<Unit>> SoftDeleteCustomerAsync(int customerId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Soft deleting customer with ID: {CustomerId}", customerId);
+
         var customer = await _unitOfWork.Customers.FirstOrDefaultAsync(c => c.Id == customerId, cancellationToken);
         if (customer == null)
         {
             _logger.LogInformation("Attempt to soft delete non-existing customer with ID: {CustomerId}", customerId);
             return BuildResult<Unit>(404, false, messages: ["Customer doesn't exist."]);
+        }
+
+        if (!customer.IsActive)
+        {
+            return BuildResult<Unit>(409, false, messages: ["Customer is already inactive."]);
         }
 
         var activeAccounts = await _unitOfWork.Accounts.GetAllAsync(a => a.CustomerId == customerId && a.IsActive, cancellationToken: cancellationToken);
@@ -119,28 +92,27 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
             return BuildResult<Unit>(409, false, messages: ["Can't delete customer with active accounts. Please close all accounts first."]);
         }
 
-        if (!customer.IsActive)
-        {
-            return BuildResult<Unit>(409, false, messages: ["Customer is already inactive."]);
-        }
-
         _unitOfWork.Customers.SoftDelete(customer);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Soft deleted customer with ID: {CustomerId}", customerId);
-        return BuildResult(200, true, new Unit());
+        return BuildResult(200, true, new Unit(), ["Customer has been deactivated successfully."]);
     }
 
     public async Task<Result<Unit>> RestoreCustomerAsync(int customerId, CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation("Restoring customer with ID: {CustomerId}", customerId);
         var customer = await _unitOfWork.Customers.FirstOrDefaultAsync(c => c.Id == customerId, cancellationToken);
+
         if (customer == null)
         {
+            _logger.LogInformation("Attempt to restore non-existing customer with ID: {CustomerId}", customerId);
             return BuildResult<Unit>(404, false, messages: ["Customer doesn't exist."]);
         }
 
         if (customer.IsActive)
         {
+            _logger.LogInformation("Attempt to restore already active customer with ID: {CustomerId}", customerId);
             return BuildResult<Unit>(409, false, messages: ["Customer is already active."]);
         }
 
@@ -148,7 +120,7 @@ public class CustomerService(IUnitOfWork unitOfWork, ILogger<CustomerService> lo
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Customer restored. ID: {CustomerId}", customerId);
-        return BuildResult(200, true, new Unit());
+        return BuildResult(200, true, new Unit(), ["Customer restored successfully."]);
     }
 
     private static Result<T> BuildResult<T>(int code, bool succeeded, T? data = default, List<string>? messages = null)

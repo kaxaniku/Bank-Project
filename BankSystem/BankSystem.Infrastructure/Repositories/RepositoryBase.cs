@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace BankSystem.Infrastructure.Repositories;
-public class RepositoryBase<T>(BankSystemDbContext context) : IRepositoryBase<T> where T : BaseEntity
+
+internal class RepositoryBase<T>(BankSystemDbContext context) : IRepositoryBase<T> where T : BaseEntity
 {
     protected readonly BankSystemDbContext Context = context;
     protected readonly DbSet<T> DbSet = context.Set<T>();
@@ -29,12 +30,12 @@ public class RepositoryBase<T>(BankSystemDbContext context) : IRepositoryBase<T>
 
     public virtual IQueryable<T> Query(Expression<Func<T, bool>> predicate)
     {
-        return DbSet.Where(predicate).AsQueryable();
+        return DbSet.Where(predicate);
     }
 
     public virtual IQueryable<T> Query()
     {
-        return DbSet.AsQueryable();
+        return DbSet;
     }
 
     public virtual async Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(

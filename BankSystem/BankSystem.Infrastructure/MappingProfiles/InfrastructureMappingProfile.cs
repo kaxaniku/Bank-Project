@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BankSystem.Application.Common.DTOs;
+using BankSystem.Application.Common.DTOs.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace BankSystem.Infrastructure.MappingProfiles;

@@ -7,5 +7,6 @@ public enum CardStatus : byte
     Blocked = 3,
     Expired = 4,
     Stolen = 5,
-    Lost = 6
+    Lost = 6,
+    Cancelled = 7
 }

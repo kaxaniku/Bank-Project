@@ -1,4 +1,4 @@
-﻿using BankSystem.Application.Common.DTOs;
+﻿using BankSystem.Application.Common.DTOs.User;
 
 namespace BankSystem.Application.Common.Interfaces;
 

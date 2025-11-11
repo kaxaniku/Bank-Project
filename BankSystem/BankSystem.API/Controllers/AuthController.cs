@@ -1,4 +1,4 @@
-﻿using BankSystem.Application.Common.DTOs;
+﻿using BankSystem.Application.Common.DTOs.User;
 using BankSystem.Application.Features.Auth.Commands;
 using BankSystem.Application.Features.Auth.Commands.RegisterUser;
 using MediatR;

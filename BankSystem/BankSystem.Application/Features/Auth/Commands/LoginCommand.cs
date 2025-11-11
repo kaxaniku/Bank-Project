@@ -1,4 +1,4 @@
-﻿using BankSystem.Application.Common.DTOs;
+﻿using BankSystem.Application.Common.DTOs.User;
 using BankSystem.Application.Common.Interfaces;
 using BankSystem.Shared.Models;
 using MediatR;

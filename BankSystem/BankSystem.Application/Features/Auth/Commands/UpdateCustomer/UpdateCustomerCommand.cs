@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BankSystem.Application.Common.DTOs;
+using BankSystem.Application.Common.DTOs.Customer;
 using BankSystem.Application.Common.Interfaces.Services;
 using BankSystem.Domain.Entities;
 using BankSystem.Shared.Models;

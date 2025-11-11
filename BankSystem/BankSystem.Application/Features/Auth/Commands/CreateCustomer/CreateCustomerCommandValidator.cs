@@ -1,5 +1,6 @@
 ﻿using BankSystem.Domain.Enums;
 using FluentValidation;
+
 namespace BankSystem.Application.Features.Auth.Commands.CreateCustomer;
 
 public class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCommand>

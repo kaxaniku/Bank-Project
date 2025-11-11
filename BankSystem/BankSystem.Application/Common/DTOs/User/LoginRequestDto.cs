@@ -1,4 +1,4 @@
-﻿namespace BankSystem.Application.Common.DTOs;
+﻿namespace BankSystem.Application.Common.DTOs.User;
 
 public class LoginRequestDto
 {

@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Common\Models\" />
     <Folder Include="Common\Exceptions\" />
-    <Folder Include="Features\Auth\Queries\" />
   </ItemGroup>
 
   <ItemGroup>

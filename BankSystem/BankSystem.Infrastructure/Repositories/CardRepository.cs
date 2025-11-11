@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Infrastructure.Repositories;
 
-public class CardRepository(BankSystemDbContext context) : RepositoryBase<Card>(context), ICardRepository
+internal class CardRepository(BankSystemDbContext context) : RepositoryBase<Card>(context), ICardRepository
 {
     public async Task<Card?> GetByCardNumberAsync(string cardNumber, CancellationToken cancellationToken = default)
     {

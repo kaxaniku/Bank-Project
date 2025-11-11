@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Infrastructure.Repositories;
 
-public class TransactionRepository(BankSystemDbContext context) : RepositoryBase<Transaction>(context), ITransactionRepository
+internal class TransactionRepository(BankSystemDbContext context) : RepositoryBase<Transaction>(context), ITransactionRepository
 {
     public async Task<IEnumerable<Transaction>> GetAccountTransactionsAsync(
         int accountId,

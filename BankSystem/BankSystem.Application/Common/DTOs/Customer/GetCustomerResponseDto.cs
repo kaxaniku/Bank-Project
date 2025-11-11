@@ -1,8 +1,8 @@
-﻿using BankSystem.Domain.Enums;
+﻿using BankSystem.Application.Common.DTOs.Account;
 
-namespace BankSystem.Application.Common.DTOs;
+namespace BankSystem.Application.Common.DTOs.Customer;
 
-public class CustomerResponseDto
+public class GetCustomerResponseDto
 {
     public int Id { get; set; }
     public string FirstName { get; set; } = null!;
@@ -12,5 +12,6 @@ public class CustomerResponseDto
     public string Address { get; set; } = null!;
     public string NationalId { get; set; } = null!;
     public DateTime DateOfBirth { get; set; }
-    public CustomerType Type { get; set; }
+    public string Type { get; set; } = null!;
+    public IEnumerable<AccountsDto>? Accounts { get; set; }
 }
