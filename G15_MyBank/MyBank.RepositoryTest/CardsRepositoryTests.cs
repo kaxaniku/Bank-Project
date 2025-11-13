@@ -3,6 +3,7 @@ using MyBank.Domain;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.RepositoryTest;
+
 public class CardsRepositoryTests : BaseRepositoryTests<Card>
 {
     private ICardRepository? _repository;

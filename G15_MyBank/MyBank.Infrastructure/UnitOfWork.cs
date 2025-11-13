@@ -3,11 +3,11 @@ using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
 
-public class UnitOfWork : IUnitOfWork
+public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly BankDbContext _context;
     private IDbContextTransaction? _transaction;
-    private bool _disposed = false;
+    private bool _disposed;
 
     private readonly Lazy<IAccountRepository> _account;
     private readonly Lazy<ICardRepository> _card;
@@ -68,13 +68,22 @@ public class UnitOfWork : IUnitOfWork
         _transaction = null;
     }
 
-    public void Dispose()
+    private void Dispose(bool disposing)
     {
         if (_disposed) return;
 
-        _transaction?.Dispose();
-        _transaction = null;
+        if (disposing)
+        {
+            _transaction?.Dispose();
+            _transaction = null;
+        }
 
         _disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

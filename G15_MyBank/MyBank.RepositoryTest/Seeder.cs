@@ -3,6 +3,7 @@ using MyBank.Domain;
 using MyBank.Infrastructure;
 
 namespace MyBank.RepositoryTest;
+
 public class Seeder
 {
     private BankDbContext _context;

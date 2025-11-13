@@ -2,6 +2,7 @@
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.RepositoryTest;
+
 public abstract class BaseRepositoryTests<T>
 {
     protected IUnitOfWork? _unitOfWork;

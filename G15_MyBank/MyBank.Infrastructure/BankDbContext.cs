@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBank.Domain;
 using MyBank.Domain.Interfaces;
-using MyBank.Infrastructure.EntityConfigurations;
 
 namespace MyBank.Infrastructure;
-public class BankDbContext : DbContext
+
+public sealed class BankDbContext : DbContext
 {
     public DbSet<Account>? Accounts { get; set; }
     public DbSet<Card>? Cards { get; set; }
@@ -17,11 +17,10 @@ public class BankDbContext : DbContext
     {
         foreach (var entry in ChangeTracker.Entries())
         {
-            if (entry.State == EntityState.Deleted && entry.Entity is IDisable entity)
-            {
-                entry.State = EntityState.Modified;
-                entity.Activity.IsActive = false;
-            }
+            if (entry.State != EntityState.Deleted || entry.Entity is not IDisable disableEntity) continue;
+            
+            entry.State = EntityState.Modified;
+            disableEntity.Activity.IsActive = false;
         }
 
         return base.SaveChanges();
@@ -29,10 +28,10 @@ public class BankDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new AccountConfig());
-        modelBuilder.ApplyConfiguration(new CardConfig());
-        modelBuilder.ApplyConfiguration(new CustomerConfig());
-        modelBuilder.ApplyConfiguration(new TransactionConfig());
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(BankDbContext).Assembly,
+            type => type.Namespace == "MyBank.Infrastructure.EntityConfigurations"
+        );
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

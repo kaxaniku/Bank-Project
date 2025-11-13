@@ -3,6 +3,7 @@ using MyBank.Domain;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.RepositoryTest;
+
 public class CityRepositoryTests : BaseRepositoryTests<City>
 {
     private ICityRepository? _repository;

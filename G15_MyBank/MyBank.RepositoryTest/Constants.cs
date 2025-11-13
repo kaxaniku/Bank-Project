@@ -1,5 +1,6 @@
 ﻿namespace MyBank.RepositoryTest;
-internal class Constants
+
+internal static class Constants
 {
     public const int UpdateTestID = 1;
     public const int DeleteTestID = 2;

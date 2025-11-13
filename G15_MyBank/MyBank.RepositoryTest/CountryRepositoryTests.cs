@@ -3,6 +3,7 @@ using MyBank.Domain;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.RepositoryTest;
+
 public class CountryRepositoryTests : BaseRepositoryTests<Country>
 {
     private ICountryRepository? _repository;

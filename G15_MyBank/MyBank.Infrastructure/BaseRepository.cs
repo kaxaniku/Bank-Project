@@ -4,6 +4,7 @@ using MyBank.Domain.Interfaces;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
+
 internal abstract class BaseRepository<T> : IBaseRepository<T> where T : class
 {
     private readonly DbSet<T> _dbSet;
@@ -35,10 +36,9 @@ internal abstract class BaseRepository<T> : IBaseRepository<T> where T : class
 
     public void Delete(T entity)
     {
-        if (entity is IDisable DEntity && DEntity.Activity.IsActive == false)
-        {
-           throw new DbUpdateConcurrencyException("Entity is already disabled.");
-        }
+        if (entity is IDisable dEntity && !dEntity.Activity.IsActive)
+            throw new DbUpdateConcurrencyException("Entity is already disabled.");
+        
         _dbSet.Remove(entity);
     }
 }
