@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore.Storage;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
@@ -16,7 +17,15 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly Lazy<ICustomerRepository> _customer;
     private readonly Lazy<ITransactionRepository> _bankTransaction;
 
-    public IAccountRepository AccountRepository => _account.Value;
+    public IAccountRepository AccountRepository
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _account.Value;
+        }
+    }
+
     public ICardRepository CardRepository => _card.Value;
     public ICityRepository CityRepository => _city.Value;
     public ICountryRepository CountryRepository => _country.Value;
@@ -37,6 +46,7 @@ public sealed class UnitOfWork : IUnitOfWork
 
     public int SaveChanges()
     {
+        ThrowIfDisposed();
         return _context.SaveChanges();
     }
 
@@ -68,6 +78,12 @@ public sealed class UnitOfWork : IUnitOfWork
         _transaction = null;
     }
 
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     private void Dispose(bool disposing)
     {
         if (_disposed) return;
@@ -81,9 +97,7 @@ public sealed class UnitOfWork : IUnitOfWork
         _disposed = true;
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this.GetType());
+
+    ~UnitOfWork() => Dispose(false);
 }

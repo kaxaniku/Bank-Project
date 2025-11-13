@@ -28,6 +28,7 @@ public sealed class BankDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(BankDbContext).Assembly,
             type => type.Namespace == "MyBank.Infrastructure.EntityConfigurations"
