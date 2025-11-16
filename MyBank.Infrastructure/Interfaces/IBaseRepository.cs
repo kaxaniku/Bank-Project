@@ -7,8 +7,10 @@ namespace MyBank.Infrastructure.Interfaces
         Task<T?> GetByIdAsync(int id);
         Task<List<T>> GetAllAsync();
         Task AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
+
+        void Update(T entity);
+        void Remove(T entity);
+
         IQueryable<T> Query(Expression<Func<T, bool>> predicate);
     }
 }
