@@ -3,7 +3,8 @@ using System.Linq.Expressions;
 
 namespace MyBank.Infrastructure.Repositories
 {
-    internal abstract class BaseRepository<T> : IDisposable where T : class
+    internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable
+        where T : class
     {
         protected readonly BankDbContext _context;
         private bool _disposed;
@@ -11,6 +12,12 @@ namespace MyBank.Infrastructure.Repositories
         protected BaseRepository(BankDbContext context)
         {
             _context = context;
+        }
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(GetType().Name);
         }
 
         public async Task<T?> GetByIdAsync(int id)
@@ -45,25 +52,21 @@ namespace MyBank.Infrastructure.Repositories
             return Task.CompletedTask;
         }
 
-
         public IQueryable<T> Query(Expression<Func<T, bool>> predicate)
         {
             ThrowIfDisposed();
             return _context.Set<T>().Where(predicate);
         }
 
-        protected void ThrowIfDisposed()
-        {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(BaseRepository<T>));
-        }
-
         public void Dispose()
         {
-            if (!_disposed)
-            {
-                _disposed = true;
-            }
+            _disposed = true;
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            _disposed = true;
+            return ValueTask.CompletedTask;
         }
     }
 }
