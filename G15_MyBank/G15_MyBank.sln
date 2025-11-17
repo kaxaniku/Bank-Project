@@ -24,6 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{89C8EB51-7950-48F7-B81C-C232AC0F9EF8}"
 	ProjectSection(SolutionItems) = preProject
 		TextFile1.txt = TextFile1.txt
+		Todo.txt = Todo.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBank.RepositoryTest", "MyBank.RepositoryTest\MyBank.RepositoryTest.csproj", "{3F5EA630-6572-4A9B-9892-5E136E2B0EDB}"

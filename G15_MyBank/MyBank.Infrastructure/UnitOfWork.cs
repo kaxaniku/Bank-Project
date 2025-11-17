@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
@@ -17,20 +16,13 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly Lazy<ICustomerRepository> _customer;
     private readonly Lazy<ITransactionRepository> _bankTransaction;
 
-    public IAccountRepository AccountRepository
-    {
-        get
-        {
-            ThrowIfDisposed();
-            return _account.Value;
-        }
-    }
+    public IAccountRepository AccountRepository => CheckDisposedAndGet(_account);
 
-    public ICardRepository CardRepository => _card.Value;
-    public ICityRepository CityRepository => _city.Value;
-    public ICountryRepository CountryRepository => _country.Value;
-    public ICustomerRepository CustomerRepository => _customer.Value;
-    public ITransactionRepository TransactionRepository => _bankTransaction.Value;
+    public ICardRepository CardRepository => CheckDisposedAndGet(_card);
+    public ICityRepository CityRepository => CheckDisposedAndGet(_city);
+    public ICountryRepository CountryRepository => CheckDisposedAndGet(_country);
+    public ICustomerRepository CustomerRepository => CheckDisposedAndGet(_customer);
+    public ITransactionRepository TransactionRepository => CheckDisposedAndGet(_bankTransaction);
 
     public UnitOfWork(BankDbContext context)
     {
@@ -50,12 +42,29 @@ public sealed class UnitOfWork : IUnitOfWork
         return _context.SaveChanges();
     }
 
+    public async Task<int> SaveChangesAsync()
+    {
+        ThrowIfDisposed();
+        return await _context.SaveChangesAsync();
+    }
+
     public void BeginTransaction()
     {
+        ThrowIfDisposed();
         if (_transaction != null)
             throw new ArgumentException("Transaction has already started");
 
         _transaction = _context.Database.BeginTransaction();
+    }
+
+    public async Task BeginTransactionAsync()
+    {
+        ThrowIfDisposed();
+        if (_transaction != null)
+            throw new ArgumentException("Transaction has already started");
+
+        _transaction = await _context.Database.BeginTransactionAsync();
+
     }
 
     public void Commit()
@@ -68,6 +77,17 @@ public sealed class UnitOfWork : IUnitOfWork
         _transaction = null;
     }
 
+    public async Task CommitAsync()
+    {
+        if (_transaction == null)
+            throw new ArgumentException("Transaction has not started");
+
+        await _transaction.CommitAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
+
+    }
+
     public void Rollback()
     {
         if (_transaction == null)
@@ -78,10 +98,27 @@ public sealed class UnitOfWork : IUnitOfWork
         _transaction = null;
     }
 
+    public async Task RollbackAsync()
+    {
+        if (_transaction == null)
+            throw new ArgumentException("Transaction has not started");
+
+        await _transaction.RollbackAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
+
+    }
+
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    private T CheckDisposedAndGet<T>(Lazy<T> lazy)
+    {
+        ThrowIfDisposed();
+        return lazy.Value;
     }
 
     private void Dispose(bool disposing)
@@ -92,6 +129,25 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             _transaction?.Dispose();
             _transaction = null;
+
+            if (_account.IsValueCreated)
+                AccountRepository.Dispose();
+
+            if (_card.IsValueCreated)
+                CardRepository.Dispose();
+
+            if (_city.IsValueCreated)
+                CityRepository.Dispose();
+
+            if (_country.IsValueCreated)
+                CountryRepository.Dispose();
+
+            if (_customer.IsValueCreated)
+                CustomerRepository.Dispose();
+
+            if (_bankTransaction.IsValueCreated)
+                TransactionRepository.Dispose();
+
         }
 
         _disposed = true;
