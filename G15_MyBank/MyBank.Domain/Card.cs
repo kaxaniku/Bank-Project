@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MyBank.Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyBank.Domain;
@@ -17,7 +18,7 @@ public enum CardStatus : byte
     Suspended = 2
 }
 
-public sealed class Card
+public sealed class Card : IDisable
 {
     [Key]
     public int CardId { get; set; }

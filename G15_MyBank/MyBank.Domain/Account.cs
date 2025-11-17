@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MyBank.Domain.Interfaces;
 
 namespace MyBank.Domain;
 
-public sealed class Account
+public sealed class Account : IDisable
 {
     [Key]
     public int AccountId { get; set; }
@@ -22,5 +23,6 @@ public sealed class Account
 
     public ICollection<Card> Cards { get; set; } = null!;
 
-    public ICollection<Transaction>? Transactions { get; set; }
+    public ICollection<Transaction>? TransactionsSent { get; set; }
+    public ICollection<Transaction>? TransactionsRecived { get; set; }
 }

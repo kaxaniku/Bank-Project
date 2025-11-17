@@ -15,5 +15,7 @@ public sealed class Country
     [MaxLength(50)]
     public string Name { get; set; } = null!;
 
+    public ActivityInfo Activity { get; set; } = null!;
+
     public ICollection<City>? Cities { get; set; }
 }

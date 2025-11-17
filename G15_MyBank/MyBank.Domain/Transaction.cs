@@ -26,6 +26,9 @@ public sealed class Transaction
 
     public TransactionStatus Status { get; set; }
 
+    public int FromAccountId { get; set; }
+    public int ToAccountId { get; set; }
+
     public Account FromAccount { get; set; } = null!;
 
     public Account ToAccount { get; set; } = null!;
