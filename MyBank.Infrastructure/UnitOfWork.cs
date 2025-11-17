@@ -119,8 +119,6 @@ namespace MyBank.Infrastructure
             DisposeRepository(_customers);
             DisposeRepository(_transactions);
 
-            _context.Dispose();
-
             _disposed = true;
         }
 
@@ -135,8 +133,6 @@ namespace MyBank.Infrastructure
             await DisposeRepositoryAsync(_countries);
             await DisposeRepositoryAsync(_customers);
             await DisposeRepositoryAsync(_transactions);
-
-            await _context.DisposeAsync();
 
             _disposed = true;
         }
