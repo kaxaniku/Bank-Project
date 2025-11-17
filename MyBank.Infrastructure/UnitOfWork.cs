@@ -28,64 +28,75 @@ namespace MyBank.Infrastructure
                 throw new ObjectDisposedException(nameof(UnitOfWork));
         }
 
-        public IAccountRepository Accounts =>
-            _accounts ??= new AccountRepository(_context);
+        public IAccountRepository Accounts
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _accounts ??= new AccountRepository(_context);
+            }
+        }
 
-        public ICardRepository Cards =>
-            _cards ??= new CardRepository(_context);
+        public ICardRepository Cards
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _cards ??= new CardRepository(_context);
+            }
+        }
 
-        public ICityRepository Cities =>
-            _cities ??= new CityRepository(_context);
+        public ICityRepository Cities
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _cities ??= new CityRepository(_context);
+            }
+        }
 
-        public ICountryRepository Countries =>
-            _countries ??= new CountryRepository(_context);
+        public ICountryRepository Countries
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _countries ??= new CountryRepository(_context);
+            }
+        }
 
-        public ICustomerRepository Customers =>
-            _customers ??= new CustomerRepository(_context);
+        public ICustomerRepository Customers
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _customers ??= new CustomerRepository(_context);
+            }
+        }
 
-        public ITransactionRepository Transactions =>
-            _transactions ??= new TransactionRepository(_context);
+        public ITransactionRepository Transactions
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _transactions ??= new TransactionRepository(_context);
+            }
+        }
 
-        public Task<int> SaveChangesAsync()
+        public int SaveChanges()
         {
             ThrowIfDisposed();
-            return _context.SaveChangesAsync();
+            return _context.SaveChanges();
         }
 
-        public void Dispose()
+        public async Task<int> SaveChangesAsync()
         {
-            if (_disposed) return;
-
-            DisposeRepository(_accounts);
-            DisposeRepository(_cards);
-            DisposeRepository(_cities);
-            DisposeRepository(_countries);
-            DisposeRepository(_customers);
-            DisposeRepository(_transactions);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
+            ThrowIfDisposed();
+            return await _context.SaveChangesAsync();
         }
 
-        public async ValueTask DisposeAsync()
+        private static void DisposeRepository(IDisposable? repo)
         {
-            if (_disposed) return;
-
-            await DisposeRepositoryAsync(_accounts);
-            await DisposeRepositoryAsync(_cards);
-            await DisposeRepositoryAsync(_cities);
-            await DisposeRepositoryAsync(_countries);
-            await DisposeRepositoryAsync(_customers);
-            await DisposeRepositoryAsync(_transactions);
-
-            _disposed = true;
-            GC.SuppressFinalize(this);
-        }
-
-        private static void DisposeRepository(object? repo)
-        {
-            if (repo is IDisposable d)
-                d.Dispose();
+            repo?.Dispose();
         }
 
         private static async ValueTask DisposeRepositoryAsync(object? repo)
@@ -94,6 +105,40 @@ namespace MyBank.Infrastructure
                 await ad.DisposeAsync();
             else if (repo is IDisposable d)
                 d.Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            DisposeRepository(_accounts);
+            DisposeRepository(_cards);
+            DisposeRepository(_cities);
+            DisposeRepository(_countries);
+            DisposeRepository(_customers);
+            DisposeRepository(_transactions);
+
+            _context.Dispose();
+
+            _disposed = true;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_disposed)
+                return;
+
+            await DisposeRepositoryAsync(_accounts);
+            await DisposeRepositoryAsync(_cards);
+            await DisposeRepositoryAsync(_cities);
+            await DisposeRepositoryAsync(_countries);
+            await DisposeRepositoryAsync(_customers);
+            await DisposeRepositoryAsync(_transactions);
+
+            await _context.DisposeAsync();
+
+            _disposed = true;
         }
     }
 }

@@ -14,48 +14,88 @@ namespace MyBank.Infrastructure.Repositories
             _context = context;
         }
 
-        protected void ThrowIfDisposed()
+        private void ThrowIfDisposed()
         {
             if (_disposed)
                 throw new ObjectDisposedException(GetType().Name);
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public virtual T? GetById(Guid id)
+        {
+            ThrowIfDisposed();
+            return _context.Set<T>().Find(id);
+        }
+
+        public virtual async Task<T?> GetByIdAsync(Guid id)
         {
             ThrowIfDisposed();
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public virtual IEnumerable<T> GetAll()
+        {
+            ThrowIfDisposed();
+            return _context.Set<T>().ToList();
+        }
+
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             ThrowIfDisposed();
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task AddAsync(T entity)
+        public virtual IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
+        {
+            ThrowIfDisposed();
+            return _context.Set<T>().Where(predicate).ToList();
+        }
+
+        public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            ThrowIfDisposed();
+            return await _context.Set<T>().Where(predicate).ToListAsync();
+        }
+
+        public virtual void Add(T entity)
+        {
+            ThrowIfDisposed();
+            _context.Set<T>().Add(entity);
+        }
+
+        public virtual async Task AddAsync(T entity)
         {
             ThrowIfDisposed();
             await _context.Set<T>().AddAsync(entity);
         }
 
-        public Task UpdateAsync(T entity)
+        public virtual void AddRange(IEnumerable<T> entities)
+        {
+            ThrowIfDisposed();
+            _context.Set<T>().AddRange(entities);
+        }
+
+        public virtual async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            ThrowIfDisposed();
+            await _context.Set<T>().AddRangeAsync(entities);
+        }
+
+        public virtual void Update(T entity)
         {
             ThrowIfDisposed();
             _context.Set<T>().Update(entity);
-            return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(T entity)
+        public virtual void Remove(T entity)
         {
             ThrowIfDisposed();
             _context.Set<T>().Remove(entity);
-            return Task.CompletedTask;
         }
 
-        public IQueryable<T> Query(Expression<Func<T, bool>> predicate)
+        public virtual void RemoveRange(IEnumerable<T> entities)
         {
             ThrowIfDisposed();
-            return _context.Set<T>().Where(predicate);
+            _context.Set<T>().RemoveRange(entities);
         }
 
         public void Dispose()
