@@ -7,54 +7,73 @@ namespace MyBank.Infrastructure;
 
 internal abstract class BaseRepository<T> : IDisposable, IBaseRepository<T> where T : class
 {
+    #region Private and protected fields
+
     private readonly DbSet<T> _dbSet;
     private bool _disposed = false;
+
+    #endregion
+
+    #region Constructors
 
     protected BaseRepository(BankDbContext context)
     {
         _dbSet = context.Set<T>();
     }
 
-    protected void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this.GetType());
+    #endregion
+
+    #region Public properties
+
+    #endregion
+
+    #region Public methods
 
     public T? GetById(int id)
     {
+        ThrowIfDisposed();
         return _dbSet.Find(id);
     }
 
     public async Task<T?> GetByIdAsync(int id)
     {
+        ThrowIfDisposed();
         return await _dbSet.FindAsync(id);
     }
 
     public IQueryable<T> Query(Expression<Func<T, bool>> predicate)
     {
+        ThrowIfDisposed();
         return _dbSet.Where(predicate);
     }
 
     public async Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate)
     {
-
+        ThrowIfDisposed();
         return await _dbSet.Where(predicate).ToListAsync();
     }
 
     public void Insert(T entity)
     {
+        ThrowIfDisposed();
         _dbSet.Add(entity);
     }
 
     public async Task InsertAsync(T entity)
     {
+        ThrowIfDisposed();
         await _dbSet.AddAsync(entity);
     }
 
     public void Update(T entity)
     {
+        ThrowIfDisposed();
         _dbSet.Update(entity);
     }
 
     public Task UpdateAsync(T entity)
     {
+        ThrowIfDisposed();
         _dbSet.Update(entity);
         return Task.CompletedTask;
     }
@@ -63,7 +82,7 @@ internal abstract class BaseRepository<T> : IDisposable, IBaseRepository<T> wher
     {
         if (entity is IDisable dEntity && !dEntity.Activity.IsActive)
             throw new DbUpdateConcurrencyException("Entity is already disabled.");
-        
+
         _dbSet.Remove(entity);
     }
 
@@ -82,18 +101,29 @@ internal abstract class BaseRepository<T> : IDisposable, IBaseRepository<T> wher
         GC.SuppressFinalize(this);
     }
 
+    #endregion
+
+    #region Private and protected methods
+
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                //We don't have managed resources to dispose in this base class
-            }
+        if (_disposed) return;
 
-            _disposed = true;
+        if (disposing)
+        {
+            //We don't have managed resources to dispose in this base class
         }
+
+        _disposed = true;
     }
 
+    private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, GetType());
+
+    #endregion
+
+    #region Finalizer
+
     ~BaseRepository() => Dispose(false);
+
+    #endregion
 }

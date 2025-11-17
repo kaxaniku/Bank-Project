@@ -17,7 +17,6 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly Lazy<ITransactionRepository> _bankTransaction;
 
     public IAccountRepository AccountRepository => CheckDisposedAndGet(_account);
-
     public ICardRepository CardRepository => CheckDisposedAndGet(_card);
     public ICityRepository CityRepository => CheckDisposedAndGet(_city);
     public ICountryRepository CountryRepository => CheckDisposedAndGet(_country);
@@ -147,7 +146,6 @@ public sealed class UnitOfWork : IUnitOfWork
 
             if (_bankTransaction.IsValueCreated)
                 TransactionRepository.Dispose();
-
         }
 
         _disposed = true;

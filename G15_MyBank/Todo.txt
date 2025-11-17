@@ -7,8 +7,11 @@
 6. Split FluentAPI from ModelBuilder to Configuration classes.+
 7. Add necessary check constraint in the database.+
 8. Modify repository visibility to internal.+
-9. Implement proper IDisposable pattern in unit of work.
-10. Add Async methods to the repositories.
-11. Make Repositories Disposable.
-12. If UnitOfWork is Disposed, ensure all repositories are disposed of correctly.
-13. Think how to check if UnitOfWork is disposed before performing any operation.
+9. Implement proper IDisposable pattern in unit of work.+
+10. Add Async methods to the repositories.+
+11. Make Repositories Disposable.+
+12. If UnitOfWork is Disposed, ensure all repositories are disposed of correctly.+
+13. Think how to check if UnitOfWork is disposed before performing any operation.+
+
+14. Implement proper IDisposable async pattern in unit of work and repositories.
+15. Write down functionality which should we support in our project.
