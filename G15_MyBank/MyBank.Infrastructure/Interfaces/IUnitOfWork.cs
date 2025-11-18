@@ -1,15 +1,15 @@
 ﻿namespace MyBank.Infrastructure.Interfaces;
 
-public interface IUnitOfWork : IDisposable
+public interface IUnitOfWork : IDisposable, IAsyncDisposable
 {
     int SaveChanges();
-    Task<int> SaveChangesAsync();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     void BeginTransaction();
-    Task BeginTransactionAsync();
+    Task BeginTransactionAsync(CancellationToken cancellationToken);
     void Commit();
-    Task CommitAsync();
+    Task CommitAsync(CancellationToken cancellationToken);
     void Rollback();
-    Task RollbackAsync();
+    Task RollbackAsync(CancellationToken cancellationToken);
 
     IAccountRepository AccountRepository { get; }
     ICardRepository CardRepository { get; }

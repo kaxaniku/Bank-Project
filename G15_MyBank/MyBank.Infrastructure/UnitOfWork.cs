@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using System.IO;
+using Microsoft.EntityFrameworkCore.Storage;
 using MyBank.Infrastructure.Interfaces;
 
 namespace MyBank.Infrastructure;
@@ -41,7 +42,7 @@ public sealed class UnitOfWork : IUnitOfWork
         return _context.SaveChanges();
     }
 
-    public async Task<int> SaveChangesAsync()
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
         return await _context.SaveChangesAsync();
@@ -56,7 +57,7 @@ public sealed class UnitOfWork : IUnitOfWork
         _transaction = _context.Database.BeginTransaction();
     }
 
-    public async Task BeginTransactionAsync()
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
         if (_transaction != null)
@@ -68,6 +69,7 @@ public sealed class UnitOfWork : IUnitOfWork
 
     public void Commit()
     {
+        ThrowIfDisposed();
         if (_transaction == null)
             throw new ArgumentException("Transaction has not started");
 
@@ -76,8 +78,9 @@ public sealed class UnitOfWork : IUnitOfWork
         _transaction = null;
     }
 
-    public async Task CommitAsync()
+    public async Task CommitAsync(CancellationToken cancellationToken)
     {
+        ThrowIfDisposed();
         if (_transaction == null)
             throw new ArgumentException("Transaction has not started");
 
@@ -89,6 +92,7 @@ public sealed class UnitOfWork : IUnitOfWork
 
     public void Rollback()
     {
+        ThrowIfDisposed();
         if (_transaction == null)
             throw new ArgumentException("Transaction has not started");
 
@@ -97,8 +101,9 @@ public sealed class UnitOfWork : IUnitOfWork
         _transaction = null;
     }
 
-    public async Task RollbackAsync()
+    public async Task RollbackAsync(CancellationToken cancellationToken)
     {
+        ThrowIfDisposed();
         if (_transaction == null)
             throw new ArgumentException("Transaction has not started");
 
@@ -114,6 +119,12 @@ public sealed class UnitOfWork : IUnitOfWork
         GC.SuppressFinalize(this);
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
+    }
+
     private T CheckDisposedAndGet<T>(Lazy<T> lazy)
     {
         ThrowIfDisposed();
@@ -126,29 +137,65 @@ public sealed class UnitOfWork : IUnitOfWork
 
         if (disposing)
         {
-            _transaction?.Dispose();
-            _transaction = null;
+            if (_transaction != null)
+            {
+                _transaction.DisposeAsync();
+                _transaction = null;
+            }
 
             if (_account.IsValueCreated)
-                AccountRepository.Dispose();
+                _account.Value.Dispose();
 
             if (_card.IsValueCreated)
-                CardRepository.Dispose();
+                _card.Value.Dispose();
 
             if (_city.IsValueCreated)
-                CityRepository.Dispose();
+                _city.Value.Dispose();
 
             if (_country.IsValueCreated)
-                CountryRepository.Dispose();
+                _country.Value.Dispose();
 
             if (_customer.IsValueCreated)
-                CustomerRepository.Dispose();
+                _customer.Value.Dispose();
 
             if (_bankTransaction.IsValueCreated)
-                TransactionRepository.Dispose();
+                _bankTransaction.Value.Dispose();
         }
 
         _disposed = true;
+    }
+
+    private async ValueTask DisposeAsyncCore()
+    {
+        if (!_disposed)
+        {
+            if (_transaction != null)
+            {
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
+
+            if (_account.IsValueCreated)
+                await _account.Value.DisposeAsync();
+
+            if (_card.IsValueCreated)
+                await _card.Value.DisposeAsync();
+
+            if (_city.IsValueCreated)
+                await _city.Value.DisposeAsync();
+
+            if (_country.IsValueCreated)
+                await _country.Value.DisposeAsync();
+
+            if (_customer.IsValueCreated)
+                await _customer.Value.DisposeAsync();
+
+            if (_bankTransaction.IsValueCreated)
+                await _bankTransaction.Value.DisposeAsync();
+
+            _disposed = true;
+        }
+
     }
 
     private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this.GetType());
