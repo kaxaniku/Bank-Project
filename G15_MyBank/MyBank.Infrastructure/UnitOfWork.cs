@@ -45,7 +45,7 @@ public sealed class UnitOfWork : IUnitOfWork
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        return await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 
     public void BeginTransaction()
@@ -63,7 +63,7 @@ public sealed class UnitOfWork : IUnitOfWork
         if (_transaction != null)
             throw new ArgumentException("Transaction has already started");
 
-        _transaction = await _context.Database.BeginTransactionAsync();
+        _transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
     }
 
@@ -84,7 +84,7 @@ public sealed class UnitOfWork : IUnitOfWork
         if (_transaction == null)
             throw new ArgumentException("Transaction has not started");
 
-        await _transaction.CommitAsync();
+        await _transaction.CommitAsync(cancellationToken);
         await _transaction.DisposeAsync();
         _transaction = null;
 
@@ -107,7 +107,7 @@ public sealed class UnitOfWork : IUnitOfWork
         if (_transaction == null)
             throw new ArgumentException("Transaction has not started");
 
-        await _transaction.RollbackAsync();
+        await _transaction.RollbackAsync(cancellationToken);
         await _transaction.DisposeAsync();
         _transaction = null;
 
@@ -195,7 +195,6 @@ public sealed class UnitOfWork : IUnitOfWork
 
             _disposed = true;
         }
-
     }
 
     private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this.GetType());
