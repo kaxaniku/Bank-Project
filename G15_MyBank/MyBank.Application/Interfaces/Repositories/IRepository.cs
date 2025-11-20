@@ -2,7 +2,7 @@
 
 namespace MyBank.Application.Interfaces.Repositories
 {
-    public interface IRepository<T> : IDisposable
+    public interface IRepository<T> : IDisposable, IAsyncDisposable
     {
         T? GetById(int id);
         Task<T> GetByIdAsync(int id);

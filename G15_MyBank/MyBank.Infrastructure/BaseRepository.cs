@@ -2,6 +2,7 @@
 using MyBank.Application.Interfaces.Repositories;
 using MyBank.Domain.Interfaces;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace MyBank.Infrastructure
 {
@@ -11,7 +12,7 @@ namespace MyBank.Infrastructure
         private readonly DbSet<T> _dbSet;
         private bool _isDisposed;
 
-        public BaseRepository(MyBankDbContext context)
+        protected BaseRepository(MyBankDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = context.Set<T>();
@@ -19,6 +20,7 @@ namespace MyBank.Infrastructure
 
         public T? GetById(int id)
         {
+            ThrowIfDisposed();
             var entity = _dbSet.Find(id);
             if (entity == null)
                 throw new KeyNotFoundException($"Entity with id {id} not found.");
@@ -28,6 +30,7 @@ namespace MyBank.Infrastructure
 
         public async Task<T> GetByIdAsync(int id)
         {
+            ThrowIfDisposed();
             var entity = await _dbSet.FindAsync(id);
             if (entity == null)
                 throw new KeyNotFoundException($"Entity with id {id} not found.");
@@ -36,6 +39,7 @@ namespace MyBank.Infrastructure
 
         public IQueryable<T> Query(Expression<Func<T, bool>> predicate)
         {
+            ThrowIfDisposed();
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
@@ -44,6 +48,7 @@ namespace MyBank.Infrastructure
 
         public async Task<List<T>> QueryAsync(Expression<Func<T, bool>> predicate)
         {
+            ThrowIfDisposed();
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
@@ -52,6 +57,7 @@ namespace MyBank.Infrastructure
 
         public void Insert(T entity)
         {
+            ThrowIfDisposed();
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
@@ -61,6 +67,7 @@ namespace MyBank.Infrastructure
 
         public async Task InsertAsync(T entity)
         {
+            ThrowIfDisposed();
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
@@ -70,6 +77,7 @@ namespace MyBank.Infrastructure
 
         public void Update(T entity)
         {
+            ThrowIfDisposed();
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
@@ -79,6 +87,7 @@ namespace MyBank.Infrastructure
 
         public async Task UpdateAsync(T entity)
         {
+            ThrowIfDisposed();
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
@@ -112,19 +121,35 @@ namespace MyBank.Infrastructure
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
+
+        protected void Dispose(bool disposing)
         {
             if (_isDisposed)
                 return;
 
             if (disposing)
             {
-                _context.Dispose();
+
             }
 
             _isDisposed = true;
         }
 
-        
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            if (!_isDisposed)
+            {
+                _isDisposed = true;
+            }
+        }
+
+        private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_isDisposed, GetType());
+
+        ~BaseRepository() => Dispose(false);
     }
 }

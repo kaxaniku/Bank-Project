@@ -16,12 +16,12 @@ namespace MyBank.Infrastructure
         private readonly Lazy<ICustomerRepository> _customer;
         private readonly Lazy<ITransactionRepository> _transaction;
 
-        public IAccountRepository AccountRepository => _account.Value;
-        public ICardRepository CardRepository => _card.Value;
-        public ICityRepository CityRepository => _city.Value;
-        public ICountryRepository CountryRepository => _country.Value;
-        public ICustomerRepository CustomerRepository => _customer.Value;
-        public ITransactionRepository TransactionRepository => _transaction.Value;
+        public IAccountRepository AccountRepository => CheckIfDispose(_account);
+        public ICardRepository CardRepository => CheckIfDispose(_card);
+        public ICityRepository CityRepository => CheckIfDispose(_city);
+        public ICountryRepository CountryRepository => CheckIfDispose(_country);
+        public ICustomerRepository CustomerRepository => CheckIfDispose(_customer);
+        public ITransactionRepository TransactionRepository => CheckIfDispose(_transaction);
         
         public UnitOfWork(MyBankDbContext context)
         {
@@ -40,6 +40,11 @@ namespace MyBank.Infrastructure
             ThrowIfDisposed();
             return _context.SaveChanges();
         }
+        
+        public async Task<int> SavechangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
 
         public void BeginTransaction()
         {
@@ -47,6 +52,14 @@ namespace MyBank.Infrastructure
                 throw new InvalidOperationException("A transaction is already in progress.");
 
             _dbTransaction = _context.Database.BeginTransaction();
+        }
+        
+        public async Task BeginTrasactionAsync()
+        {
+            if (_dbTransaction != null)
+                throw new InvalidOperationException("A transaction is already in progress.");
+
+            _dbTransaction = await _context.Database.BeginTransactionAsync();
         }
 
         public void CommitTransaction()
@@ -56,6 +69,16 @@ namespace MyBank.Infrastructure
 
             _dbTransaction.Commit();
             _dbTransaction.Dispose();
+            _dbTransaction = null;
+        }
+        
+        public async Task CommitTransactionAsync()
+        {
+            if (_dbTransaction == null)
+                throw new InvalidOperationException("No transaction in progress to commit.");
+
+            await _dbTransaction.CommitAsync();
+            await _dbTransaction.DisposeAsync();
             _dbTransaction = null;
         }
 
@@ -68,11 +91,33 @@ namespace MyBank.Infrastructure
             _dbTransaction.Dispose();
             _dbTransaction = null;
         }
+        
+        public async Task RollbackTransactionAsyn()
+        {
+            if (_dbTransaction == null)
+                throw new InvalidOperationException("No transaction in progress to rollback.");
+
+            await _dbTransaction.RollbackAsync();
+            await _dbTransaction.DisposeAsync();
+            _dbTransaction = null;
+        }
 
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
+
+        private T CheckIfDispose<T>(Lazy<T> lazy)
+        {
+            ThrowIfDisposed();
+            return lazy.Value;
         }
 
         private void Dispose(bool disposing)
@@ -82,15 +127,65 @@ namespace MyBank.Infrastructure
 
             if (disposing)
             {
-                _dbTransaction?.Dispose();
-                _dbTransaction = null;
+                if(_dbTransaction != null)
+                {
+                    _dbTransaction.DisposeAsync();
+                    _dbTransaction = null;
+                }
+
+                if (_account.IsValueCreated)
+                    _account.Value.Dispose();
+
+                if (_card.IsValueCreated)
+                    _card.Value.Dispose();
+
+                if (_city.IsValueCreated)
+                    _city.Value.Dispose();
+
+                if (_country.IsValueCreated)
+                    _country.Value.Dispose();
+
+                if (_customer.IsValueCreated)
+                    _customer.Value.Dispose();
+
+                if (_transaction.IsValueCreated)
+                    _transaction.Value.Dispose();
             }
 
             _isDisposed = true;
-
         }
 
-        private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_isDisposed, this.GetType());
+        private async ValueTask DisposeAsyncCore()
+        {
+            if (!_isDisposed)
+            {
+                if (_dbTransaction != null)
+                {
+                    await _dbTransaction.DisposeAsync();
+                    _dbTransaction = null;
+                }
+
+                if (_account.IsValueCreated)
+                    await _account.Value.DisposeAsync();
+
+                if (_card.IsValueCreated)
+                    await _card.Value.DisposeAsync();
+
+                if (_city.IsValueCreated)
+                    await _city.Value.DisposeAsync();
+
+                if (_country.IsValueCreated)
+                    await _country.Value.DisposeAsync();
+
+                if (_customer.IsValueCreated)
+                    await _customer.Value.DisposeAsync();
+
+                if (_transaction.IsValueCreated)
+                    await _transaction.Value.DisposeAsync();
+            }
+        }
+
+        protected void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_isDisposed, this.GetType());
 
         ~UnitOfWork() => Dispose(false);
     }
