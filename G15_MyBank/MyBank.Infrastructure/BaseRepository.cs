@@ -28,10 +28,10 @@ namespace MyBank.Infrastructure
             return entity;
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(int id, CancellationToken token)
         {
             ThrowIfDisposed();
-            var entity = await _dbSet.FindAsync(id);
+            var entity = await _dbSet.FindAsync(id, token);
             if (entity == null)
                 throw new KeyNotFoundException($"Entity with id {id} not found.");
             return entity;
@@ -46,13 +46,13 @@ namespace MyBank.Infrastructure
             return _dbSet.Where(predicate);
         }
 
-        public async Task<List<T>> QueryAsync(Expression<Func<T, bool>> predicate)
+        public async Task<List<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken token)
         {
             ThrowIfDisposed();
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
-            return await _dbSet.Where(predicate).ToListAsync();
+            return await _dbSet.Where(predicate).ToListAsync(token);
         }
 
         public void Insert(T entity)
@@ -65,14 +65,14 @@ namespace MyBank.Infrastructure
             _context.SaveChanges();
         }
 
-        public async Task InsertAsync(T entity)
+        public async Task InsertAsync(T entity, CancellationToken token)
         {
             ThrowIfDisposed();
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _dbSet.AddAsync(entity, token);
+            await _context.SaveChangesAsync(token);
         }
 
         public void Update(T entity)
@@ -85,14 +85,14 @@ namespace MyBank.Infrastructure
             _context.SaveChanges();
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity, CancellationToken token)
         {
             ThrowIfDisposed();
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(token);
         }
 
         public void Delete(T entity)
@@ -105,14 +105,14 @@ namespace MyBank.Infrastructure
             _context.SaveChanges();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity, CancellationToken token)
         {
             if (entity is IDisable DEntity && DEntity.Activity.IsActive == false)
             {
                 throw new DbUpdateConcurrencyException("Entity is already disabled.");
             }
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(token);
         }
         
         public void Dispose()

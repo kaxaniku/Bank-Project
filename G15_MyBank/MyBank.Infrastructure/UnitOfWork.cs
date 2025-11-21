@@ -41,9 +41,9 @@ namespace MyBank.Infrastructure
             return _context.SaveChanges();
         }
         
-        public async Task<int> SavechangesAsync()
+        public async Task<int> SavechangesAsync(CancellationToken token)
         {
-            return await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync(token);
         }
 
         public void BeginTransaction()
@@ -54,12 +54,12 @@ namespace MyBank.Infrastructure
             _dbTransaction = _context.Database.BeginTransaction();
         }
         
-        public async Task BeginTrasactionAsync()
+        public async Task BeginTrasactionAsync(CancellationToken token)
         {
             if (_dbTransaction != null)
                 throw new InvalidOperationException("A transaction is already in progress.");
 
-            _dbTransaction = await _context.Database.BeginTransactionAsync();
+            _dbTransaction = await _context.Database.BeginTransactionAsync(token);
         }
 
         public void CommitTransaction()
@@ -72,12 +72,12 @@ namespace MyBank.Infrastructure
             _dbTransaction = null;
         }
         
-        public async Task CommitTransactionAsync()
+        public async Task CommitTransactionAsync(CancellationToken token)
         {
             if (_dbTransaction == null)
                 throw new InvalidOperationException("No transaction in progress to commit.");
 
-            await _dbTransaction.CommitAsync();
+            await _dbTransaction.CommitAsync(token);
             await _dbTransaction.DisposeAsync();
             _dbTransaction = null;
         }
@@ -92,12 +92,12 @@ namespace MyBank.Infrastructure
             _dbTransaction = null;
         }
         
-        public async Task RollbackTransactionAsyn()
+        public async Task RollbackTransactionAsyn(CancellationToken token)
         {
             if (_dbTransaction == null)
                 throw new InvalidOperationException("No transaction in progress to rollback.");
 
-            await _dbTransaction.RollbackAsync();
+            await _dbTransaction.RollbackAsync(token);
             await _dbTransaction.DisposeAsync();
             _dbTransaction = null;
         }

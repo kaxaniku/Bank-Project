@@ -3,13 +3,13 @@
     public interface IUnitOfWork : IDisposable, IAsyncDisposable
     {
         int SaveChanges();
-        Task<int> SavechangesAsync();
+        Task<int> SavechangesAsync(CancellationToken token);
         void BeginTransaction();
-        Task BeginTrasactionAsync();
+        Task BeginTrasactionAsync(CancellationToken token);
         void CommitTransaction();
-        Task CommitTransactionAsync();
+        Task CommitTransactionAsync(CancellationToken token);
         void RollbackTransaction();
-        Task RollbackTransactionAsyn();
+        Task RollbackTransactionAsyn(CancellationToken token);
 
         IAccountRepository AccountRepository { get; }
         ICardRepository CardRepository { get; }
