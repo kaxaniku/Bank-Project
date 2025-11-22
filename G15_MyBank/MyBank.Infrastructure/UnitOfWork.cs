@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using MyBank.Application.Interfaces;
+using MyBank.Application.Interfaces.Repositories;
 
 namespace MyBank.Infrastructure;
 

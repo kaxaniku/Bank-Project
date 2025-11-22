@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MyBank.Domain.Interfaces;
-using MyBank.Application.Interfaces;
+using MyBank.Application.Interfaces.Repositories;
 
 namespace MyBank.Infrastructure;
 

@@ -1,6 +1,8 @@
-﻿namespace MyBank.Infrastructure;
+﻿using MyBank.Application.Interfaces.Repositories;
 
-internal class CustomerRepository : BaseRepository<Domain.Customer>, Application.Interfaces.ICustomerRepository
+namespace MyBank.Infrastructure;
+
+internal class CustomerRepository : BaseRepository<Domain.Customer>, ICustomerRepository
 {
     public CustomerRepository(BankDbContext context) : base(context) { }
 }

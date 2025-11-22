@@ -1,6 +1,8 @@
-﻿namespace MyBank.Infrastructure;
+﻿using MyBank.Application.Interfaces.Repositories;
 
-internal class CountryRepository : BaseRepository<Domain.Country>, Application.Interfaces.ICountryRepository
+namespace MyBank.Infrastructure;
+
+internal class CountryRepository : BaseRepository<Domain.Country>, ICountryRepository
 {
     public CountryRepository(BankDbContext context) : base(context) { }
 }

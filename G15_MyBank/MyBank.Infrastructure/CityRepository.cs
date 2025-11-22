@@ -1,6 +1,8 @@
-﻿namespace MyBank.Infrastructure;
+﻿using MyBank.Application.Interfaces.Repositories;
 
-internal class CityRepository : BaseRepository<Domain.City>, Application.Interfaces.ICityRepository
+namespace MyBank.Infrastructure;
+
+internal class CityRepository : BaseRepository<Domain.City>, ICityRepository
 {
     public CityRepository(BankDbContext context) : base(context) { }
 }

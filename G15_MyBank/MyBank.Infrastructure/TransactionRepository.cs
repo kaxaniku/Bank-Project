@@ -1,6 +1,8 @@
-﻿namespace MyBank.Infrastructure;
+﻿using MyBank.Application.Interfaces.Repositories;
 
-internal class TransactionRepository : BaseRepository<Domain.Transaction>, Application.Interfaces.ITransactionRepository
+namespace MyBank.Infrastructure;
+
+internal class TransactionRepository : BaseRepository<Domain.Transaction>, ITransactionRepository
 {
     public TransactionRepository(BankDbContext context) : base(context) { }
 }

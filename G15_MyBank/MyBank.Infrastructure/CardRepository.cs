@@ -1,6 +1,8 @@
-﻿namespace MyBank.Infrastructure;
+﻿using MyBank.Application.Interfaces.Repositories;
 
-internal class CardRepository : BaseRepository<Domain.Card>, Application.Interfaces.ICardRepository
+namespace MyBank.Infrastructure;
+
+internal class CardRepository : BaseRepository<Domain.Card>, ICardRepository
 {
     public CardRepository(BankDbContext context) : base(context) { }
 }

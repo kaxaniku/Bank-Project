@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace MyBank.Application.Interfaces;
+namespace MyBank.Application.Interfaces.Repositories;
 public interface IBaseRepository<T> where T : class
 {
     T? GetById(int id);
