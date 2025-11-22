@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyBank.Domain;
-using MyBank.Infrastructure.Interfaces;
+using MyBank.Application.Interfaces;
 
 namespace MyBank.RepositoryTest;
 

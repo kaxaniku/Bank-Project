@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace MyBank.Infrastructure.Interfaces;
+namespace MyBank.Application.Interfaces;
 public interface IBaseRepository<T> where T : class
 {
     T? GetById(int id);
@@ -12,8 +12,8 @@ public interface IBaseRepository<T> where T : class
     Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
     Task InsertAsync(T entity, CancellationToken cancellationToken);
-    Task UpdateAsync(T entity, CancellationToken cancellationToken);
-    Task DeleteAsync(T entity, CancellationToken cancellationToken);
+    Task UpdateAsync(T entity);
+    Task DeleteAsync(T entity);
 
     void Dispose();
 

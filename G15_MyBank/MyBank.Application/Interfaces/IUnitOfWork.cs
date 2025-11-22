@@ -1,4 +1,4 @@
-﻿namespace MyBank.Infrastructure.Interfaces;
+﻿namespace MyBank.Application.Interfaces;
 
 public interface IUnitOfWork : IDisposable, IAsyncDisposable
 {

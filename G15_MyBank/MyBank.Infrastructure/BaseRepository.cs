@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MyBank.Domain.Interfaces;
-using MyBank.Infrastructure.Interfaces;
+using MyBank.Application.Interfaces;
 
 namespace MyBank.Infrastructure;
 
@@ -39,7 +39,7 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
     public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        return await _dbSet.FindAsync(id);
+        return await _dbSet.FindAsync(id, cancellationToken);
     }
 
     public IQueryable<T> Query(Expression<Func<T, bool>> predicate)
@@ -51,7 +51,7 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
     public async Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        return await _dbSet.Where(predicate).ToListAsync();
+        return await _dbSet.Where(predicate).ToListAsync(cancellationToken);
     }
 
     public void Insert(T entity)
@@ -63,7 +63,7 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
     public async Task InsertAsync(T entity, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
-        await _dbSet.AddAsync(entity);
+        await _dbSet.AddAsync(entity, cancellationToken);
     }
 
     public void Update(T entity)
@@ -72,7 +72,7 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
         _dbSet.Update(entity);
     }
 
-    public Task UpdateAsync(T entity, CancellationToken cancellationToken)
+    public Task UpdateAsync(T entity)
     {
         ThrowIfDisposed();
         _dbSet.Update(entity);
@@ -87,7 +87,7 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
         _dbSet.Remove(entity);
     }
 
-    public Task DeleteAsync(T entity, CancellationToken cancellationToken)
+    public Task DeleteAsync(T entity)
     {
         if (entity is IDisable dEntity && !dEntity.Activity.IsActive)
             throw new DbUpdateConcurrencyException("Entity is already disabled.");

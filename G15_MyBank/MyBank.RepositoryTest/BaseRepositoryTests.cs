@@ -1,5 +1,5 @@
 ﻿using MyBank.Infrastructure;
-using MyBank.Infrastructure.Interfaces;
+using MyBank.Application.Interfaces;
 
 namespace MyBank.RepositoryTest;
 
