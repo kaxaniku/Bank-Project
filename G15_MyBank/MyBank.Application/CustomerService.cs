@@ -8,6 +8,8 @@ public sealed class CustomerService : ICustomerService
 {
     private readonly IUnitOfWork _unitOfWork;
 
+    public static event Action<Customer>? CustomerRegistered;
+
     public CustomerService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
@@ -15,7 +17,11 @@ public sealed class CustomerService : ICustomerService
 
     public void RegisterNewCustomer(Customer customer)
     {
-        throw new NotImplementedException();
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer));
+        _unitOfWork.CustomerRepository.Insert(customer);
+        _unitOfWork.SaveChanges();
+        OnCustomerRegistered(customer);
     }
 
     public void UpdateCustomer(Customer customer)
@@ -71,5 +77,10 @@ public sealed class CustomerService : ICustomerService
     public Task<IEnumerable<int>> ListAccountsByCustomerAsync(int customerId)
     {
         throw new NotImplementedException();
+    }
+
+    private static void OnCustomerRegistered(Customer customer)
+    {
+        CustomerRegistered?.Invoke(customer);
     }
 }
