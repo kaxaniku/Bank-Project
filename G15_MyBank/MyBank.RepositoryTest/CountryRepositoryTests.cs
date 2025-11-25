@@ -4,7 +4,7 @@ using MyBank.Application.Interfaces.Repositories;
 
 namespace MyBank.RepositoryTest;
 
-public class CountryRepositoryTests : BaseRepositoryTests<Country>
+public class CountryRepositoryTests : BaseRepositoryTests
 {
     private ICountryRepository? _repository;
 

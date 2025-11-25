@@ -26,6 +26,19 @@ public sealed class BankDbContext : DbContext
         return base.SaveChanges();
     }
 
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.State != EntityState.Deleted || entry.Entity is not IDisable disableEntity) continue;
+
+            entry.State = EntityState.Modified;
+            disableEntity.Activity.IsActive = false;
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

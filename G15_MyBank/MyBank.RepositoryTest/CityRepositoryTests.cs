@@ -4,7 +4,7 @@ using MyBank.Application.Interfaces.Repositories;
 
 namespace MyBank.RepositoryTest;
 
-public class CityRepositoryTests : BaseRepositoryTests<City>
+public class CityRepositoryTests : BaseRepositoryTests
 {
     private ICityRepository? _repository;
 

@@ -3,16 +3,18 @@ using MyBank.Application.Interfaces.Repositories;
 
 namespace MyBank.RepositoryTest;
 
-public abstract class BaseRepositoryTests<T>
+public abstract class BaseRepositoryTests
 {
     protected IUnitOfWork? _unitOfWork;
     private BankDbContext _context;
+    protected CancellationTokenSource _cts;
 
     [SetUp]
     public virtual void SetUp()
     {
         _context = new BankDbContext();
         _unitOfWork = new UnitOfWork(_context);
+        _cts = new CancellationTokenSource();
     }
 
     [TearDown]
@@ -20,6 +22,7 @@ public abstract class BaseRepositoryTests<T>
     {
         _unitOfWork?.Dispose();
         _context?.Dispose();
+        _cts.Dispose();
     }
 
     [OneTimeSetUp]

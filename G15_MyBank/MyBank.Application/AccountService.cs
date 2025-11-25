@@ -52,42 +52,42 @@ public sealed class AccountService : IAccountService
         throw new NotImplementedException();
     }
 
-    public Task OpenNewAccountAsync(int customerId)
+    public Task OpenNewAccountAsync(int customerId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task CloseAccountAsync(int accountId)
+    public Task CloseAccountAsync(int accountId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<decimal> CheckBalanceAsync(int accountId)
+    public Task<decimal> CheckBalanceAsync(int accountId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task DepositMoneyAsync(int accountId, decimal amount)
+    public Task DepositMoneyAsync(int accountId, decimal amount, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task WithdrawMoneyAsync(int accountId, decimal amount)
+    public Task WithdrawMoneyAsync(int accountId, decimal amount, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task FreezeAccountAsync(int accountId)
+    public Task FreezeAccountAsync(int accountId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task UnfreezeAccountAsync(int accountId)
+    public Task UnfreezeAccountAsync(int accountId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<int>> ListAccountsByCustomerAsync(int customerId)
+    public Task<IEnumerable<int>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

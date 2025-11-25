@@ -9,6 +9,8 @@ public sealed class CustomerService : ICustomerService
     private readonly IUnitOfWork _unitOfWork;
 
     public static event Action<Customer>? CustomerRegistered;
+    public static event Action<Customer>? CustomerUpdated;
+    public static event Action<int>? CustomerRemoved;
 
     public CustomerService(IUnitOfWork unitOfWork)
     {
@@ -26,61 +28,91 @@ public sealed class CustomerService : ICustomerService
 
     public void UpdateCustomer(Customer customer)
     {
-        throw new NotImplementedException();
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer));
+        _unitOfWork.CustomerRepository.Update(customer);
+        _unitOfWork.SaveChanges();
+        OnCustomerUpdated(customer);
     }
 
     public void RemoveCustomer(int customerId)
     {
-        throw new NotImplementedException();
+        Customer customer = _unitOfWork.CustomerRepository.GetById(customerId)
+            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
+        _unitOfWork.CustomerRepository.Delete(customer);
+        _unitOfWork.SaveChanges();
+        OnCustomerRemoved(customerId);
     }
 
     public Customer? FindCustomerById(int customerId)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CustomerRepository.GetById(customerId);
     }
 
     public IEnumerable<Customer> ListAllCustomers()
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CustomerRepository.Query(x => x.Activity.IsActive);
     }
 
-    public IEnumerable<int> ListAccountsByCustomer(int customerId)
+    public IEnumerable<Account> ListAccountsByCustomer(int customerId)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.AccountRepository.Query(x => x.Customer.CustomerId == customerId, x => x.Customer);
     }
 
-    public Task RegisterNewCustomerAsync(Customer customer)
+    public async Task RegisterNewCustomerAsync(Customer customer, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer));
+        await _unitOfWork.CustomerRepository.InsertAsync(customer, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnCustomerRegistered(customer);
     }
 
-    public Task UpdateCustomerAsync(Customer customer)
+    public async Task UpdateCustomerAsync(Customer customer, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer));
+        await _unitOfWork.CustomerRepository.UpdateAsync(customer);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnCustomerUpdated(customer);
     }
 
-    public Task RemoveCustomerAsync(int customerId)
+    public async Task RemoveCustomerAsync(int customerId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        Customer customer = _unitOfWork.CustomerRepository.GetById(customerId)
+            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
+        await _unitOfWork.CustomerRepository.DeleteAsync(customer);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnCustomerRemoved(customerId);
     }
 
-    public Task<Customer?> FindCustomerByIdAsync(int customerId)
+    public async Task<Customer?> FindCustomerByIdAsync(int customerId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.CustomerRepository.GetByIdAsync(customerId, cancellationToken);
     }
 
-    public Task<IEnumerable<Customer>> ListAllCustomersAsync()
+    public async Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.CustomerRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
-    public Task<IEnumerable<int>> ListAccountsByCustomerAsync(int customerId)
+    public async Task<IEnumerable<Account>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.AccountRepository.QueryAsync(x => x.Customer.CustomerId.Equals(customerId), cancellationToken, x => x.Customer);
     }
 
     private static void OnCustomerRegistered(Customer customer)
     {
         CustomerRegistered?.Invoke(customer);
+    }
+
+    private static void OnCustomerUpdated(Customer customer)
+    {
+        CustomerUpdated?.Invoke(customer);
+    }
+
+    private static void OnCustomerRemoved(int customerId)
+    {
+        CustomerRemoved?.Invoke(customerId);
     }
 }

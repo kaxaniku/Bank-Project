@@ -4,7 +4,7 @@ using MyBank.Application.Interfaces.Repositories;
 
 namespace MyBank.RepositoryTest;
 
-public class TransactionRepositoryTests : BaseRepositoryTests<Transaction>
+public class TransactionRepositoryTests : BaseRepositoryTests
 {
     private ITransactionRepository? _repository;
 

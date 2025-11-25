@@ -43,32 +43,32 @@ public sealed class TransactionService : ITransactionService
         throw new NotImplementedException();
     }
 
-    public Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount)
+    public Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task ProcessCardPaymentAsync(int cardId, decimal amount)
+    public Task ProcessCardPaymentAsync(int cardId, decimal amount, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> IsTransactionAllowedAsync(int accountId, decimal amount)
+    public Task<bool> IsTransactionAllowedAsync(int accountId, decimal amount, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Transaction?> GetTransactionAsync(int transactionId)
+    public Task<Transaction?> GetTransactionAsync(int transactionId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Transaction>> ListTransactionsAsync(int accountId)
+    public Task<IEnumerable<Transaction>> ListTransactionsAsync(int accountId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate)
+    public Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

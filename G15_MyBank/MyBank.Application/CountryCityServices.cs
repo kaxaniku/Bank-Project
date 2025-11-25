@@ -38,27 +38,27 @@ public sealed class CountryCityServices : ICountryCityServices
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Country>> ListAllCountriesAsync()
+    public Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Country?> GetCountryAsync(int countryId)
+    public Task<Country?> GetCountryAsync(int countryId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<City>> ListAllCitiesAsync()
+    public Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<City?> GetCityAsync(int cityId)
+    public Task<City?> GetCityAsync(int cityId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId)
+    public Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
