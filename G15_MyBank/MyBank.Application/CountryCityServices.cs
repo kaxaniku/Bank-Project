@@ -15,51 +15,51 @@ public sealed class CountryCityServices : ICountryCityServices
 
     public IEnumerable<Country> ListAllCountries()
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CountryRepository.Query(x => x.Activity.IsActive);
     }
 
     public Country? GetCountry(int countryId)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CountryRepository.GetById(countryId);
     }
 
     public IEnumerable<City> ListAllCities()
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CityRepository.Query(x => x.Activity.IsActive);
     }
 
     public City? GetCity(int cityId)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CityRepository.GetById(cityId);
     }
 
     public IEnumerable<City> ListCitiesByCountry(int countryId)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.CityRepository.Query(x => x.Country.CountryId == countryId, x => x.Country);
     }
 
-    public Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.CountryRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
-    public Task<Country?> GetCountryAsync(int countryId, CancellationToken cancellationToken)
+    public async Task<Country?> GetCountryAsync(int countryId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.CountryRepository.GetByIdAsync(countryId, cancellationToken);
     }
 
-    public Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.CityRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
-    public Task<City?> GetCityAsync(int cityId, CancellationToken cancellationToken)
+    public async Task<City?> GetCityAsync(int cityId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.CityRepository.GetByIdAsync(cityId, cancellationToken);
     }
 
-    public Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.CityRepository.QueryAsync(x => x.Country.CountryId == countryId, cancellationToken, x => x.Country);
     }
 }

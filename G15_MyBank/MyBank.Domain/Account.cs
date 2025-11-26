@@ -4,6 +4,13 @@ using MyBank.Domain.Interfaces;
 
 namespace MyBank.Domain;
 
+public enum AccountStatus : byte
+{
+    Active = 0,
+    Inactive = 1,
+    Blocked = 2
+}
+
 public sealed class Account : IDisable
 {
     [Key]
@@ -17,6 +24,8 @@ public sealed class Account : IDisable
 
     [Column(TypeName = "MONEY")]
     public decimal Balance { get; set; }
+
+    public AccountStatus Status { get; set; }
 
     public ActivityInfo Activity { get; set; } = null!;
 

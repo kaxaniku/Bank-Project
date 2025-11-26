@@ -1,4 +1,6 @@
-﻿namespace MyBank.Application.Interfaces.Services;
+﻿using MyBank.Domain;
+
+namespace MyBank.Application.Interfaces.Services;
 
 public interface ICardService
 {
@@ -6,10 +8,10 @@ public interface ICardService
     Task ActivateCardAsync(int cardId, CancellationToken cancellationToken);
     void BlockCard(int cardId);
     Task BlockCardAsync(int cardId, CancellationToken cancellationToken);
-    void IssueNewCard(int accountId);
-    Task IssueNewCardAsync(int accountId, CancellationToken cancellationToken);
-    IEnumerable<int> ListCardsByAccount(int accountId);
-    Task<IEnumerable<int>> ListCardsByAccountAsync(int accountId, CancellationToken cancellationToken);
-    void UnblockCard(int cardId);
-    Task UnblockCardAsync(int cardId, CancellationToken cancellationToken);
+    void SuspendCard(int cardId);
+    Task SuspendCardAsync(int cardId, CancellationToken cancellationToken);
+    void IssueNewCard(Card card);
+    Task IssueNewCardAsync(Card card, CancellationToken cancellationToken);
+    IEnumerable<Card> ListCardsByAccount(int accountId);
+    Task<IEnumerable<Card>> ListCardsByAccountAsync(int accountId, CancellationToken cancellationToken);
 }

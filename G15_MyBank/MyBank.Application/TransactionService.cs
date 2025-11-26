@@ -13,63 +13,198 @@ public sealed class TransactionService : ITransactionService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
+    public static event Action<Transaction>? TransactionMade;
+
     public void TransferMoney(int fromAccountId, int toAccountId, decimal amount)
     {
-        throw new NotImplementedException();
+        Account fromAccount = _unitOfWork.AccountRepository.GetById(fromAccountId)
+            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
+        Account toAccount = _unitOfWork.AccountRepository.GetById(toAccountId)
+            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
+        fromAccount.Balance -= amount;
+        toAccount.Balance += amount;
+
+        Transaction transaction = new()
+        {
+            FromAccountId = fromAccountId,
+            ToAccountId = toAccountId,
+            Amount = amount,
+            Description = $"Transfer from {fromAccount.AccountNumber} to {toAccount.AccountNumber}",
+            TransactionDate = DateTime.UtcNow
+        };
+
+        _unitOfWork.TransactionRepository.Insert(transaction);
+        _unitOfWork.AccountRepository.Update(fromAccount);
+        _unitOfWork.AccountRepository.Update(toAccount);
+        _unitOfWork.SaveChanges();
+        OnTransactionMade(transaction);
     }
 
-    public void ProcessCardPayment(int cardId, decimal amount)
+    public void ProcessCardPayment(int cardId, int recieverId, decimal amount)
     {
-        throw new NotImplementedException();
+        Card card = _unitOfWork.CardRepository.GetById(cardId)
+            ?? throw new InvalidOperationException($"Card with ID {cardId} does not exist.");
+        Account reciever = _unitOfWork.AccountRepository.GetById(recieverId)
+            ?? throw new InvalidOperationException($"Account with ID {recieverId} does not exist.");
+        Account account = card.Account;
+        account.Balance -= amount;
+        reciever.Balance += amount;
+
+        Transaction transaction = new()
+        {
+            FromAccountId = account.AccountId,
+            ToAccountId = recieverId,
+            Amount = amount,
+            Description = $"Card payment from card {card.CardNumber}",
+            TransactionDate = DateTime.UtcNow
+        };
+
+        _unitOfWork.TransactionRepository.Insert(transaction);
+        _unitOfWork.AccountRepository.Update(account);
+        _unitOfWork.AccountRepository.Update(reciever);
+        _unitOfWork.SaveChanges();
+        OnTransactionMade(transaction);
     }
 
-    public bool IsTransactionAllowed(int accountId, decimal amount)
+    public bool IsTransactionAllowed(int fromAccountId, int toAccountId, decimal amount)
     {
-        throw new NotImplementedException();
+        Account fromAccount = _unitOfWork.AccountRepository.GetById(fromAccountId)
+            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
+        Account toAccount = _unitOfWork.AccountRepository.GetById(toAccountId)
+            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
+
+        if (fromAccountId == toAccountId)
+        {
+            return false;
+        }
+
+        if(amount <= 0)
+        {
+            return false;
+        }
+
+        if(fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
+        {
+            return false;
+        }
+
+        return fromAccount.Balance >= amount;
     }
 
     public Transaction? GetTransaction(int transactionId)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.TransactionRepository.GetById(transactionId);
     }
 
     public IEnumerable<Transaction> ListTransactions(int accountId)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.TransactionRepository.Query(t => true);
     }
 
     public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.TransactionRepository.Query(x => 
+            (x.FromAccountId == accountId || x.ToAccountId == accountId) &&
+            x.TransactionDate >= fromDate &&
+            x.TransactionDate <= toDate);
     }
 
-    public Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
+    public async Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        Account fromAccount = await _unitOfWork.AccountRepository.GetByIdAsync(fromAccountId, cancellationToken)
+            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
+        Account toAccount = await _unitOfWork.AccountRepository.GetByIdAsync(toAccountId, cancellationToken)
+            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
+        fromAccount.Balance -= amount;
+        toAccount.Balance += amount;
+
+        Transaction transaction = new()
+        {
+            FromAccountId = fromAccountId,
+            ToAccountId = toAccountId,
+            Amount = amount,
+            Description = $"Transfer from {fromAccount.AccountNumber} to {toAccount.AccountNumber}",
+            TransactionDate = DateTime.UtcNow
+        };
+
+        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+        await _unitOfWork.AccountRepository.UpdateAsync(fromAccount);
+        await _unitOfWork.AccountRepository.UpdateAsync(toAccount);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnTransactionMade(transaction);
     }
 
-    public Task ProcessCardPaymentAsync(int cardId, decimal amount, CancellationToken cancellationToken)
+    public async Task ProcessCardPaymentAsync(int cardId, int recieverId, decimal amount, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, cancellationToken)
+            ?? throw new InvalidOperationException($"Card with ID {cardId} does not exist.");
+        Account reciever = await _unitOfWork.AccountRepository.GetByIdAsync(recieverId, cancellationToken)
+            ?? throw new InvalidOperationException($"Account with ID {recieverId} does not exist.");
+        Account account = card.Account;
+        account.Balance -= amount;
+        reciever.Balance += amount;
+
+        Transaction transaction = new()
+        {
+            FromAccountId = account.AccountId,
+            ToAccountId = recieverId,
+            Amount = amount,
+            Description = $"Card payment from card {card.CardNumber}",
+            TransactionDate = DateTime.UtcNow
+        };
+
+        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+        await _unitOfWork.AccountRepository.UpdateAsync(account);
+        await _unitOfWork.AccountRepository.UpdateAsync(reciever);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnTransactionMade(transaction);
     }
 
-    public Task<bool> IsTransactionAllowedAsync(int accountId, decimal amount, CancellationToken cancellationToken)
+    public async Task<bool> IsTransactionAllowedAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        Account fromAccount = await _unitOfWork.AccountRepository.GetByIdAsync(fromAccountId, cancellationToken)
+            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
+        Account toAccount = await _unitOfWork.AccountRepository.GetByIdAsync(toAccountId, cancellationToken)
+            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
+
+        if (fromAccountId == toAccountId)
+        {
+            return false;
+        }
+
+        if (amount <= 0)
+        {
+            return false;
+        }
+
+        if (fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
+        {
+            return false;
+        }
+
+        return fromAccount.Balance >= amount;
     }
 
-    public Task<Transaction?> GetTransactionAsync(int transactionId, CancellationToken cancellationToken)
+    public async Task<Transaction?> GetTransactionAsync(int transactionId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, cancellationToken);
     }
 
-    public Task<IEnumerable<Transaction>> ListTransactionsAsync(int accountId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(int accountId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.TransactionRepository.QueryAsync(t => true, cancellationToken);
     }
 
-    public Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.TransactionRepository.QueryAsync(x =>
+            (x.FromAccountId == accountId || x.ToAccountId == accountId) &&
+            x.TransactionDate >= fromDate &&
+            x.TransactionDate <= toDate, cancellationToken);
+    }
+
+    private static void OnTransactionMade(Transaction transaction)
+    {
+        TransactionMade?.Invoke(transaction);
     }
 }
