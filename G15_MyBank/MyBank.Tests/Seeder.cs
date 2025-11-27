@@ -151,11 +151,11 @@ namespace MyBank.Tests
         {
             return new List<Account>
             {
-                 new Account { AccountNumber = "0000000000000000", Balance = 0, Activity = new ActivityInfo()},
-                 new Account { AccountNumber = "0000000000000001", Balance = 10, Activity = new ActivityInfo()},
-                 new Account { AccountNumber = "0000000000000002", Balance = 100, Activity = new ActivityInfo()},
-                 new Account { AccountNumber = "0000000000000003", Balance = 1000, Activity = new ActivityInfo()},
-                 new Account { AccountNumber = "0000000000000004", Balance = 10000, Activity = new ActivityInfo()}
+                 new Account { AccountNumber = "0000000000000000", Balance = 0, Status = AccountStatus.Active, Activity = new ActivityInfo()},
+                 new Account { AccountNumber = "0000000000000001", Balance = 10, Status = AccountStatus.Active, Activity = new ActivityInfo()},
+                 new Account { AccountNumber = "0000000000000002", Balance = 100, Status = AccountStatus.Closed, Activity = new ActivityInfo()},
+                 new Account { AccountNumber = "0000000000000003", Balance = 1000, Status = AccountStatus.Frozen, Activity = new ActivityInfo()},
+                 new Account { AccountNumber = "0000000000000004", Balance = 10000, Status = AccountStatus.Active, Activity = new ActivityInfo()}
             };
         }
 

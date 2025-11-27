@@ -4,6 +4,13 @@ using MyBank.Domain.Interfaces;
 
 namespace MyBank.Domain;
 
+public enum AccountStatus
+{
+    Active = 1,
+    Frozen = 2,
+    Closed = 3
+}
+
 public sealed class Account : IDisable
 {
     [Key]
@@ -11,13 +18,15 @@ public sealed class Account : IDisable
 
     [MaxLength(20)]
     [Column(TypeName = "VARCHAR")]
-    // TODO: We need to add unique validation for AccountNumber in the DbContext configuration
+
     public string AccountNumber { get; set; } = null!;
 
     public Customer Customer { get; set; } = null!;
 
     [Column(TypeName = "MONEY")]
     public decimal Balance { get; set; }
+
+    public AccountStatus Status { get; set; }
 
     public ActivityInfo Activity { get; set; } = null!;
 

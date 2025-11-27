@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBank.Infrastructure;
 
@@ -12,9 +13,11 @@ using MyBank.Infrastructure;
 namespace MyBank.Infrastructure.Migrations
 {
     [DbContext(typeof(MyBankDbContext))]
-    partial class MyBankDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251126160516_AccountTableUpdate")]
+    partial class AccountTableUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
