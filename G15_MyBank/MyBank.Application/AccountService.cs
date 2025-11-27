@@ -17,10 +17,26 @@ public sealed class AccountService : IAccountService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public void OpenNewAccount(Account account)
+    public void OpenNewAccount(int customerId, string accountNumber, decimal initialBalance)
     {
-        if (account == null)
-            throw new ArgumentNullException(nameof(account));
+        if (string.IsNullOrWhiteSpace(accountNumber))
+            throw new ArgumentNullException(nameof(accountNumber));
+        if (initialBalance < 0)
+            throw new ArgumentOutOfRangeException(nameof(initialBalance), "Initial balance must be non-negative.");
+
+        var customer = _unitOfWork.CustomerRepository.GetById(customerId)
+            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
+
+        //TODO: Add additional business logic validations as needed.
+
+        var account = new Account
+        {
+            Customer = customer,
+            AccountNumber = accountNumber,
+            Balance = initialBalance,
+            Status = AccountStatus.Active
+        };
+
         _unitOfWork.AccountRepository.Insert(account);
         _unitOfWork.SaveChanges();
         OnAccountOpened(account);

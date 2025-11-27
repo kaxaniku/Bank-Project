@@ -1,4 +1,5 @@
-﻿using MyBank.Application.Interfaces.Repositories;
+﻿using MyBank.Application.Interfaces;
+using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -7,14 +8,16 @@ namespace MyBank.Application;
 public sealed class CustomerService : ICustomerService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmailService _emailService;
 
     public static event Action<Customer>? CustomerRegistered;
     public static event Action<Customer>? CustomerUpdated;
     public static event Action<int>? CustomerRemoved;
 
-    public CustomerService(IUnitOfWork unitOfWork)
+    public CustomerService(IUnitOfWork unitOfWork, IEmailService emailService)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
     }
 
     public void RegisterNewCustomer(Customer customer)
@@ -23,6 +26,7 @@ public sealed class CustomerService : ICustomerService
             throw new ArgumentNullException(nameof(customer));
         _unitOfWork.CustomerRepository.Insert(customer);
         _unitOfWork.SaveChanges();
+        // TODO: Send confirmation email.
         OnCustomerRegistered(customer);
     }
 

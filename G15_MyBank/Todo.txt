@@ -14,6 +14,10 @@
 13. Think how to check if UnitOfWork is disposed before performing any operation.+
 
 14. Implement proper IDisposable async pattern in unit of work and repositories.+
-15. Write down functionality which should we support in our project.
+15. Write down functionality which should we support in our project.+
 
-16. Move repository interfaces to the application module.
+16. Move repository interfaces to the application module.+
+
+17. Add Email message sender service.
+18. Send confirmation email after user registration.
+19. Implement functionality that allows manage confirmation mail templates not yet(To be discussed).
