@@ -5,8 +5,8 @@ namespace MyBank.Application.Interfaces.Services;
 
 public interface ICustomerService
 {
-    Customer? FindCustomerById(int customerId);
-    Task<Customer?> FindCustomerByIdAsync(int customerId, CancellationToken cancellationToken);
+    Customer FindCustomerById(int customerId);
+    Task<Customer> FindCustomerByIdAsync(int customerId, CancellationToken cancellationToken);
     IEnumerable<Account> ListAccountsByCustomer(int customerId);
     Task<IEnumerable<Account>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken);
     IEnumerable<Customer> ListAllCustomers();

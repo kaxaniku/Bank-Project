@@ -40,16 +40,20 @@ public sealed class CustomerService : ICustomerService
 
     public void RemoveCustomer(int customerId)
     {
-        Customer customer = _unitOfWork.CustomerRepository.GetById(customerId)
-            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
+        Customer customer = FindCustomerById(customerId);
+
         _unitOfWork.CustomerRepository.Delete(customer);
         _unitOfWork.SaveChanges();
         OnCustomerRemoved(customerId);
     }
 
-    public Customer? FindCustomerById(int customerId)
+    public Customer FindCustomerById(int customerId)
     {
-        return _unitOfWork.CustomerRepository.GetById(customerId);
+        Customer customer = _unitOfWork.CustomerRepository.GetById(customerId)
+            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
+        if (!customer.Activity.IsActive)
+            throw new InvalidOperationException($"Customer with ID {customerId} no longer exists.");
+        return customer;
     }
 
     public IEnumerable<Customer> ListAllCustomers()
@@ -83,16 +87,19 @@ public sealed class CustomerService : ICustomerService
 
     public async Task RemoveCustomerAsync(int customerId, CancellationToken cancellationToken)
     {
-        Customer customer = _unitOfWork.CustomerRepository.GetById(customerId)
-            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
+        Customer customer = await FindCustomerByIdAsync(customerId, cancellationToken);
         await _unitOfWork.CustomerRepository.DeleteAsync(customer);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnCustomerRemoved(customerId);
     }
 
-    public async Task<Customer?> FindCustomerByIdAsync(int customerId, CancellationToken cancellationToken)
+    public async Task<Customer> FindCustomerByIdAsync(int customerId, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.CustomerRepository.GetByIdAsync(customerId, cancellationToken);
+        Customer customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId, cancellationToken)
+            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
+        if (!customer.Activity.IsActive)
+            throw new InvalidOperationException($"Customer with ID {customerId} no longer exists.");
+        return customer;
     }
 
     public async Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken)

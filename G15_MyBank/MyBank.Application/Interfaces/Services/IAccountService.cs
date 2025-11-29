@@ -14,10 +14,8 @@ public interface IAccountService
     Task<decimal> CheckBalanceAsync(int accountId, CancellationToken cancellationToken);
     void CloseAccount(int accountId);
     Task CloseAccountAsync(int accountId, CancellationToken cancellationToken);
-    void DepositMoney(int accountId, decimal amount);
-    Task DepositMoneyAsync(int accountId, decimal amount, CancellationToken cancellationToken);
     void OpenNewAccount(int customerId, string accountNumber, decimal initialBalance);
-    Task OpenNewAccountAsync(Account account, CancellationToken cancellationToken);
-    void WithdrawMoney(int accountId, decimal amount);
-    Task WithdrawMoneyAsync(int accountId, decimal amount, CancellationToken cancellationToken);
+    Task OpenNewAccountAsync(int customerId, string accountNumber, decimal initialBalance, CancellationToken cancellationToken);
+    Account FindAccountById(int accountId);
+    Task<Account> FindAccountByIdAsync(int accountId, CancellationToken cancellationToken);
 }

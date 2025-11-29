@@ -11,6 +11,14 @@ public enum TransactionStatus : byte
     Blocked = 3
 }
 
+public enum TransactionType : byte
+{
+    Transfer = 0,
+    Deposit = 1,
+    Withdrawal = 2,
+    CardPayment = 3
+}
+
 public sealed class Transaction
 {
     [Key]
@@ -26,9 +34,11 @@ public sealed class Transaction
 
     public TransactionStatus Status { get; set; }
 
+    public TransactionType Type { get; set; }
+
     public int FromAccountId { get; set; }
     public int ToAccountId { get; set; }
 
-    public Account FromAccount { get; set; } = null!;
-    public Account ToAccount { get; set; } = null!;
+    public Account? FromAccount { get; set; }
+    public Account? ToAccount { get; set; }
 }

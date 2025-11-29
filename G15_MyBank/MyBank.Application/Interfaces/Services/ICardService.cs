@@ -14,4 +14,6 @@ public interface ICardService
     Task IssueNewCardAsync(Card card, CancellationToken cancellationToken);
     IEnumerable<Card> ListCardsByAccount(int accountId);
     Task<IEnumerable<Card>> ListCardsByAccountAsync(int accountId, CancellationToken cancellationToken);
+    Card FindCardById(int cardId);
+    Task<Card> FindCardByIdAsync(int cardId, CancellationToken cancellationToken);
 }

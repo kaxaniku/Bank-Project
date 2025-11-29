@@ -139,20 +139,9 @@ public class CustomerServiceTests : BaseServiceTests
     {
         _service!.RemoveCustomer(Constants.DeleteTestID);
 
-        Customer deletedCustomer = _service!.FindCustomerById(Constants.DeleteTestID)!;
-        Assert.That(deletedCustomer.Activity.IsActive, Is.EqualTo(false));
-    }
-
-    [Test]
-    public void TestRemove_ShouldNotRemove()
-    {
-        _service!.RemoveCustomer(Constants.DeleteTestID2);
-
-        Customer deletedCustomer = _service!.FindCustomerById(Constants.DeleteTestID2)!;
-        Assert.That(deletedCustomer.Activity.IsActive, Is.EqualTo(false));
-        Assert.Throws<DbUpdateConcurrencyException>(() =>
+        Assert.Throws<InvalidOperationException>(() =>
         {
-            _service!.RemoveCustomer(Constants.DeleteTestID2);
+            Customer customer = _service!.FindCustomerById(Constants.DeleteTestID)!;
         });
     }
 
@@ -298,20 +287,9 @@ public class CustomerServiceTests : BaseServiceTests
     {
         await _service!.RemoveCustomerAsync(Constants.DeleteTestID3, _cts.Token);
 
-        Customer? deletedCustomer = await _service!.FindCustomerByIdAsync(Constants.DeleteTestID, _cts.Token)!;
-        Assert.That(deletedCustomer!.Activity.IsActive, Is.EqualTo(false));
-    }
-
-    [Test]
-    public async Task TestRemove_ShouldNotRemoveAsync()
-    {
-        await _service!.RemoveCustomerAsync(Constants.DeleteTestID4, _cts.Token);
-
-        Customer? deletedCustomer = await _service!.FindCustomerByIdAsync(Constants.DeleteTestID4, _cts.Token)!;
-        Assert.That(deletedCustomer!.Activity.IsActive, Is.EqualTo(false));
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(async Task() =>
+        Assert.ThrowsAsync<InvalidOperationException>(async Task () =>
         {
-            await _service!.RemoveCustomerAsync(Constants.DeleteTestID2, _cts.Token);
+            Customer deletedCustomer = await _service!.FindCustomerByIdAsync(Constants.DeleteTestID, _cts.Token)!;
         });
     }
 

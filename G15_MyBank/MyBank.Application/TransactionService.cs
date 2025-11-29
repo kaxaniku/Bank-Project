@@ -1,4 +1,6 @@
-﻿using MyBank.Application.Interfaces.Repositories;
+﻿using System.Security.Principal;
+using System.Threading;
+using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -7,20 +9,39 @@ namespace MyBank.Application;
 public sealed class TransactionService : ITransactionService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAccountService _accountService;
+    private readonly ICardService _cardService;
 
-    public TransactionService(IUnitOfWork unitOfWork)
+    public TransactionService(IUnitOfWork unitOfWork, IAccountService accountService, ICardService cardService)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
+        _cardService = cardService;
     }
 
     public static event Action<Transaction>? TransactionMade;
 
     public void TransferMoney(int fromAccountId, int toAccountId, decimal amount)
     {
-        Account fromAccount = _unitOfWork.AccountRepository.GetById(fromAccountId)
-            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
-        Account toAccount = _unitOfWork.AccountRepository.GetById(toAccountId)
-            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
+        Account fromAccount = _accountService.FindAccountById(fromAccountId);
+        Account toAccount = _accountService.FindAccountById(toAccountId);
+
+        if(fromAccountId == toAccountId)
+        {
+            throw new InvalidOperationException("Cannot transfer money to the same account.");
+        }
+        if(amount <= 0)
+        {
+            throw new InvalidOperationException("Transfer amount must be greater than zero.");
+        }
+        if(fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Both accounts must be active to perform a transfer.");
+        }
+        if(fromAccount.Balance < amount)
+        {
+            throw new InvalidOperationException("Insufficient funds in the source account.");
+        }
         fromAccount.Balance -= amount;
         toAccount.Balance += amount;
 
@@ -30,6 +51,7 @@ public sealed class TransactionService : ITransactionService
             ToAccountId = toAccountId,
             Amount = amount,
             Description = $"Transfer from {fromAccount.AccountNumber} to {toAccount.AccountNumber}",
+            Type = TransactionType.Transfer,
             TransactionDate = DateTime.UtcNow
         };
 
@@ -40,13 +62,91 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
+    public void DepositMoney(int toAccountId, decimal amount)
+    {
+        Account toAccount = _accountService.FindAccountById(toAccountId);
+        if (amount <= 0)
+        {
+            throw new InvalidOperationException("Deposit amount must be greater than zero.");
+        }
+        if (toAccount.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Account must be active to perform a deposition.");
+        }
+        toAccount.Balance += amount;
+
+        Transaction transaction = new()
+        {
+            ToAccountId = toAccountId,
+            Amount = amount,
+            Description = $"Deposited money to {toAccount.AccountNumber}",
+            Type = TransactionType.Deposit,
+            TransactionDate = DateTime.UtcNow
+        };
+
+        _unitOfWork.TransactionRepository.Insert(transaction);
+        _unitOfWork.AccountRepository.Update(toAccount);
+        _unitOfWork.SaveChanges();
+        OnTransactionMade(transaction);
+    }
+
+    public void WithdrawMoney(int fromAccountId, decimal amount)
+    {
+        Account fromAccount = _accountService.FindAccountById(fromAccountId);
+        if (amount <= 0)
+        {
+            throw new InvalidOperationException("Withdrawl amount must be greater than zero.");
+        }
+        if (fromAccount.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Account must be active to perform a deposition.");
+        }
+        if (fromAccount.Balance < amount)
+        {
+            throw new InvalidOperationException("Insufficient funds in the source account.");
+        }
+        fromAccount.Balance -= amount;
+
+        Transaction transaction = new()
+        {
+            FromAccountId = fromAccountId,
+            Amount = amount,
+            Description = $"Withdrawn Money from {fromAccount.AccountNumber}",
+            Type = TransactionType.Withdrawal,
+            TransactionDate = DateTime.UtcNow
+        };
+
+        _unitOfWork.TransactionRepository.Insert(transaction);
+        _unitOfWork.AccountRepository.Update(fromAccount);
+        _unitOfWork.SaveChanges();
+        OnTransactionMade(transaction);
+    }
+
     public void ProcessCardPayment(int cardId, int recieverId, decimal amount)
     {
-        Card card = _unitOfWork.CardRepository.GetById(cardId)
-            ?? throw new InvalidOperationException($"Card with ID {cardId} does not exist.");
-        Account reciever = _unitOfWork.AccountRepository.GetById(recieverId)
-            ?? throw new InvalidOperationException($"Account with ID {recieverId} does not exist.");
+        Card card = _cardService.FindCardById(cardId);
+        Account reciever = _accountService.FindAccountById(recieverId);
         Account account = card.Account;
+        if (account.AccountId == recieverId)
+        {
+            throw new InvalidOperationException("Cannot transfer money to the same account.");
+        }
+        if (amount <= 0)
+        {
+            throw new InvalidOperationException("Transfer amount must be greater than zero.");
+        }
+        if (account.Status != AccountStatus.Active || reciever.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Both accounts must be active to perform a transfer.");
+        }
+        if (account.Balance < amount)
+        {
+            throw new InvalidOperationException("Insufficient funds in the source account.");
+        }
+        if (card.Status != CardStatus.Active)
+        {
+            throw new InvalidOperationException("Card must be active to process the payment");
+        }
         account.Balance -= amount;
         reciever.Balance += amount;
 
@@ -56,6 +156,7 @@ public sealed class TransactionService : ITransactionService
             ToAccountId = recieverId,
             Amount = amount,
             Description = $"Card payment from card {card.CardNumber}",
+            Type = TransactionType.CardPayment,
             TransactionDate = DateTime.UtcNow
         };
 
@@ -66,39 +167,14 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public bool IsTransactionAllowed(int fromAccountId, int toAccountId, decimal amount)
-    {
-        Account fromAccount = _unitOfWork.AccountRepository.GetById(fromAccountId)
-            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
-        Account toAccount = _unitOfWork.AccountRepository.GetById(toAccountId)
-            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
-
-        if (fromAccountId == toAccountId)
-        {
-            return false;
-        }
-
-        if(amount <= 0)
-        {
-            return false;
-        }
-
-        if(fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
-        {
-            return false;
-        }
-
-        return fromAccount.Balance >= amount;
-    }
-
     public Transaction? GetTransaction(int transactionId)
     {
         return _unitOfWork.TransactionRepository.GetById(transactionId);
     }
 
-    public IEnumerable<Transaction> ListTransactions(int accountId)
+    public IEnumerable<Transaction> ListTransactions(int accountId, TransactionType type)
     {
-        return _unitOfWork.TransactionRepository.Query(t => true);
+        return _unitOfWork.TransactionRepository.Query(x => x.Type == type);
     }
 
     public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate)
@@ -111,10 +187,24 @@ public sealed class TransactionService : ITransactionService
 
     public async Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
     {
-        Account fromAccount = await _unitOfWork.AccountRepository.GetByIdAsync(fromAccountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
-        Account toAccount = await _unitOfWork.AccountRepository.GetByIdAsync(toAccountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
+        Account fromAccount = await _accountService.FindAccountByIdAsync(fromAccountId, cancellationToken);
+        Account toAccount = await _accountService.FindAccountByIdAsync(toAccountId, cancellationToken);
+        if (fromAccountId == toAccountId)
+        {
+            throw new InvalidOperationException("Cannot transfer money to the same account.");
+        }
+        if (amount <= 0)
+        {
+            throw new InvalidOperationException("Transfer amount must be greater than zero.");
+        }
+        if (fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Both accounts must be active to perform a transfer.");
+        }
+        if (fromAccount.Balance < amount)
+        {
+            throw new InvalidOperationException("Insufficient funds in the source account.");
+        }
         fromAccount.Balance -= amount;
         toAccount.Balance += amount;
 
@@ -134,13 +224,91 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
+    public async Task DepositMoneyAsync(int toAccountId, decimal amount, CancellationToken cancellationToken)
+    {
+        Account toAccount = await _accountService.FindAccountByIdAsync(toAccountId, cancellationToken);
+        if (amount <= 0)
+        {
+            throw new InvalidOperationException("Deposit amount must be greater than zero.");
+        }
+        if (toAccount.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Account must be active to perform a deposition.");
+        }
+        toAccount.Balance += amount;
+
+        Transaction transaction = new()
+        {
+            ToAccountId = toAccountId,
+            Amount = amount,
+            Description = $"Deposited money to {toAccount.AccountNumber}",
+            Type = TransactionType.Deposit,
+            TransactionDate = DateTime.UtcNow
+        };
+
+        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+        await _unitOfWork.AccountRepository.UpdateAsync(toAccount);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnTransactionMade(transaction);
+    }
+
+    public async Task WithdrawMoneyAsync(int fromAccountId, decimal amount, CancellationToken cancellationToken)
+    {
+        Account fromAccount = await _accountService.FindAccountByIdAsync(fromAccountId, cancellationToken);
+        if (amount <= 0)
+        {
+            throw new InvalidOperationException("Withdrawl amount must be greater than zero.");
+        }
+        if (fromAccount.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Account must be active to perform a deposition.");
+        }
+        if (fromAccount.Balance < amount)
+        {
+            throw new InvalidOperationException("Insufficient funds in the source account.");
+        }
+        fromAccount.Balance -= amount;
+
+        Transaction transaction = new()
+        {
+            FromAccountId = fromAccountId,
+            Amount = amount,
+            Description = $"Withdrawn Money from {fromAccount.AccountNumber}",
+            Type = TransactionType.Withdrawal,
+            TransactionDate = DateTime.UtcNow
+        };
+
+        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+        await _unitOfWork.AccountRepository.UpdateAsync(fromAccount);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnTransactionMade(transaction);
+    }
+
     public async Task ProcessCardPaymentAsync(int cardId, int recieverId, decimal amount, CancellationToken cancellationToken)
     {
-        Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, cancellationToken)
-            ?? throw new InvalidOperationException($"Card with ID {cardId} does not exist.");
-        Account reciever = await _unitOfWork.AccountRepository.GetByIdAsync(recieverId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {recieverId} does not exist.");
+        Card card = await _cardService.FindCardByIdAsync(cardId, cancellationToken);
+        Account reciever = await _accountService.FindAccountByIdAsync(recieverId, cancellationToken);
         Account account = card.Account;
+        if (account.AccountId == recieverId)
+        {
+            throw new InvalidOperationException("Cannot transfer money to the same account.");
+        }
+        if (amount <= 0)
+        {
+            throw new InvalidOperationException("Transfer amount must be greater than zero.");
+        }
+        if (account.Status != AccountStatus.Active || reciever.Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException("Both accounts must be active to perform a transfer.");
+        }
+        if (account.Balance < amount)
+        {
+            throw new InvalidOperationException("Insufficient funds in the source account.");
+        }
+        if (card.Status != CardStatus.Active)
+        {
+            throw new InvalidOperationException("Card must be active to process the payment");
+        }
         account.Balance -= amount;
         reciever.Balance += amount;
 
@@ -150,6 +318,7 @@ public sealed class TransactionService : ITransactionService
             ToAccountId = recieverId,
             Amount = amount,
             Description = $"Card payment from card {card.CardNumber}",
+            Type = TransactionType.CardPayment,
             TransactionDate = DateTime.UtcNow
         };
 
@@ -160,39 +329,14 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public async Task<bool> IsTransactionAllowedAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
-    {
-        Account fromAccount = await _unitOfWork.AccountRepository.GetByIdAsync(fromAccountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {fromAccountId} does not exist.");
-        Account toAccount = await _unitOfWork.AccountRepository.GetByIdAsync(toAccountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {toAccountId} does not exist.");
-
-        if (fromAccountId == toAccountId)
-        {
-            return false;
-        }
-
-        if (amount <= 0)
-        {
-            return false;
-        }
-
-        if (fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
-        {
-            return false;
-        }
-
-        return fromAccount.Balance >= amount;
-    }
-
     public async Task<Transaction?> GetTransactionAsync(int transactionId, CancellationToken cancellationToken)
     {
         return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, cancellationToken);
     }
 
-    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(int accountId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(int accountId, TransactionType type, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.TransactionRepository.QueryAsync(t => true, cancellationToken);
+        return await _unitOfWork.TransactionRepository.QueryAsync(x => x.Type == type, cancellationToken);
     }
 
     public async Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)

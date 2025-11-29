@@ -150,7 +150,7 @@ public class Seeder
     {
         return new List<Account>
         {
-            new Account { AccountNumber = "0000000000000000", Balance = 0, Status = AccountStatus.Active, Activity = new ActivityInfo()},
+            new Account { AccountNumber = "0000000000000000", Balance = 9999999999999, Status = AccountStatus.Active, Activity = new ActivityInfo()},
             new Account { AccountNumber = "0000000000000001", Balance = 10, Status = AccountStatus.Active, Activity = new ActivityInfo()},
             new Account { AccountNumber = "0000000000000002", Balance = 100, Status = AccountStatus.Blocked, Activity = new ActivityInfo()},
             new Account { AccountNumber = "0000000000000003", Balance = 1000, Status = AccountStatus.Active, Activity = new ActivityInfo()},

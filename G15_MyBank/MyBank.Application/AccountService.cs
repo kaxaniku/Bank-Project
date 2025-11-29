@@ -7,14 +7,16 @@ namespace MyBank.Application;
 public sealed class AccountService : IAccountService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICustomerService _customerService;
 
     public static event Action<Account>? AccountOpened;
     public static event Action<Account>? AccountUpdated;
     public static event Action<int>? AccountClosed;
 
-    public AccountService(IUnitOfWork unitOfWork)
+    public AccountService(IUnitOfWork unitOfWork, ICustomerService customerService, ITransactionService transactionService)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
     }
 
     public void OpenNewAccount(int customerId, string accountNumber, decimal initialBalance)
@@ -24,14 +26,11 @@ public sealed class AccountService : IAccountService
         if (initialBalance < 0)
             throw new ArgumentOutOfRangeException(nameof(initialBalance), "Initial balance must be non-negative.");
 
-        var customer = _unitOfWork.CustomerRepository.GetById(customerId)
-            ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
-
-        //TODO: Add additional business logic validations as needed.
+        var customer = _customerService.FindCustomerById(customerId);
 
         var account = new Account
         {
-            Customer = customer,
+            Customer = customer!,
             AccountNumber = accountNumber,
             Balance = initialBalance,
             Status = AccountStatus.Active
@@ -44,8 +43,8 @@ public sealed class AccountService : IAccountService
 
     public void CloseAccount(int accountId)
     {
-        Account account = _unitOfWork.AccountRepository.GetById(accountId)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        Account account = FindAccountById(accountId);
+
         _unitOfWork.AccountRepository.Delete(account);
         _unitOfWork.SaveChanges();
         OnAccountClosed(accountId);
@@ -53,9 +52,9 @@ public sealed class AccountService : IAccountService
 
     public void ActivateAccount(int accountId)
     {
-        Account account = _unitOfWork.AccountRepository.GetById(accountId)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        Account account = FindAccountById(accountId);
         account.Status = AccountStatus.Active;
+
         _unitOfWork.AccountRepository.Update(account);
         _unitOfWork.SaveChanges();
         OnAccountUpdated(account);
@@ -63,9 +62,9 @@ public sealed class AccountService : IAccountService
 
     public void DeactivateAccount(int accountId)
     {
-        Account account = _unitOfWork.AccountRepository.GetById(accountId)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        Account account = FindAccountById(accountId);
         account.Status = AccountStatus.Inactive;
+
         _unitOfWork.AccountRepository.Update(account);
         _unitOfWork.SaveChanges();
         OnAccountUpdated(account);
@@ -73,9 +72,9 @@ public sealed class AccountService : IAccountService
 
     public void BlockAccount(int accountId)
     {
-        Account account = _unitOfWork.AccountRepository.GetById(accountId)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        Account account = FindAccountById(accountId);
         account.Status = AccountStatus.Blocked;
+
         _unitOfWork.AccountRepository.Update(account);
         _unitOfWork.SaveChanges();
         OnAccountUpdated(account);
@@ -83,35 +82,37 @@ public sealed class AccountService : IAccountService
 
     public decimal CheckBalance(int accountId)
     {
-        Account account = _unitOfWork.AccountRepository.GetById(accountId)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        Account account = FindAccountById(accountId);
+
         return account.Balance;
     }
 
-    public void DepositMoney(int accountId, decimal amount)
+    public Account FindAccountById(int accountId)
     {
         Account account = _unitOfWork.AccountRepository.GetById(accountId)
             ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
-        account.Balance += amount;
-        _unitOfWork.AccountRepository.Update(account);
-        _unitOfWork.SaveChanges();
-        OnAccountUpdated(account);
+        if (!account.Activity.IsActive)
+            throw new InvalidOperationException($"Account with ID {accountId} no longer exists.");
+        return account;
     }
 
-    public void WithdrawMoney(int accountId, decimal amount)
+    public async Task OpenNewAccountAsync(int customerId, string accountNumber, decimal initialBalance, CancellationToken cancellationToken)
     {
-        Account account = _unitOfWork.AccountRepository.GetById(accountId)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
-        account.Balance -= amount;
-        _unitOfWork.AccountRepository.Update(account);
-        _unitOfWork.SaveChanges();
-        OnAccountUpdated(account);
-    }
+        if (string.IsNullOrWhiteSpace(accountNumber))
+            throw new ArgumentNullException(nameof(accountNumber));
+        if (initialBalance < 0)
+            throw new ArgumentOutOfRangeException(nameof(initialBalance), "Initial balance must be non-negative.");
 
-    public async Task OpenNewAccountAsync(Account account, CancellationToken cancellationToken)
-    {
-        if (account == null)
-            throw new ArgumentNullException(nameof(account));
+        var customer = await _customerService.FindCustomerByIdAsync(customerId, cancellationToken);
+
+        var account = new Account
+        {
+            Customer = customer!,
+            AccountNumber = accountNumber,
+            Balance = initialBalance,
+            Status = AccountStatus.Active
+        };
+
         await _unitOfWork.AccountRepository.InsertAsync(account, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnAccountOpened(account);
@@ -119,8 +120,7 @@ public sealed class AccountService : IAccountService
 
     public async Task CloseAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        var account = await FindAccountByIdAsync(accountId, cancellationToken);
         await _unitOfWork.AccountRepository.DeleteAsync(account);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnAccountClosed(accountId);
@@ -128,9 +128,9 @@ public sealed class AccountService : IAccountService
 
     public async Task ActivateAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        var account = await FindAccountByIdAsync(accountId, cancellationToken);
         account.Status = AccountStatus.Active;
+
         await _unitOfWork.AccountRepository.UpdateAsync(account);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnAccountUpdated(account);
@@ -138,9 +138,9 @@ public sealed class AccountService : IAccountService
 
     public async Task DeactivateAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        var account = await FindAccountByIdAsync(accountId, cancellationToken);
         account.Status = AccountStatus.Inactive;
+
         await _unitOfWork.AccountRepository.UpdateAsync(account);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnAccountUpdated(account);
@@ -148,9 +148,9 @@ public sealed class AccountService : IAccountService
 
     public async Task BlockAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        var account = await FindAccountByIdAsync(accountId, cancellationToken);
         account.Status = AccountStatus.Blocked;
+
         await _unitOfWork.AccountRepository.UpdateAsync(account);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnAccountUpdated(account);
@@ -158,29 +158,17 @@ public sealed class AccountService : IAccountService
 
     public async Task<decimal> CheckBalanceAsync(int accountId, CancellationToken cancellationToken)
     {
-        Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        var account = await FindAccountByIdAsync(accountId, cancellationToken);
         return account.Balance;
     }
 
-    public async Task DepositMoneyAsync(int accountId, decimal amount, CancellationToken cancellationToken)
+    public async Task<Account> FindAccountByIdAsync(int accountId, CancellationToken cancellationToken)
     {
         Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
             ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
-        account.Balance += amount;
-        await _unitOfWork.AccountRepository.UpdateAsync(account);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        OnAccountUpdated(account);
-    }
-
-    public async Task WithdrawMoneyAsync(int accountId, decimal amount, CancellationToken cancellationToken)
-    {
-        Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
-                    ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
-        account.Balance -= amount;
-        await _unitOfWork.AccountRepository.UpdateAsync(account);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        OnAccountUpdated(account);
+        if (!account.Activity.IsActive)
+            throw new InvalidOperationException($"Account with ID {accountId} no longer exists.");
+        return account;
     }
 
     private static void OnAccountOpened(Account account)

@@ -1,5 +1,4 @@
-﻿using System.Security.Principal;
-using MyBank.Application.Interfaces.Repositories;
+﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -71,6 +70,15 @@ public sealed class CardService : ICardService
         return _unitOfWork.CardRepository.Query(x => x.Account.AccountId == accountId, x => x.Account);
     }
 
+    public Card FindCardById(int cardId)
+    {
+        Card card = _unitOfWork.CardRepository.GetById(cardId)
+            ?? throw new InvalidOperationException($"Card with ID {cardId} does not exist.");
+        if (!card.Activity.IsActive)
+            throw new InvalidOperationException($"Card with ID {cardId} no longer exists.");
+        return card;
+    }
+
     public async Task IssueNewCardAsync(Card card, CancellationToken cancellationToken)
     {
         if (card == null)
@@ -117,6 +125,15 @@ public sealed class CardService : ICardService
         await _unitOfWork.CardRepository.DeleteAsync(card);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnCardClosed(cardId);
+    }
+
+    public async Task<Card> FindCardByIdAsync(int cardId, CancellationToken cancellationToken)
+    {
+        Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, cancellationToken)
+            ?? throw new InvalidOperationException($"Card with ID {cardId} does not exist.");
+        if (!card.Activity.IsActive)
+            throw new InvalidOperationException($"Card with ID {cardId} no longer exists.");
+        return card;
     }
 
     public async Task<IEnumerable<Card>> ListCardsByAccountAsync(int accountId, CancellationToken cancellationToken)
