@@ -1,5 +1,4 @@
-﻿using MyBank.Application.Interfaces;
-using MyBank.Application.Interfaces.Repositories;
+﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -26,7 +25,7 @@ public sealed class CustomerService : ICustomerService
             throw new ArgumentNullException(nameof(customer));
         _unitOfWork.CustomerRepository.Insert(customer);
         _unitOfWork.SaveChanges();
-        // TODO: Send confirmation email.
+        _emailService.SendEmail(customer.Email, "Welcome to MyBank", "Thank you for registering with MyBank.");
         OnCustomerRegistered(customer);
     }
 
@@ -69,6 +68,7 @@ public sealed class CustomerService : ICustomerService
             throw new ArgumentNullException(nameof(customer));
         await _unitOfWork.CustomerRepository.InsertAsync(customer, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _emailService.SendEmailAsync(customer.Email, "Welcome to MyBank", "Thank you for registering with MyBank.");
         OnCustomerRegistered(customer);
     }
 

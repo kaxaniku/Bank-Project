@@ -1,5 +1,6 @@
-﻿using System.Net.Mail;
-using MyBank.Application.Interfaces;
+﻿using System.Net;
+using System.Net.Mail;
+using MyBank.Application.Interfaces.Services;
 
 namespace MyBank.Application;
 
@@ -11,17 +12,43 @@ public sealed class EmailService : IEmailService
     {
         _emailSettings = emailSettings;
     }
-
-    public void SendEmail(string from, string to, string subject, string body)
+    public void SendEmail(string to, string subject, string body)
     {
-        using SmtpClient client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort);
-        using MailMessage mailMessage = new MailMessage(from, to, subject, body);
-        client.Send(mailMessage);
+        var message = new MailMessage(_emailSettings.FromAddress, to, subject, body)
+        {
+            IsBodyHtml = true
+        };
+
+        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
+        {
+            Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password),
+            EnableSsl = true
+        };
+
+        client.Send(message);
+    }
+
+    public async Task SendEmailAsync(string to, string subject, string body)
+    {
+        var message = new MailMessage(_emailSettings.FromAddress, to, subject, body)
+        {
+            IsBodyHtml = true
+        };
+
+        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
+        {
+            Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password),
+            EnableSsl = true
+        };
+
+        await client.SendMailAsync(message);
     }
 }
 
 public sealed class EmailSettings
 {
-    public string SmtpServer { get; set; }
+    public string? SmtpServer { get; set; }
     public int SmtpPort { get; set; }
+    public string Password { get; set; } = string.Empty;
+    public string FromAddress { get; set; } = string.Empty;
 }

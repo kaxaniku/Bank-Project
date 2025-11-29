@@ -13,7 +13,12 @@ public class CustomerServiceTests : BaseServiceTests
     [SetUp]
     public void Setup()
     {
-        _service = new CustomerService(_unitOfWork!);
+        EmailSettings settings = new EmailSettings();
+        settings.SmtpServer = "smtp.gmail.com";
+        settings.SmtpPort = 587;
+        settings.Password = "mhwg rwoe bkek svhs";
+        settings.FromAddress = "knindustrybank@gmail.com";
+        _service = new CustomerService(_unitOfWork!, new EmailService(settings));
     }
 
     [Test]
@@ -26,7 +31,7 @@ public class CustomerServiceTests : BaseServiceTests
             LastName = "User",
             Gender = Gender.Male,
             DateOfBirth = new DateTime(1990, 1, 1),
-            Email = "TestUser@Gmail.com",
+            Email = "knindustrybank@gmail.com",
             PhoneNumber = "+1234567890",
             Address = new AddressInfo
             {
@@ -185,7 +190,7 @@ public class CustomerServiceTests : BaseServiceTests
             LastName = "User",
             Gender = Gender.Male,
             DateOfBirth = new DateTime(1990, 1, 1),
-            Email = "TestUser@Gmail.com",
+            Email = "knindustrybank@gmail.com",
             PhoneNumber = "+1234567890",
             Address = new AddressInfo
             {
