@@ -13,7 +13,7 @@ public sealed class AccountService : IAccountService
     public static event Action<Account>? AccountUpdated;
     public static event Action<int>? AccountClosed;
 
-    public AccountService(IUnitOfWork unitOfWork, ICustomerService customerService, ITransactionService transactionService)
+    public AccountService(IUnitOfWork unitOfWork, ICustomerService customerService)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
@@ -21,16 +21,13 @@ public sealed class AccountService : IAccountService
 
     public void OpenNewAccount(int customerId, string accountNumber, decimal initialBalance)
     {
-        if (string.IsNullOrWhiteSpace(accountNumber))
-            throw new ArgumentNullException(nameof(accountNumber));
-        if (initialBalance < 0)
-            throw new ArgumentOutOfRangeException(nameof(initialBalance), "Initial balance must be non-negative.");
+        ArgumentException.ThrowIfNullOrWhiteSpace(accountNumber);
+        ArgumentOutOfRangeException.ThrowIfNegative(initialBalance, nameof(initialBalance));
 
         var customer = _customerService.FindCustomerById(customerId);
-
         var account = new Account
         {
-            Customer = customer!,
+            Customer = customer,
             AccountNumber = accountNumber,
             Balance = initialBalance,
             Status = AccountStatus.Active
@@ -43,7 +40,7 @@ public sealed class AccountService : IAccountService
 
     public void CloseAccount(int accountId)
     {
-        Account account = FindAccountById(accountId);
+        Account account = FindAccount(accountId);
 
         _unitOfWork.AccountRepository.Delete(account);
         _unitOfWork.SaveChanges();
@@ -52,7 +49,9 @@ public sealed class AccountService : IAccountService
 
     public void ActivateAccount(int accountId)
     {
-        Account account = FindAccountById(accountId);
+        Account account = FindAccount(accountId);
+        if (account.Status == AccountStatus.Active)
+            throw new InvalidOperationException($"Account with ID {accountId} is already active.");
         account.Status = AccountStatus.Active;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -62,7 +61,9 @@ public sealed class AccountService : IAccountService
 
     public void DeactivateAccount(int accountId)
     {
-        Account account = FindAccountById(accountId);
+        Account account = FindAccount(accountId);
+        if (account.Status == AccountStatus.Inactive)
+            throw new InvalidOperationException($"Account with ID {accountId} is already inactive.");
         account.Status = AccountStatus.Inactive;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -72,7 +73,9 @@ public sealed class AccountService : IAccountService
 
     public void BlockAccount(int accountId)
     {
-        Account account = FindAccountById(accountId);
+        Account account = FindAccount(accountId);
+        if (account.Status == AccountStatus.Blocked)
+            throw new InvalidOperationException($"Account with ID {accountId} is already blocked.");
         account.Status = AccountStatus.Blocked;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -82,12 +85,12 @@ public sealed class AccountService : IAccountService
 
     public decimal CheckBalance(int accountId)
     {
-        Account account = FindAccountById(accountId);
+        Account account = FindAccount(accountId);
 
         return account.Balance;
     }
 
-    public Account FindAccountById(int accountId)
+    public Account FindAccount(int accountId)
     {
         Account account = _unitOfWork.AccountRepository.GetById(accountId)
             ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");

@@ -23,8 +23,8 @@ public sealed class TransactionService : ITransactionService
 
     public void TransferMoney(int fromAccountId, int toAccountId, decimal amount)
     {
-        Account fromAccount = _accountService.FindAccountById(fromAccountId);
-        Account toAccount = _accountService.FindAccountById(toAccountId);
+        Account fromAccount = _accountService.FindAccount(fromAccountId);
+        Account toAccount = _accountService.FindAccount(toAccountId);
 
         if(fromAccountId == toAccountId)
         {
@@ -64,7 +64,7 @@ public sealed class TransactionService : ITransactionService
 
     public void DepositMoney(int toAccountId, decimal amount)
     {
-        Account toAccount = _accountService.FindAccountById(toAccountId);
+        Account toAccount = _accountService.FindAccount(toAccountId);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Deposit amount must be greater than zero.");
@@ -92,7 +92,7 @@ public sealed class TransactionService : ITransactionService
 
     public void WithdrawMoney(int fromAccountId, decimal amount)
     {
-        Account fromAccount = _accountService.FindAccountById(fromAccountId);
+        Account fromAccount = _accountService.FindAccount(fromAccountId);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Withdrawl amount must be greater than zero.");
@@ -125,7 +125,7 @@ public sealed class TransactionService : ITransactionService
     public void ProcessCardPayment(int cardId, int recieverId, decimal amount)
     {
         Card card = _cardService.FindCardById(cardId);
-        Account reciever = _accountService.FindAccountById(recieverId);
+        Account reciever = _accountService.FindAccount(recieverId);
         Account account = card.Account;
         if (account.AccountId == recieverId)
         {

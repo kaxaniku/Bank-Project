@@ -33,7 +33,7 @@ public sealed class CardService : ICardService
             throw new ArgumentOutOfRangeException("Expiration date must be in the future.");
         }
 
-        Account account = _accountService.FindAccountById(accountId);
+        Account account = _accountService.FindAccount(accountId);
 
         Card card = new Card()
         {

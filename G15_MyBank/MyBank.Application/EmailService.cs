@@ -12,6 +12,7 @@ public sealed class EmailService : IEmailService
     {
         _emailSettings = emailSettings;
     }
+
     public void SendEmail(string to, string subject, string body)
     {
         var message = new MailMessage(_emailSettings.FromAddress, to, subject, body)
