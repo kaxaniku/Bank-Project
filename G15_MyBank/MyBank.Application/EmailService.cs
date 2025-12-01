@@ -12,6 +12,7 @@ public sealed class EmailService : IEmailService
     {
         _emailSettings = emailSettings;
     }
+    
     public void SendEmail(string to, string subject, string body)
     {
         var message = new MailMessage(_emailSettings.FromAddress, to, subject, body)
@@ -35,11 +36,9 @@ public sealed class EmailService : IEmailService
             IsBodyHtml = true
         };
 
-        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
-        {
-            Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password),
-            EnableSsl = true
-        };
+        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort);
+        client.Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password);
+        client.EnableSsl = true;
 
         await client.SendMailAsync(message);
     }

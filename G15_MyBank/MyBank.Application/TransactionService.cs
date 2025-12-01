@@ -27,21 +27,14 @@ public sealed class TransactionService : ITransactionService
         Account toAccount = _accountService.FindAccountById(toAccountId);
 
         if(fromAccountId == toAccountId)
-        {
             throw new InvalidOperationException("Cannot transfer money to the same account.");
-        }
         if(amount <= 0)
-        {
             throw new InvalidOperationException("Transfer amount must be greater than zero.");
-        }
         if(fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
-        {
             throw new InvalidOperationException("Both accounts must be active to perform a transfer.");
-        }
         if(fromAccount.Balance < amount)
-        {
             throw new InvalidOperationException("Insufficient funds in the source account.");
-        }
+
         fromAccount.Balance -= amount;
         toAccount.Balance += amount;
 

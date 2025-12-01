@@ -30,7 +30,7 @@ public sealed class AccountService : IAccountService
 
         var account = new Account
         {
-            Customer = customer!,
+            Customer = customer,
             AccountNumber = accountNumber,
             Balance = initialBalance,
             Status = AccountStatus.Active

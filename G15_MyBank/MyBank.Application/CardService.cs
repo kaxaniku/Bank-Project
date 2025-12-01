@@ -35,7 +35,7 @@ public sealed class CardService : ICardService
 
         Account account = _accountService.FindAccountById(accountId);
 
-        Card card = new Card()
+        Card card = new Card
         {
             CardNumber = cardNumber,
             CardType = (CardType)cardType,

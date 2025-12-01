@@ -18,7 +18,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return _unitOfWork.CountryRepository.Query(x => x.Activity.IsActive);
     }
 
-    public Country? GetCountry(int countryId)
+    public Country GetCountry(int countryId)
     {
         Country customer = _unitOfWork.CountryRepository.GetById(countryId)
             ?? throw new InvalidOperationException($"Country with ID {countryId} does not exist.");
