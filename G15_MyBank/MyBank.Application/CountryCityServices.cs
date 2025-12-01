@@ -20,7 +20,11 @@ public sealed class CountryCityServices : ICountryCityServices
 
     public Country? GetCountry(int countryId)
     {
-        return _unitOfWork.CountryRepository.GetById(countryId);
+        Country customer = _unitOfWork.CountryRepository.GetById(countryId)
+            ?? throw new InvalidOperationException($"Country with ID {countryId} does not exist.");
+        if (!customer.Activity.IsActive)
+            throw new InvalidOperationException($"Country with ID {countryId} no longer exists.");
+        return customer;
     }
 
     public IEnumerable<City> ListAllCities()
@@ -30,7 +34,11 @@ public sealed class CountryCityServices : ICountryCityServices
 
     public City? GetCity(int cityId)
     {
-        return _unitOfWork.CityRepository.GetById(cityId);
+        City city = _unitOfWork.CityRepository.GetById(cityId)
+            ?? throw new InvalidOperationException($"City with ID {cityId} does not exist.");
+        if (!city.Activity.IsActive)
+            throw new InvalidOperationException($"City with ID {cityId} no longer exists.");
+        return city;
     }
 
     public IEnumerable<City> ListCitiesByCountry(int countryId)
@@ -45,7 +53,11 @@ public sealed class CountryCityServices : ICountryCityServices
 
     public async Task<Country?> GetCountryAsync(int countryId, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.CountryRepository.GetByIdAsync(countryId, cancellationToken);
+        Country customer = await _unitOfWork.CountryRepository.GetByIdAsync(countryId, cancellationToken)
+            ?? throw new InvalidOperationException($"Country with ID {countryId} does not exist.");
+        if (!customer.Activity.IsActive)
+            throw new InvalidOperationException($"Country with ID {countryId} no longer exists.");
+        return customer;
     }
 
     public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken)
@@ -55,7 +67,11 @@ public sealed class CountryCityServices : ICountryCityServices
 
     public async Task<City?> GetCityAsync(int cityId, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.CityRepository.GetByIdAsync(cityId, cancellationToken);
+        City city = await _unitOfWork.CityRepository.GetByIdAsync(cityId, cancellationToken)
+            ?? throw new InvalidOperationException($"City with ID {cityId} does not exist.");
+        if (!city.Activity.IsActive)
+            throw new InvalidOperationException($"City with ID {cityId} no longer exists.");
+        return city;
     }
 
     public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
