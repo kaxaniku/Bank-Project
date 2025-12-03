@@ -55,10 +55,21 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        _unitOfWork.TransactionRepository.Insert(transaction);
-        _unitOfWork.AccountRepository.Update(fromAccount);
-        _unitOfWork.AccountRepository.Update(toAccount);
-        _unitOfWork.SaveChanges();
+        try
+        {
+            _unitOfWork.BeginTransaction();
+            _unitOfWork.TransactionRepository.Insert(transaction);
+            _unitOfWork.AccountRepository.Update(fromAccount);
+            _unitOfWork.AccountRepository.Update(toAccount);
+            _unitOfWork.SaveChanges();
+            _unitOfWork.Commit();
+        }
+        catch
+        {
+            _unitOfWork.Rollback();
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 
@@ -84,9 +95,20 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        _unitOfWork.TransactionRepository.Insert(transaction);
-        _unitOfWork.AccountRepository.Update(toAccount);
-        _unitOfWork.SaveChanges();
+        try
+        {
+            _unitOfWork.BeginTransaction();
+            _unitOfWork.TransactionRepository.Insert(transaction);
+            _unitOfWork.AccountRepository.Update(toAccount);
+            _unitOfWork.SaveChanges();
+            _unitOfWork.Commit();
+        }
+        catch
+        {
+            _unitOfWork.Rollback();
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 
@@ -116,15 +138,26 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        _unitOfWork.TransactionRepository.Insert(transaction);
-        _unitOfWork.AccountRepository.Update(fromAccount);
-        _unitOfWork.SaveChanges();
+        try
+        {
+            _unitOfWork.BeginTransaction();
+            _unitOfWork.TransactionRepository.Insert(transaction);
+            _unitOfWork.AccountRepository.Update(fromAccount);
+            _unitOfWork.SaveChanges();
+            _unitOfWork.Commit();
+        }
+        catch
+        {
+            _unitOfWork.Rollback();
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 
     public void ProcessCardPayment(int cardId, int recieverId, decimal amount)
     {
-        Card card = _cardService.FindCardById(cardId);
+        Card card = _cardService.FindCard(cardId);
         Account reciever = _accountService.FindAccount(recieverId);
         Account account = card.Account;
         if (account.AccountId == recieverId)
@@ -160,10 +193,21 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        _unitOfWork.TransactionRepository.Insert(transaction);
-        _unitOfWork.AccountRepository.Update(account);
-        _unitOfWork.AccountRepository.Update(reciever);
-        _unitOfWork.SaveChanges();
+        try
+        {
+            _unitOfWork.BeginTransaction();
+            _unitOfWork.TransactionRepository.Insert(transaction);
+            _unitOfWork.AccountRepository.Update(account);
+            _unitOfWork.AccountRepository.Update(reciever);
+            _unitOfWork.SaveChanges();
+            _unitOfWork.Commit();
+        }
+        catch
+        {
+            _unitOfWork.Rollback();
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 
@@ -187,8 +231,8 @@ public sealed class TransactionService : ITransactionService
 
     public async Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
     {
-        Account fromAccount = await _accountService.FindAccountByIdAsync(fromAccountId, cancellationToken);
-        Account toAccount = await _accountService.FindAccountByIdAsync(toAccountId, cancellationToken);
+        Account fromAccount = await _accountService.FindAccountAsync(fromAccountId, cancellationToken);
+        Account toAccount = await _accountService.FindAccountAsync(toAccountId, cancellationToken);
         if (fromAccountId == toAccountId)
         {
             throw new InvalidOperationException("Cannot transfer money to the same account.");
@@ -217,16 +261,27 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
-        await _unitOfWork.AccountRepository.UpdateAsync(fromAccount);
-        await _unitOfWork.AccountRepository.UpdateAsync(toAccount);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+            await _unitOfWork.AccountRepository.UpdateAsync(fromAccount);
+            await _unitOfWork.AccountRepository.UpdateAsync(toAccount);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 
     public async Task DepositMoneyAsync(int toAccountId, decimal amount, CancellationToken cancellationToken)
     {
-        Account toAccount = await _accountService.FindAccountByIdAsync(toAccountId, cancellationToken);
+        Account toAccount = await _accountService.FindAccountAsync(toAccountId, cancellationToken);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Deposit amount must be greater than zero.");
@@ -246,15 +301,26 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
-        await _unitOfWork.AccountRepository.UpdateAsync(toAccount);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+            await _unitOfWork.AccountRepository.UpdateAsync(toAccount);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 
     public async Task WithdrawMoneyAsync(int fromAccountId, decimal amount, CancellationToken cancellationToken)
     {
-        Account fromAccount = await _accountService.FindAccountByIdAsync(fromAccountId, cancellationToken);
+        Account fromAccount = await _accountService.FindAccountAsync(fromAccountId, cancellationToken);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Withdrawl amount must be greater than zero.");
@@ -278,16 +344,27 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
-        await _unitOfWork.AccountRepository.UpdateAsync(fromAccount);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+            await _unitOfWork.AccountRepository.UpdateAsync(fromAccount);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 
     public async Task ProcessCardPaymentAsync(int cardId, int recieverId, decimal amount, CancellationToken cancellationToken)
     {
-        Card card = await _cardService.FindCardByIdAsync(cardId, cancellationToken);
-        Account reciever = await _accountService.FindAccountByIdAsync(recieverId, cancellationToken);
+        Card card = await _cardService.FindCardAsync(cardId, cancellationToken);
+        Account reciever = await _accountService.FindAccountAsync(recieverId, cancellationToken);
         Account account = card.Account;
         if (account.AccountId == recieverId)
         {
@@ -322,10 +399,21 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
-        await _unitOfWork.AccountRepository.UpdateAsync(account);
-        await _unitOfWork.AccountRepository.UpdateAsync(reciever);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        try 
+        {
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);
+            await _unitOfWork.AccountRepository.UpdateAsync(account);
+            await _unitOfWork.AccountRepository.UpdateAsync(reciever);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
+
         OnTransactionMade(transaction);
     }
 

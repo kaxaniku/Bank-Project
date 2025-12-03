@@ -17,5 +17,5 @@ public interface IAccountService
     void OpenNewAccount(int customerId, string accountNumber, decimal initialBalance);
     Task OpenNewAccountAsync(int customerId, string accountNumber, decimal initialBalance, CancellationToken cancellationToken);
     Account FindAccount(int accountId);
-    Task<Account> FindAccountByIdAsync(int accountId, CancellationToken cancellationToken);
+    Task<Account> FindAccountAsync(int accountId, CancellationToken cancellationToken);
 }

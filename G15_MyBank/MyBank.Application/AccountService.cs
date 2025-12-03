@@ -24,7 +24,7 @@ public sealed class AccountService : IAccountService
         ArgumentException.ThrowIfNullOrWhiteSpace(accountNumber);
         ArgumentOutOfRangeException.ThrowIfNegative(initialBalance, nameof(initialBalance));
 
-        var customer = _customerService.FindCustomerById(customerId);
+        var customer = _customerService.FindCustomer(customerId);
         var account = new Account
         {
             Customer = customer,
@@ -106,7 +106,7 @@ public sealed class AccountService : IAccountService
         if (initialBalance < 0)
             throw new ArgumentOutOfRangeException(nameof(initialBalance), "Initial balance must be non-negative.");
 
-        var customer = await _customerService.FindCustomerByIdAsync(customerId, cancellationToken);
+        var customer = await _customerService.FindCustomerAsync(customerId, cancellationToken);
 
         var account = new Account
         {
@@ -123,7 +123,7 @@ public sealed class AccountService : IAccountService
 
     public async Task CloseAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        var account = await FindAccountByIdAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountId, cancellationToken);
         await _unitOfWork.AccountRepository.DeleteAsync(account);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnAccountClosed(accountId);
@@ -131,7 +131,9 @@ public sealed class AccountService : IAccountService
 
     public async Task ActivateAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        var account = await FindAccountByIdAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountId, cancellationToken);
+        if (account.Status == AccountStatus.Active)
+            throw new InvalidOperationException($"Account with ID {accountId} is already active.");
         account.Status = AccountStatus.Active;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -141,7 +143,9 @@ public sealed class AccountService : IAccountService
 
     public async Task DeactivateAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        var account = await FindAccountByIdAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountId, cancellationToken);
+        if (account.Status == AccountStatus.Inactive)
+            throw new InvalidOperationException($"Account with ID {accountId} is already inactive.");
         account.Status = AccountStatus.Inactive;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -151,7 +155,9 @@ public sealed class AccountService : IAccountService
 
     public async Task BlockAccountAsync(int accountId, CancellationToken cancellationToken)
     {
-        var account = await FindAccountByIdAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountId, cancellationToken);
+        if (account.Status == AccountStatus.Blocked)
+            throw new InvalidOperationException($"Account with ID {accountId} is already blocked.");
         account.Status = AccountStatus.Blocked;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -161,11 +167,11 @@ public sealed class AccountService : IAccountService
 
     public async Task<decimal> CheckBalanceAsync(int accountId, CancellationToken cancellationToken)
     {
-        var account = await FindAccountByIdAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountId, cancellationToken);
         return account.Balance;
     }
 
-    public async Task<Account> FindAccountByIdAsync(int accountId, CancellationToken cancellationToken)
+    public async Task<Account> FindAccountAsync(int accountId, CancellationToken cancellationToken)
     {
         Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
             ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
