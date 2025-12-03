@@ -36,6 +36,41 @@ public interface ICustomerService
     CancellationToken cancellationToken);
     void RemoveCustomer(int customerId);
     Task RemoveCustomerAsync(int customerId, CancellationToken cancellationToken);
-    void UpdateCustomer(Customer customer);
-    Task UpdateCustomerAsync(Customer customer, CancellationToken cancellationToken);
+    void UpdateCustomerDisplayInfo(
+    int customerId,
+    string firstName,
+    string lastName,
+    Gender gender,
+    DateTime dateOfBirth);
+    Task UpdateCustomerDisplayInfoAsync(
+    int customerId,
+    string firstName,
+    string lastName,
+    Gender gender,
+    DateTime dateOfBirth,
+    CancellationToken cancellationToken);
+    void UpdateCustomerPrivateInfo(
+    int customerId,
+    string personalNumber,
+    string email,
+    string phoneNumber);
+    Task UpdateCustomerPrivateInfoAsync(
+    int customerId,
+    string personalNumber,
+    string email,
+    string phoneNumber,
+    CancellationToken cancellationToken);
+    void UpdateCustomerAddressInfo(
+    int customerId,
+    string addressLine1,
+    string? addressLine2,
+    string zipCode,
+    int cityId);
+    Task UpdateCustomerAddressInfoAsync(
+    int customerId,
+    string addressLine1,
+    string? addressLine2,
+    string zipCode,
+    int cityId,
+    CancellationToken cancellationToken);
 }

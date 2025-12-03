@@ -1,4 +1,5 @@
-﻿using MyBank.Application.Interfaces.Repositories;
+﻿using System.Threading;
+using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -8,15 +9,17 @@ public sealed class CustomerService : ICustomerService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
+    private readonly ICountryCityServices _countryCityService;
 
     public static event Action<Customer>? CustomerRegistered;
     public static event Action<Customer>? CustomerUpdated;
     public static event Action<int>? CustomerRemoved;
 
-    public CustomerService(IUnitOfWork unitOfWork, IEmailService emailService)
+    public CustomerService(IUnitOfWork unitOfWork, IEmailService emailService, ICountryCityServices countryCity)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+        _countryCityService = countryCity ?? throw new ArgumentNullException(nameof(countryCity));
     }
 
     public void RegisterNewCustomer(
@@ -57,7 +60,7 @@ public sealed class CustomerService : ICustomerService
                 AddressLine2 = addressLine2,
                 ZipCode = zipCode
             },
-            City = new City { CityId = cityId },
+            City = _countryCityService.GetCity(cityId)!,
             Activity = new ActivityInfo()
         };
 
@@ -67,10 +70,65 @@ public sealed class CustomerService : ICustomerService
         OnCustomerRegistered(customer);
     }
 
-    public void UpdateCustomer(Customer customer)
+    public void UpdateCustomerDisplayInfo(
+    int customerId,
+    string firstName,
+    string lastName,
+    Gender gender,
+    DateTime dateOfBirth)
     {
-        if (customer == null)
-            throw new ArgumentNullException(nameof(customer));
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+        if (dateOfBirth >= DateTime.UtcNow)
+            throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
+
+        Customer customer = FindCustomer(customerId);
+        customer.FirstName = firstName;
+        customer.LastName = lastName;
+        customer.Gender = gender;
+        customer.DateOfBirth = dateOfBirth;
+
+        _unitOfWork.CustomerRepository.Update(customer);
+        _unitOfWork.SaveChanges();
+        OnCustomerUpdated(customer);
+    }
+
+    public void UpdateCustomerPrivateInfo(
+    int customerId,
+    string personalNumber,
+    string email,
+    string phoneNumber)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
+
+        Customer customer = FindCustomer(customerId);
+        customer.PersonalNumber = personalNumber;
+        customer.Email = email;
+        customer.PhoneNumber = phoneNumber;
+
+        _unitOfWork.CustomerRepository.Update(customer);
+        _unitOfWork.SaveChanges();
+        OnCustomerUpdated(customer);
+    }
+
+    public void UpdateCustomerAddressInfo(
+    int customerId,
+    string addressLine1,
+    string? addressLine2,
+    string zipCode,
+    int cityId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
+        ArgumentException.ThrowIfNullOrWhiteSpace(zipCode);
+
+        Customer customer = FindCustomer(customerId);
+        customer.Address.AddressLine1 = addressLine1;
+        customer.Address.AddressLine2 = addressLine2;
+        customer.Address.ZipCode = zipCode;
+        customer.City = _countryCityService.GetCity(cityId)!;
+
         _unitOfWork.CustomerRepository.Update(customer);
         _unitOfWork.SaveChanges();
         OnCustomerUpdated(customer);
@@ -152,10 +210,68 @@ public sealed class CustomerService : ICustomerService
         OnCustomerRegistered(customer);
     }
 
-    public async Task UpdateCustomerAsync(Customer customer, CancellationToken cancellationToken)
+    public async Task UpdateCustomerDisplayInfoAsync(
+    int customerId,
+    string firstName,
+    string lastName,
+    Gender gender,
+    DateTime dateOfBirth,
+    CancellationToken cancellationToken)
     {
-        if (customer == null)
-            throw new ArgumentNullException(nameof(customer));
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+        if (dateOfBirth >= DateTime.UtcNow)
+            throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
+
+        Customer customer = await FindCustomerAsync(customerId, cancellationToken);
+        customer.FirstName = firstName;
+        customer.LastName = lastName;
+        customer.Gender = gender;
+        customer.DateOfBirth = dateOfBirth;
+
+        await _unitOfWork.CustomerRepository.UpdateAsync(customer);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnCustomerUpdated(customer);
+    }
+
+    public async Task UpdateCustomerPrivateInfoAsync(
+    int customerId,
+    string personalNumber,
+    string email,
+    string phoneNumber,
+    CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
+
+        Customer customer = await FindCustomerAsync(customerId, cancellationToken);
+        customer.PersonalNumber = personalNumber;
+        customer.Email = email;
+        customer.PhoneNumber = phoneNumber;
+
+        await _unitOfWork.CustomerRepository.UpdateAsync(customer);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        OnCustomerUpdated(customer);
+    }
+
+    public async Task UpdateCustomerAddressInfoAsync(
+    int customerId,
+    string addressLine1,
+    string? addressLine2,
+    string zipCode,
+    int cityId,
+    CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
+        ArgumentException.ThrowIfNullOrWhiteSpace(zipCode);
+
+        Customer customer = FindCustomer(customerId);
+        customer.Address.AddressLine1 = addressLine1;
+        customer.Address.AddressLine2 = addressLine2;
+        customer.Address.ZipCode = zipCode;
+        customer.City = await _countryCityService.GetCityAsync(cityId, cancellationToken);
+
         await _unitOfWork.CustomerRepository.UpdateAsync(customer);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         OnCustomerUpdated(customer);

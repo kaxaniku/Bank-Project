@@ -18,7 +18,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return _unitOfWork.CountryRepository.Query(x => x.Activity.IsActive);
     }
 
-    public Country? GetCountry(int countryId)
+    public Country GetCountry(int countryId)
     {
         Country customer = _unitOfWork.CountryRepository.GetById(countryId)
             ?? throw new InvalidOperationException($"Country with ID {countryId} does not exist.");
@@ -32,7 +32,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return _unitOfWork.CityRepository.Query(x => x.Activity.IsActive);
     }
 
-    public City? GetCity(int cityId)
+    public City GetCity(int cityId)
     {
         City city = _unitOfWork.CityRepository.GetById(cityId)
             ?? throw new InvalidOperationException($"City with ID {cityId} does not exist.");
@@ -51,7 +51,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return await _unitOfWork.CountryRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
-    public async Task<Country?> GetCountryAsync(int countryId, CancellationToken cancellationToken)
+    public async Task<Country> GetCountryAsync(int countryId, CancellationToken cancellationToken)
     {
         Country customer = await _unitOfWork.CountryRepository.GetByIdAsync(countryId, cancellationToken)
             ?? throw new InvalidOperationException($"Country with ID {countryId} does not exist.");
@@ -65,7 +65,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return await _unitOfWork.CityRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
-    public async Task<City?> GetCityAsync(int cityId, CancellationToken cancellationToken)
+    public async Task<City> GetCityAsync(int cityId, CancellationToken cancellationToken)
     {
         City city = await _unitOfWork.CityRepository.GetByIdAsync(cityId, cancellationToken)
             ?? throw new InvalidOperationException($"City with ID {cityId} does not exist.");
