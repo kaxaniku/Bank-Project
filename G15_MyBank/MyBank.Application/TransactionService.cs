@@ -1,6 +1,4 @@
-﻿using System.Security.Principal;
-using System.Threading;
-using MyBank.Application.Interfaces.Repositories;
+﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -21,24 +19,25 @@ public sealed class TransactionService : ITransactionService
 
     public static event Action<Transaction>? TransactionMade;
 
+    // TODO: We need to find account by numbers.
     public void TransferMoney(int fromAccountId, int toAccountId, decimal amount)
     {
         Account fromAccount = _accountService.FindAccount(fromAccountId);
         Account toAccount = _accountService.FindAccount(toAccountId);
 
-        if(fromAccountId == toAccountId)
+        if (fromAccountId == toAccountId)
         {
             throw new InvalidOperationException("Cannot transfer money to the same account.");
         }
-        if(amount <= 0)
+        if (amount <= 0)
         {
             throw new InvalidOperationException("Transfer amount must be greater than zero.");
         }
-        if(fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
+        if (fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
         {
             throw new InvalidOperationException("Both accounts must be active to perform a transfer.");
         }
-        if(fromAccount.Balance < amount)
+        if (fromAccount.Balance < amount)
         {
             throw new InvalidOperationException("Insufficient funds in the source account.");
         }
@@ -117,7 +116,7 @@ public sealed class TransactionService : ITransactionService
         Account fromAccount = _accountService.FindAccount(fromAccountId);
         if (amount <= 0)
         {
-            throw new InvalidOperationException("Withdrawl amount must be greater than zero.");
+            throw new InvalidOperationException("Withdrawal amount must be greater than zero.");
         }
         if (fromAccount.Status != AccountStatus.Active)
         {
@@ -223,7 +222,7 @@ public sealed class TransactionService : ITransactionService
 
     public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate)
     {
-        return _unitOfWork.TransactionRepository.Query(x => 
+        return _unitOfWork.TransactionRepository.Query(x =>
             (x.FromAccountId == accountId || x.ToAccountId == accountId) &&
             x.TransactionDate >= fromDate &&
             x.TransactionDate <= toDate);
@@ -399,7 +398,7 @@ public sealed class TransactionService : ITransactionService
             TransactionDate = DateTime.UtcNow
         };
 
-        try 
+        try
         {
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             await _unitOfWork.TransactionRepository.InsertAsync(transaction, cancellationToken);

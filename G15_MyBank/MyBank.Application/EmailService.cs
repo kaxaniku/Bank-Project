@@ -20,11 +20,9 @@ public sealed class EmailService : IEmailService
             IsBodyHtml = true
         };
 
-        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
-        {
-            Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password),
-            EnableSsl = true
-        };
+        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort);
+        client.Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password);
+        client.EnableSsl = true;
 
         client.Send(message);
     }
@@ -36,11 +34,9 @@ public sealed class EmailService : IEmailService
             IsBodyHtml = true
         };
 
-        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
-        {
-            Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password),
-            EnableSsl = true
-        };
+        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort);
+        client.Credentials = new NetworkCredential(_emailSettings.FromAddress, _emailSettings.Password);
+        client.EnableSsl = true;
 
         await client.SendMailAsync(message);
     }

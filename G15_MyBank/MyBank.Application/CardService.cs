@@ -1,6 +1,4 @@
-﻿using System.Security.Principal;
-using Microsoft.VisualBasic;
-using MyBank.Application.Interfaces.Repositories;
+﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -36,7 +34,7 @@ public sealed class CardService : ICardService
 
         Account account = _accountService.FindAccount(accountId);
 
-        Card card = new Card()
+        Card card = new Card
         {
             CardNumber = cardNumber,
             CardType = (CardType)cardType,

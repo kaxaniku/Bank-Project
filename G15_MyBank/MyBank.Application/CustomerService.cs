@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using MyBank.Application.Interfaces.Repositories;
+﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -23,17 +22,17 @@ public sealed class CustomerService : ICustomerService
     }
 
     public void RegisterNewCustomer(
-    string personalNumber,
-    string firstName,
-    string lastName,
-    Gender gender,
-    string email,
-    string phoneNumber,
-    DateTime dateOfBirth,
-    string addressLine1,
-    string? addressLine2,
-    string zipCode,
-    int cityId)
+        string personalNumber,
+        string firstName,
+        string lastName,
+        Gender gender,
+        string email,
+        string phoneNumber,
+        DateTime dateOfBirth,
+        string addressLine1,
+        string? addressLine2,
+        string zipCode,
+        int cityId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
@@ -42,8 +41,7 @@ public sealed class CustomerService : ICustomerService
         ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
         ArgumentException.ThrowIfNullOrWhiteSpace(zipCode);
-        if (dateOfBirth >= DateTime.UtcNow)
-            throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
+        if (dateOfBirth >= DateTime.UtcNow) throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
 
         Customer customer = new Customer
         {
@@ -71,16 +69,15 @@ public sealed class CustomerService : ICustomerService
     }
 
     public void UpdateCustomerDisplayInfo(
-    int customerId,
-    string firstName,
-    string lastName,
-    Gender gender,
-    DateTime dateOfBirth)
+        int customerId,
+        string firstName,
+        string lastName,
+        Gender gender,
+        DateTime dateOfBirth)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
         ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
-        if (dateOfBirth >= DateTime.UtcNow)
-            throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
+        if (dateOfBirth >= DateTime.UtcNow) throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
 
         Customer customer = FindCustomer(customerId);
         customer.FirstName = firstName;
@@ -94,10 +91,10 @@ public sealed class CustomerService : ICustomerService
     }
 
     public void UpdateCustomerPrivateInfo(
-    int customerId,
-    string personalNumber,
-    string email,
-    string phoneNumber)
+        int customerId,
+        string personalNumber,
+        string email,
+        string phoneNumber)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
@@ -114,11 +111,11 @@ public sealed class CustomerService : ICustomerService
     }
 
     public void UpdateCustomerAddressInfo(
-    int customerId,
-    string addressLine1,
-    string? addressLine2,
-    string zipCode,
-    int cityId)
+        int customerId,
+        string addressLine1,
+        string? addressLine2,
+        string zipCode,
+        int cityId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
         ArgumentException.ThrowIfNullOrWhiteSpace(zipCode);
@@ -152,6 +149,7 @@ public sealed class CustomerService : ICustomerService
         return customer;
     }
 
+    // TODO: Add pagination support
     public IEnumerable<Customer> ListAllCustomers()
     {
         return _unitOfWork.CustomerRepository.Query(x => x.Activity.IsActive);
@@ -162,18 +160,19 @@ public sealed class CustomerService : ICustomerService
         return _unitOfWork.AccountRepository.Query(x => x.Customer.CustomerId == customerId, x => x.Customer);
     }
 
-    public async Task RegisterNewCustomerAsync(string personalNumber,
-    string firstName,
-    string lastName,
-    Gender gender,
-    string email,
-    string phoneNumber,
-    DateTime dateOfBirth,
-    string addressLine1,
-    string? addressLine2,
-    string zipCode,
-    int cityId, 
-    CancellationToken cancellationToken)
+    public async Task RegisterNewCustomerAsync(
+        string personalNumber,
+        string firstName,
+        string lastName,
+        Gender gender,
+        string email,
+        string phoneNumber,
+        DateTime dateOfBirth,
+        string addressLine1,
+        string? addressLine2,
+        string zipCode,
+        int cityId, 
+        CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
@@ -211,12 +210,12 @@ public sealed class CustomerService : ICustomerService
     }
 
     public async Task UpdateCustomerDisplayInfoAsync(
-    int customerId,
-    string firstName,
-    string lastName,
-    Gender gender,
-    DateTime dateOfBirth,
-    CancellationToken cancellationToken)
+        int customerId,
+        string firstName,
+        string lastName,
+        Gender gender,
+        DateTime dateOfBirth,
+        CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
         ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
@@ -235,11 +234,11 @@ public sealed class CustomerService : ICustomerService
     }
 
     public async Task UpdateCustomerPrivateInfoAsync(
-    int customerId,
-    string personalNumber,
-    string email,
-    string phoneNumber,
-    CancellationToken cancellationToken)
+        int customerId,
+        string personalNumber,
+        string email,
+        string phoneNumber,
+        CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
@@ -256,17 +255,17 @@ public sealed class CustomerService : ICustomerService
     }
 
     public async Task UpdateCustomerAddressInfoAsync(
-    int customerId,
-    string addressLine1,
-    string? addressLine2,
-    string zipCode,
-    int cityId,
-    CancellationToken cancellationToken)
+        int customerId,
+        string addressLine1,
+        string? addressLine2,
+        string zipCode,
+        int cityId,
+        CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
         ArgumentException.ThrowIfNullOrWhiteSpace(zipCode);
 
-        Customer customer = FindCustomer(customerId);
+        Customer customer = await FindCustomerAsync(customerId, cancellationToken);
         customer.Address.AddressLine1 = addressLine1;
         customer.Address.AddressLine2 = addressLine2;
         customer.Address.ZipCode = zipCode;

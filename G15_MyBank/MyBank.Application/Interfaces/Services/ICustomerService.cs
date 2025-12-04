@@ -11,17 +11,18 @@ public interface ICustomerService
     Task<IEnumerable<Account>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken);
     IEnumerable<Customer> ListAllCustomers();
     Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken);
-    void RegisterNewCustomer(string personalNumber,
-    string firstName,
-    string lastName,
-    Gender gender,
-    string email,
-    string phoneNumber,
-    DateTime dateOfBirth,
-    string addressLine1,
-    string? addressLine2,
-    string zipCode,
-    int cityId);
+    void RegisterNewCustomer(
+        string personalNumber,
+        string firstName,
+        string lastName,
+        Gender gender,
+        string email,
+        string phoneNumber,
+        DateTime dateOfBirth,
+        string addressLine1,
+        string? addressLine2,
+        string zipCode,
+        int cityId);
     Task RegisterNewCustomerAsync(string personalNumber,
     string firstName,
     string lastName,
@@ -32,7 +33,7 @@ public interface ICustomerService
     string addressLine1,
     string? addressLine2,
     string zipCode,
-    int cityId, 
+    int cityId,
     CancellationToken cancellationToken);
     void RemoveCustomer(int customerId);
     Task RemoveCustomerAsync(int customerId, CancellationToken cancellationToken);
