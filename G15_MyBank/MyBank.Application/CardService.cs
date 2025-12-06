@@ -19,7 +19,7 @@ public sealed class CardService : ICardService
     public static event Action<Card>? CardUpdated;
     public static event Action<int>? CardClosed;
 
-    public void IssueNewCard(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, int accountId)
+    public void IssueNewCard(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, string accountNum)
     {
         if (string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(cvc))
             throw new ArgumentException("Card number and CVC cannot be null or empty.");
@@ -32,7 +32,7 @@ public sealed class CardService : ICardService
             throw new ArgumentOutOfRangeException("Expiration date must be in the future.");
         }
 
-        Account account = _accountService.FindAccount(accountId);
+        Account account = _accountService.FindAccount(accountNum);
 
         Card card = new Card
         {
@@ -91,11 +91,12 @@ public sealed class CardService : ICardService
         OnCardClosed(cardId);
     }
 
-    public IEnumerable<Card> ListCardsByAccount(int accountId)
+    public IEnumerable<Card> ListCardsByAccount(string accountNum)
     {
-        return _unitOfWork.CardRepository.Query(x => x.Account.AccountId == accountId, x => x.Account);
+        return _unitOfWork.CardRepository.Query(x => x.Account.AccountNumber == accountNum, x => x.Account);
     }
 
+    // TODO: Change cardId to cardNumber and adjust logic in services accordingly
     public Card FindCard(int cardId)
     {
         Card card = _unitOfWork.CardRepository.GetById(cardId)
@@ -105,7 +106,7 @@ public sealed class CardService : ICardService
         return card;
     }
 
-    public async Task IssueNewCardAsync(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, int accountId, CancellationToken cancellationToken)
+    public async Task IssueNewCardAsync(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(cvc))
             throw new ArgumentException("Card number and CVC cannot be null or empty.");
@@ -118,7 +119,7 @@ public sealed class CardService : ICardService
             throw new ArgumentOutOfRangeException("Expiration date must be in the future.");
         }
 
-        Account account = await _accountService.FindAccountAsync(accountId, cancellationToken);
+        Account account = await _accountService.FindAccountAsync(accountNum, cancellationToken);
 
         Card card = new Card()
         {
@@ -177,6 +178,7 @@ public sealed class CardService : ICardService
         OnCardClosed(cardId);
     }
 
+    // TODO: Change cardId to cardNumber and adjust logic in services accordingly
     public async Task<Card> FindCardAsync(int cardId, CancellationToken cancellationToken)
     {
         Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, cancellationToken)
@@ -186,9 +188,9 @@ public sealed class CardService : ICardService
         return card;
     }
 
-    public async Task<IEnumerable<Card>> ListCardsByAccountAsync(int accountId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Card>> ListCardsByAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.CardRepository.QueryAsync(x => x.Account.AccountId == accountId, cancellationToken, x => x.Account);
+        return await _unitOfWork.CardRepository.QueryAsync(x => x.Account.AccountNumber == accountNum, cancellationToken, x => x.Account);
     }
 
     private static void OnCardIssued(Card card)

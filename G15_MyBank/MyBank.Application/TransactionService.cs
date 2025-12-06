@@ -19,13 +19,12 @@ public sealed class TransactionService : ITransactionService
 
     public static event Action<Transaction>? TransactionMade;
 
-    // TODO: We need to find account by numbers.
-    public void TransferMoney(int fromAccountId, int toAccountId, decimal amount)
+    public void TransferMoney(string fromAccountNum, string toAccountNum, decimal amount)
     {
-        Account fromAccount = _accountService.FindAccount(fromAccountId);
-        Account toAccount = _accountService.FindAccount(toAccountId);
+        Account fromAccount = _accountService.FindAccount(fromAccountNum);
+        Account toAccount = _accountService.FindAccount(toAccountNum);
 
-        if (fromAccountId == toAccountId)
+        if (fromAccountNum == toAccountNum)
         {
             throw new InvalidOperationException("Cannot transfer money to the same account.");
         }
@@ -46,8 +45,8 @@ public sealed class TransactionService : ITransactionService
 
         Transaction transaction = new()
         {
-            FromAccountId = fromAccountId,
-            ToAccountId = toAccountId,
+            FromAccountId = fromAccount.AccountId,
+            ToAccountId = toAccount.AccountId,
             Amount = amount,
             Description = $"Transfer from {fromAccount.AccountNumber} to {toAccount.AccountNumber}",
             Type = TransactionType.Transfer,
@@ -72,9 +71,9 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public void DepositMoney(int toAccountId, decimal amount)
+    public void DepositMoney(string toAccountNum, decimal amount)
     {
-        Account toAccount = _accountService.FindAccount(toAccountId);
+        Account toAccount = _accountService.FindAccount(toAccountNum);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Deposit amount must be greater than zero.");
@@ -87,7 +86,7 @@ public sealed class TransactionService : ITransactionService
 
         Transaction transaction = new()
         {
-            ToAccountId = toAccountId,
+            ToAccountId = toAccount.AccountId,
             Amount = amount,
             Description = $"Deposited money to {toAccount.AccountNumber}",
             Type = TransactionType.Deposit,
@@ -111,9 +110,9 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public void WithdrawMoney(int fromAccountId, decimal amount)
+    public void WithdrawMoney(string fromAccountNum, decimal amount)
     {
-        Account fromAccount = _accountService.FindAccount(fromAccountId);
+        Account fromAccount = _accountService.FindAccount(fromAccountNum);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Withdrawal amount must be greater than zero.");
@@ -130,7 +129,7 @@ public sealed class TransactionService : ITransactionService
 
         Transaction transaction = new()
         {
-            FromAccountId = fromAccountId,
+            FromAccountId = fromAccount.AccountId,
             Amount = amount,
             Description = $"Withdrawn Money from {fromAccount.AccountNumber}",
             Type = TransactionType.Withdrawal,
@@ -154,12 +153,13 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public void ProcessCardPayment(int cardId, int recieverId, decimal amount)
+    // TODO: Use card Number instead of Id
+    public void ProcessCardPayment(int cardId, string recieverNum, decimal amount)
     {
         Card card = _cardService.FindCard(cardId);
-        Account reciever = _accountService.FindAccount(recieverId);
+        Account reciever = _accountService.FindAccount(recieverNum);
         Account account = card.Account;
-        if (account.AccountId == recieverId)
+        if (account.AccountId == reciever.AccountId)
         {
             throw new InvalidOperationException("Cannot transfer money to the same account.");
         }
@@ -185,7 +185,7 @@ public sealed class TransactionService : ITransactionService
         Transaction transaction = new()
         {
             FromAccountId = account.AccountId,
-            ToAccountId = recieverId,
+            ToAccountId = reciever.AccountId,
             Amount = amount,
             Description = $"Card payment from card {card.CardNumber}",
             Type = TransactionType.CardPayment,
@@ -215,24 +215,27 @@ public sealed class TransactionService : ITransactionService
         return _unitOfWork.TransactionRepository.GetById(transactionId);
     }
 
-    public IEnumerable<Transaction> ListTransactions(int accountId, TransactionType type)
+    // TODO: Add pagination support
+    public IEnumerable<Transaction> ListTransactions(string accountNum, TransactionType type)
     {
         return _unitOfWork.TransactionRepository.Query(x => x.Type == type);
     }
 
-    public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate)
+    // TODO: Add pagination support
+    public IEnumerable<Transaction> GenerateStatement(string accountNum, DateTime fromDate, DateTime toDate)
     {
+        Account account = _accountService.FindAccount(accountNum);
         return _unitOfWork.TransactionRepository.Query(x =>
-            (x.FromAccountId == accountId || x.ToAccountId == accountId) &&
+            (x.FromAccountId == account.AccountId || x.ToAccountId == account.AccountId) &&
             x.TransactionDate >= fromDate &&
             x.TransactionDate <= toDate);
     }
 
-    public async Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken cancellationToken)
+    public async Task TransferMoneyAsync(string fromAccountNum, string toAccountNum, decimal amount, CancellationToken cancellationToken)
     {
-        Account fromAccount = await _accountService.FindAccountAsync(fromAccountId, cancellationToken);
-        Account toAccount = await _accountService.FindAccountAsync(toAccountId, cancellationToken);
-        if (fromAccountId == toAccountId)
+        Account fromAccount = await _accountService.FindAccountAsync(fromAccountNum, cancellationToken);
+        Account toAccount = await _accountService.FindAccountAsync(toAccountNum, cancellationToken);
+        if (fromAccountNum == toAccountNum)
         {
             throw new InvalidOperationException("Cannot transfer money to the same account.");
         }
@@ -253,8 +256,8 @@ public sealed class TransactionService : ITransactionService
 
         Transaction transaction = new()
         {
-            FromAccountId = fromAccountId,
-            ToAccountId = toAccountId,
+            FromAccountId = fromAccount.AccountId,
+            ToAccountId = toAccount.AccountId,
             Amount = amount,
             Description = $"Transfer from {fromAccount.AccountNumber} to {toAccount.AccountNumber}",
             TransactionDate = DateTime.UtcNow
@@ -278,9 +281,9 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public async Task DepositMoneyAsync(int toAccountId, decimal amount, CancellationToken cancellationToken)
+    public async Task DepositMoneyAsync(string toAccountNum, decimal amount, CancellationToken cancellationToken)
     {
-        Account toAccount = await _accountService.FindAccountAsync(toAccountId, cancellationToken);
+        Account toAccount = await _accountService.FindAccountAsync(toAccountNum, cancellationToken);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Deposit amount must be greater than zero.");
@@ -293,7 +296,7 @@ public sealed class TransactionService : ITransactionService
 
         Transaction transaction = new()
         {
-            ToAccountId = toAccountId,
+            ToAccountId = toAccount.AccountId,
             Amount = amount,
             Description = $"Deposited money to {toAccount.AccountNumber}",
             Type = TransactionType.Deposit,
@@ -317,9 +320,9 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public async Task WithdrawMoneyAsync(int fromAccountId, decimal amount, CancellationToken cancellationToken)
+    public async Task WithdrawMoneyAsync(string fromAccountNum, decimal amount, CancellationToken cancellationToken)
     {
-        Account fromAccount = await _accountService.FindAccountAsync(fromAccountId, cancellationToken);
+        Account fromAccount = await _accountService.FindAccountAsync(fromAccountNum, cancellationToken);
         if (amount <= 0)
         {
             throw new InvalidOperationException("Withdrawl amount must be greater than zero.");
@@ -336,7 +339,7 @@ public sealed class TransactionService : ITransactionService
 
         Transaction transaction = new()
         {
-            FromAccountId = fromAccountId,
+            FromAccountId = fromAccount.AccountId,
             Amount = amount,
             Description = $"Withdrawn Money from {fromAccount.AccountNumber}",
             Type = TransactionType.Withdrawal,
@@ -360,12 +363,13 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    public async Task ProcessCardPaymentAsync(int cardId, int recieverId, decimal amount, CancellationToken cancellationToken)
+    // TODO: Use card Number instead of Id
+    public async Task ProcessCardPaymentAsync(int cardId, string recieverNum, decimal amount, CancellationToken cancellationToken)
     {
         Card card = await _cardService.FindCardAsync(cardId, cancellationToken);
-        Account reciever = await _accountService.FindAccountAsync(recieverId, cancellationToken);
+        Account reciever = await _accountService.FindAccountAsync(recieverNum, cancellationToken);
         Account account = card.Account;
-        if (account.AccountId == recieverId)
+        if (account.AccountId == reciever.AccountId)
         {
             throw new InvalidOperationException("Cannot transfer money to the same account.");
         }
@@ -391,7 +395,7 @@ public sealed class TransactionService : ITransactionService
         Transaction transaction = new()
         {
             FromAccountId = account.AccountId,
-            ToAccountId = recieverId,
+            ToAccountId = reciever.AccountId,
             Amount = amount,
             Description = $"Card payment from card {card.CardNumber}",
             Type = TransactionType.CardPayment,
@@ -421,15 +425,18 @@ public sealed class TransactionService : ITransactionService
         return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, cancellationToken);
     }
 
-    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(int accountId, TransactionType type, CancellationToken cancellationToken)
+    // TODO: Add pagination support
+    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(string accountNum, TransactionType type, CancellationToken cancellationToken)
     {
         return await _unitOfWork.TransactionRepository.QueryAsync(x => x.Type == type, cancellationToken);
     }
 
-    public async Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
+    // TODO: Add pagination support
+    public async Task<IEnumerable<Transaction>> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
     {
+        Account account = await _accountService.FindAccountAsync(accountNum, cancellationToken);
         return await _unitOfWork.TransactionRepository.QueryAsync(x =>
-            (x.FromAccountId == accountId || x.ToAccountId == accountId) &&
+            (x.FromAccountId == account.AccountId || x.ToAccountId == account.AccountId) &&
             x.TransactionDate >= fromDate &&
             x.TransactionDate <= toDate, cancellationToken);
     }

@@ -38,20 +38,20 @@ public sealed class AccountService : IAccountService
         OnAccountOpened(account);
     }
 
-    public void CloseAccount(int accountId)
+    public void CloseAccount(string accountNum)
     {
-        Account account = FindAccount(accountId);
+        Account account = FindAccount(accountNum);
 
         _unitOfWork.AccountRepository.Delete(account);
         _unitOfWork.SaveChanges();
-        OnAccountClosed(accountId);
+        OnAccountClosed(account.AccountId);
     }
 
-    public void ActivateAccount(int accountId)
+    public void ActivateAccount(string accountNum)
     {
-        Account account = FindAccount(accountId);
+        Account account = FindAccount(accountNum);
         if (account.Status == AccountStatus.Active)
-            throw new InvalidOperationException($"Account with ID {accountId} is already active.");
+            throw new InvalidOperationException($"Account with ID {accountNum} is already active.");
         account.Status = AccountStatus.Active;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -59,11 +59,11 @@ public sealed class AccountService : IAccountService
         OnAccountUpdated(account);
     }
 
-    public void DeactivateAccount(int accountId)
+    public void DeactivateAccount(string accountNum)
     {
-        Account account = FindAccount(accountId);
+        Account account = FindAccount(accountNum);
         if (account.Status == AccountStatus.Inactive)
-            throw new InvalidOperationException($"Account with ID {accountId} is already inactive.");
+            throw new InvalidOperationException($"Account with ID {accountNum} is already inactive.");
         account.Status = AccountStatus.Inactive;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -71,11 +71,11 @@ public sealed class AccountService : IAccountService
         OnAccountUpdated(account);
     }
 
-    public void BlockAccount(int accountId)
+    public void BlockAccount(string accountNum)
     {
-        Account account = FindAccount(accountId);
+        Account account = FindAccount(accountNum);
         if (account.Status == AccountStatus.Blocked)
-            throw new InvalidOperationException($"Account with ID {accountId} is already blocked.");
+            throw new InvalidOperationException($"Account with ID {accountNum} is already blocked.");
         account.Status = AccountStatus.Blocked;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -83,19 +83,19 @@ public sealed class AccountService : IAccountService
         OnAccountUpdated(account);
     }
 
-    public decimal CheckBalance(int accountId)
+    public decimal CheckBalance(string accountNum)
     {
-        Account account = FindAccount(accountId);
+        Account account = FindAccount(accountNum);
 
         return account.Balance;
     }
 
-    public Account FindAccount(int accountId)
+    public Account FindAccount(string accountNum)
     {
-        Account account = _unitOfWork.AccountRepository.GetById(accountId)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        Account account = _unitOfWork.AccountRepository.Query(x => x.AccountNumber == accountNum).FirstOrDefault()
+            ?? throw new InvalidOperationException($"Account with number {accountNum} does not exist.");
         if (!account.Activity.IsActive)
-            throw new InvalidOperationException($"Account with ID {accountId} no longer exists.");
+            throw new InvalidOperationException($"Account with number {accountNum} no longer exists.");
         return account;
     }
 
@@ -121,19 +121,19 @@ public sealed class AccountService : IAccountService
         OnAccountOpened(account);
     }
 
-    public async Task CloseAccountAsync(int accountId, CancellationToken cancellationToken)
+    public async Task CloseAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        var account = await FindAccountAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountNum, cancellationToken);
         await _unitOfWork.AccountRepository.DeleteAsync(account);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        OnAccountClosed(accountId);
+        OnAccountClosed(account.AccountId);
     }
 
-    public async Task ActivateAccountAsync(int accountId, CancellationToken cancellationToken)
+    public async Task ActivateAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        var account = await FindAccountAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountNum, cancellationToken);
         if (account.Status == AccountStatus.Active)
-            throw new InvalidOperationException($"Account with ID {accountId} is already active.");
+            throw new InvalidOperationException($"Account with ID {accountNum} is already active.");
         account.Status = AccountStatus.Active;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -141,11 +141,11 @@ public sealed class AccountService : IAccountService
         OnAccountUpdated(account);
     }
 
-    public async Task DeactivateAccountAsync(int accountId, CancellationToken cancellationToken)
+    public async Task DeactivateAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        var account = await FindAccountAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountNum, cancellationToken);
         if (account.Status == AccountStatus.Inactive)
-            throw new InvalidOperationException($"Account with ID {accountId} is already inactive.");
+            throw new InvalidOperationException($"Account with ID {accountNum} is already inactive.");
         account.Status = AccountStatus.Inactive;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -153,11 +153,11 @@ public sealed class AccountService : IAccountService
         OnAccountUpdated(account);
     }
 
-    public async Task BlockAccountAsync(int accountId, CancellationToken cancellationToken)
+    public async Task BlockAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        var account = await FindAccountAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountNum, cancellationToken);
         if (account.Status == AccountStatus.Blocked)
-            throw new InvalidOperationException($"Account with ID {accountId} is already blocked.");
+            throw new InvalidOperationException($"Account with ID {accountNum} is already blocked.");
         account.Status = AccountStatus.Blocked;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -165,18 +165,19 @@ public sealed class AccountService : IAccountService
         OnAccountUpdated(account);
     }
 
-    public async Task<decimal> CheckBalanceAsync(int accountId, CancellationToken cancellationToken)
+    public async Task<decimal> CheckBalanceAsync(string accountNum, CancellationToken cancellationToken)
     {
-        var account = await FindAccountAsync(accountId, cancellationToken);
+        var account = await FindAccountAsync(accountNum, cancellationToken);
         return account.Balance;
     }
 
-    public async Task<Account> FindAccountAsync(int accountId, CancellationToken cancellationToken)
+    public async Task<Account> FindAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, cancellationToken)
-            ?? throw new InvalidOperationException($"Account with ID {accountId} does not exist.");
+        var accounts = await _unitOfWork.AccountRepository.QueryAsync(x => x.AccountNumber == accountNum, cancellationToken);
+        Account account = accounts.FirstOrDefault()
+            ?? throw new InvalidOperationException($"Account with ID {accountNum} does not exist.");
         if (!account.Activity.IsActive)
-            throw new InvalidOperationException($"Account with ID {accountId} no longer exists.");
+            throw new InvalidOperationException($"Account with ID {accountNum} no longer exists.");
         return account;
     }
 
@@ -190,8 +191,8 @@ public sealed class AccountService : IAccountService
         AccountUpdated?.Invoke(account);
     }
 
-    private static void OnAccountClosed(int accountId)
+    private static void OnAccountClosed(int accountNum)
     {
-        AccountClosed?.Invoke(accountId);
+        AccountClosed?.Invoke(accountNum);
     }
 }

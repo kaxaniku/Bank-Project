@@ -27,6 +27,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return customer;
     }
 
+    // TODO: Add pagination support
     public IEnumerable<City> ListAllCities()
     {
         return _unitOfWork.CityRepository.Query(x => x.Activity.IsActive);
@@ -41,6 +42,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return city;
     }
 
+    // TODO: Add pagination support
     public IEnumerable<City> ListCitiesByCountry(int countryId)
     {
         return _unitOfWork.CityRepository.Query(x => x.Country.CountryId == countryId, x => x.Country);
@@ -60,6 +62,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return customer;
     }
 
+    // TODO: Add pagination support
     public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken)
     {
         return await _unitOfWork.CityRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
@@ -74,6 +77,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return city;
     }
 
+    // TODO: Add pagination support
     public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
     {
         return await _unitOfWork.CityRepository.QueryAsync(x => x.Country.CountryId == countryId, cancellationToken, x => x.Country);

@@ -293,6 +293,7 @@ public sealed class CustomerService : ICustomerService
         return customer;
     }
 
+    // TODO: Add pagination support
     public async Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken)
     {
         return await _unitOfWork.CustomerRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
