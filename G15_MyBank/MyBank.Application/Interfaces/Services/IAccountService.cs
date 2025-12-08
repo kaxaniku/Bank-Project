@@ -4,17 +4,17 @@ namespace MyBank.Application.Interfaces.Services
 {
     internal interface IAccountService 
     {
-        void OpenNewAccount(Account account);
-        Task OpenNewAccountAsync(Account account, CancellationToken token);
-        decimal CheckBalance(int accountId);
-        Task<decimal> CheckBalanceAsync(int accountId, CancellationToken token);
-        void CloseAccount(int accountId);
-        Task CloseAccountAsync(int accountId, CancellationToken token);
-        void FreezeAccount(int accountId);
-        Task FreezeAccountAsync(int accountId, CancellationToken token);
-        void UnfreezeAccount(int accountId);
-        Task UnfreezeAccountAsync(int accountId, CancellationToken token);
-        IEnumerable<Account> GetAccountsByCostumer(int customerId);
-        Task<IEnumerable<Account>> GetAccountsByCustomerAsync(int customerId, CancellationToken token);
+        void OpenNewAccount(string personalNumber, string accounntNumber, decimal balance);
+        Task OpenNewAccountAsync(string personalNumber, string accounntNumber, decimal balance, CancellationToken token);
+        decimal CheckBalance(string accountNumber);
+        Task<decimal> CheckBalanceAsync(string accountNumber, CancellationToken token);
+        void CloseAccount(string accountNumber);
+        Task CloseAccountAsync(string accountNumber, CancellationToken token);
+        void FreezeAccount(string accountNumber);
+        Task FreezeAccountAsync(string accountNumber, CancellationToken token);
+        void UnfreezeAccount(string accountNumber);
+        Task UnfreezeAccountAsync(string accountNumber, CancellationToken token);
+        IEnumerable<Account> GetAccountsByCostumer(string personaNumber);
+        Task<IEnumerable<Account>> GetAccountsByCustomerAsync(string personalNumber, CancellationToken token);
     }
 }

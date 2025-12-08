@@ -10,67 +10,93 @@ namespace MyBank.Application
 
         public event Action<Account>? AccountOpened;
         public event Action<Account>? AccountUpdated;
-        public event Action<int>? AccountClosed;
+        public event Action<Account>? AccountClosed;
 
         public AccountService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         } 
         
-        public IEnumerable<Account> GetAccountsByCostumer(int customerId)
+        public IEnumerable<Account> GetAccountsByCostumer(string personalNumber)
         {
-            return _unitOfWork.AccountRepository.Query(c => c.Customer.CustomerId == customerId).ToList();
+            return _unitOfWork.AccountRepository.Query(c => c.Customer.PersonalNumber.Equals(personalNumber)).ToList();
         }
 
-        public async Task<IEnumerable<Account>> GetAccountsByCustomerAsync(int customerId, CancellationToken token)
+        public async Task<IEnumerable<Account>> GetAccountsByCustomerAsync(string personaNumber, CancellationToken token)
         {
-            return await _unitOfWork.AccountRepository.QueryAsync(c => c.Customer.CustomerId == customerId, token);
+            var accounts = await _unitOfWork.AccountRepository.QueryAsync(c => c.Customer.PersonalNumber.Equals(personaNumber), token);
+
+            return accounts.ToList();
         }
         
-        public void OpenNewAccount(Account account)
+        public void OpenNewAccount(string personalNumber, string accountNumber, decimal balance)
         {
-            if (account == null)
-                throw new ArgumentNullException(nameof(account), "Account cannot be null.");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber);
+            ArgumentOutOfRangeException.ThrowIfNegative(balance);
+
+            Customer customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault()!;
+
+            Account account = new()
+            {
+                Customer = customer,
+                AccountNumber = accountNumber,
+                Balance = balance
+            };
+
+            ArgumentNullException.ThrowIfNull(account, "Account cannot be null");
 
             _unitOfWork.AccountRepository.Insert(account);
             _unitOfWork.SaveChanges();
             OnAccountOpened(account);
         } 
         
-        public async Task OpenNewAccountAsync(Account account, CancellationToken token)
+        public async Task OpenNewAccountAsync(string personalNumber, string accountNumber, decimal balance, CancellationToken token)
         {
-            if (account == null)
-                throw new ArgumentNullException(nameof(account), "Account cannot be null.");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber);
+            ArgumentOutOfRangeException.ThrowIfNegative(balance);
+
+            Customer customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault()!;
+
+            Account account = new()
+            {
+                Customer = customer,
+                AccountNumber = accountNumber,
+                Balance = balance,
+                Status = AccountStatus.Active
+            };
+
+            ArgumentNullException.ThrowIfNull(account, "Account cannot be null");
 
             await _unitOfWork.AccountRepository.InsertAsync(account, token);
             await _unitOfWork.SavechangesAsync(token);
             OnAccountOpened(account);
         }
         
-        public decimal CheckBalance(int accountId)
+        public decimal CheckBalance(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.GetById(accountId)!;
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {accountId} was not found.");
+            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault()!;
+
+            ArgumentNullException.ThrowIfNull(account, $"Account with number {accountNumber} not found");
 
             return account.Balance;
         }
 
-        public async Task<decimal> CheckBalanceAsync(int accountId, CancellationToken token)
+        public async Task<decimal> CheckBalanceAsync(string accountNumber, CancellationToken token)
         {
-            Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, token);
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {accountId} was not found.");
+            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber == (accountNumber), token)).FirstOrDefault()!;
+
+            ArgumentNullException.ThrowIfNull(account, $"Account with number {accountNumber} not found");
 
             return account.Balance;
         }
 
-        public void FreezeAccount(int accountId)
+        public void FreezeAccount(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.GetById(accountId)!;
+            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault()!;
 
-            if(account == null)
-                throw new KeyNotFoundException($"Account with id {accountId} not found");
+            ArgumentNullException.ThrowIfNull(account, $"Account with number {accountNumber} not found");
 
             if (account.Status == AccountStatus.Closed)
                 throw new InvalidOperationException("Closed account cannot be frozen.");
@@ -84,12 +110,11 @@ namespace MyBank.Application
             OnAccountUpdated(account);
         }
 
-        public async Task FreezeAccountAsync(int accountId, CancellationToken token)
+        public async Task FreezeAccountAsync(string accountNumber, CancellationToken token)
         {
-            Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, token);
+            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault()!;
 
-            if (account == null)
-                throw new KeyNotFoundException($"Account with id {accountId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with id {accountNumber} not found");
 
             if (account.Status == AccountStatus.Closed)
                 throw new InvalidOperationException("Closed account cannot be frozen.");
@@ -104,12 +129,11 @@ namespace MyBank.Application
             OnAccountUpdated(account);
         }
 
-        public void UnfreezeAccount(int accountId)
+        public void UnfreezeAccount(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.GetById(accountId)!;
+            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault()!;
 
-            if (account == null)
-                throw new KeyNotFoundException($"Account with id {accountId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with id {accountNumber} not found");
 
             if (account.Status == AccountStatus.Active)
                 throw new InvalidOperationException("Account is already activated.");
@@ -121,12 +145,11 @@ namespace MyBank.Application
             OnAccountUpdated(account);
         }
 
-        public async Task UnfreezeAccountAsync(int accountId, CancellationToken token)
+        public async Task UnfreezeAccountAsync(string accountNumber, CancellationToken token)
         {
-            Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, token);
+            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault()!;
 
-            if (account == null)
-                throw new KeyNotFoundException($"Account with id {accountId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with id {accountNumber} not found");
 
             if (account.Status == AccountStatus.Active)
                 throw new InvalidOperationException("Account is already activated.");
@@ -138,26 +161,26 @@ namespace MyBank.Application
             OnAccountUpdated(account);
         }
         
-        public void CloseAccount(int accountId)
+        public void CloseAccount(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.GetById(accountId)!;
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {accountId} was not found.");
+            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber))!.FirstOrDefault()!;
+
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with number {accountNumber} was not found.");
 
             _unitOfWork.AccountRepository.Delete(account);
             _unitOfWork.SaveChanges();
-            OnAccountClosed(accountId);
+            OnAccountClosed(account);
         }
 
-        public async Task CloseAccountAsync(int accountId, CancellationToken token)
+        public async Task CloseAccountAsync(string accountNumber, CancellationToken token)
         {
-            Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, token);
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {accountId} was not found.");
+            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault()!;
+
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with Id {accountNumber} was not found.");
 
             await _unitOfWork.AccountRepository.DeleteAsync(account, token);
             await _unitOfWork.SavechangesAsync(token);
-            OnAccountClosed(accountId);
+            OnAccountClosed(account);
         }
 
         private void OnAccountOpened(Account account)
@@ -170,9 +193,9 @@ namespace MyBank.Application
             AccountUpdated?.Invoke(account);
         }
 
-        private void OnAccountClosed(int accountId)
+        private void OnAccountClosed(Account account)
         {
-            AccountClosed?.Invoke(accountId);
+            AccountClosed?.Invoke(account);
         }
     }
 }

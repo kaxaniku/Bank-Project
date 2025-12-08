@@ -4,15 +4,15 @@ namespace MyBank.Application.Interfaces.Services
 {
     internal interface ICardService 
     {
-        void ActivateCard(int cardId);
-        Task ActivateCardAsync(int cardId, CancellationToken token);
-        void BlockCard(int cardId);
-        Task BlockCardAsync(int cardId, CancellationToken token);
-        void UnblockCard(int cardId);
-        Task UnblockCardAsync(int cardId, CancellationToken token);
-        void AddNewCard(Card card);
-        Task AddNewCardAsync(Card card, CancellationToken token);
-        IEnumerable<Card> GetCardsByAccount(int accountId);
-        Task<IEnumerable<Card>> GetCardsByAccountAsync(int accountId, CancellationToken token);
+        void ActivateCard(string cardNumber);
+        Task ActivateCardAsync(string cardNumber, CancellationToken token);
+        void BlockCard(string cardNumber);
+        Task BlockCardAsync(string cardNumber, CancellationToken token);
+        void UnblockCard(string cardNumber);
+        Task UnblockCardAsync(string cardNumber, CancellationToken token);
+        void AddNewCard(string cardNumber, CardType cardType, DateTime exparationDate, string cvc, int accountId);
+        Task AddNewCardAsync(string cardNumber, CardType cardType, DateTime exparationDate, string cvc, int accountId, CancellationToken token);
+        IEnumerable<Card> GetCardsByAccount(string accountNumber);
+        Task<IEnumerable<Card>> GetCardsByAccountAsync(string accountNumber, CancellationToken token);
     }
 }

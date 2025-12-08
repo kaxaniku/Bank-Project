@@ -17,35 +17,64 @@ namespace MyBank.Application
             _unitOfWork = unitOfWork;
         }
         
-        public void AddNewCard(Card card)
+        public void AddNewCard(string cardNumber, CardType cardType, DateTime exparationDate, string cvc, int accountId)
         {
-            if (card == null)
-                throw new ArgumentNullException("Card cannot be null");
+            if (string.IsNullOrWhiteSpace(cardNumber) || string.IsNullOrEmpty(cvc) || cvc.Length != 3)
+                throw new ArgumentException("Please insert proper card number or cvc");
+
+            if (_unitOfWork.CardRepository.Query(c => c.Account.AccountId == accountId && c.CardNumber == cardNumber).Any())
+                throw new InvalidOperationException("Card with this number already exists for this account.");
+
+            if (exparationDate < DateTime.UtcNow)
+                throw new ArgumentException("Expiration date cannot be in the past.");
+
+            Account account = _unitOfWork.AccountRepository.GetById(accountId)!;
+
+            Card card = new()
+            {
+                CardNumber = cardNumber,
+                CardType = (CardType)cardType,
+                ExpirationDate = exparationDate,
+                CVC = cvc,
+                Account = account
+            };
 
             _unitOfWork.CardRepository.Insert(card);
             _unitOfWork.SaveChanges();
             OnCardOpened(card);
         }
 
-        public async Task AddNewCardAsync(Card card, CancellationToken token)
+        public async Task AddNewCardAsync(string cardNumber, CardType cardType, DateTime exparationDate, string cvc, int accountId, CancellationToken token)
         {
-            if (card == null)
-                throw new ArgumentNullException("Card cannot be null");
+            if (string.IsNullOrWhiteSpace(cardNumber) || string.IsNullOrEmpty(cvc) || cvc.Length != 3)
+                throw new ArgumentException("Please insert proper card number or cvc");
 
+            if (exparationDate < DateTime.UtcNow)
+                throw new ArgumentException("Expiration date cannot be in the past.");
+
+            Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, token)!;
+
+            Card card = new()
+            {
+                CardNumber = cardNumber,
+                CardType = (CardType)cardType,
+                ExpirationDate = exparationDate,
+                CVC = cvc,
+                Account = account
+            };
             await _unitOfWork.CardRepository.InsertAsync(card, token);
             await _unitOfWork.SavechangesAsync(token);
             OnCardOpened(card);
         }
 
-        public void ActivateCard(int cardId)
+        public void ActivateCard(string cardNumber)
         {
-            Card card = _unitOfWork.CardRepository.GetById(cardId)!;
+            Card card = _unitOfWork.CardRepository.Query(c => c.CardNumber.Equals(cardNumber)).FirstOrDefault()!;
 
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(cardNumber, $"Card with number {cardNumber} not found.");
 
             if (card.Status == CardStatus.Active)
-                throw new InvalidOperationException($"Card with Id {cardId} is already activated");
+                throw new InvalidOperationException($"Card with card number {cardNumber} is already activated");
 
             card.Status = CardStatus.Active;
 
@@ -55,15 +84,14 @@ namespace MyBank.Application
 
         }
 
-        public async Task ActivateCardAsync(int cardId, CancellationToken token)
+        public async Task ActivateCardAsync(string cardNumber, CancellationToken token)
         {
-            Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, token);
+            Card card = (await _unitOfWork.CardRepository.QueryAsync(c => c.CardNumber.Equals(cardNumber), token)).FirstOrDefault()!;
 
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(cardNumber, $"Card with number {cardNumber} not found.");
 
             if (card.Status == CardStatus.Active)
-                throw new InvalidOperationException($"Card with Id {cardId} is already activated");
+                throw new InvalidOperationException($"Card with number {cardNumber} is already activated");
 
             card.Status = CardStatus.Active;
 
@@ -72,15 +100,14 @@ namespace MyBank.Application
             OnCardUpdated(card);
         }
 
-        public void BlockCard(int cardId)
+        public void BlockCard(string cardNumber)
         {
-            Card card = _unitOfWork.CardRepository.GetById(cardId)!;
+            Card card = _unitOfWork.CardRepository.Query(c => c.CardNumber.Equals(cardNumber)).FirstOrDefault()!;
 
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(cardNumber, $"Card with number {cardNumber} not found.");
 
             if (card.Status == CardStatus.Suspended)
-                throw new InvalidOperationException($"Card with Id {cardId} is already suspended");
+                throw new InvalidOperationException($"Card with number {cardNumber} is already suspended");
 
             card.Status = CardStatus.Suspended;
 
@@ -89,15 +116,14 @@ namespace MyBank.Application
             OnCardUpdated(card);
         }
 
-        public async Task BlockCardAsync(int cardId, CancellationToken token)
+        public async Task BlockCardAsync(string cardNumber, CancellationToken token)
         {
-            Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, token);
+            Card card = (await _unitOfWork.CardRepository.QueryAsync(c => c.CardNumber.Equals(cardNumber), token)).FirstOrDefault()!;
 
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(cardNumber, $"Card with number {cardNumber} not found.");
 
             if (card.Status == CardStatus.Suspended)
-                throw new InvalidOperationException($"Card with Id {cardId} is already suspended");
+                throw new InvalidOperationException($"Card with number {cardNumber} is already suspended");
 
             card.Status = CardStatus.Suspended;
 
@@ -106,25 +132,26 @@ namespace MyBank.Application
             OnCardUpdated(card);
         }
 
-        public IEnumerable<Card> GetCardsByAccount(int accountId)
+        public IEnumerable<Card> GetCardsByAccount(string accountNumber)
         {
-            return _unitOfWork.CardRepository.Query(a => a.Account.AccountId == accountId).ToList();
+            return _unitOfWork.CardRepository.Query(a => a.Account.AccountNumber.Equals(accountNumber)).ToList();
         }
 
-        public async Task<IEnumerable<Card>> GetCardsByAccountAsync(int accountId, CancellationToken token)
+        public async Task<IEnumerable<Card>> GetCardsByAccountAsync(string accountNumber, CancellationToken token)
         {
-            return await _unitOfWork.CardRepository.QueryAsync(a => a.Account.AccountId == accountId, token);
+            var cards = await _unitOfWork.CardRepository.QueryAsync(a => a.Account.AccountNumber.Equals(accountNumber), token);
+           
+            return cards.ToList();
         }
 
-        public void UnblockCard(int cardId)
+        public void UnblockCard(string cardNumber)
         {
-            Card card = _unitOfWork.CardRepository.GetById(cardId)!;
+            Card card = _unitOfWork.CardRepository.Query(c => c.CardNumber.Equals(cardNumber)).FirstOrDefault()!;
 
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(cardNumber, $"Card with number {cardNumber} not found.");
 
             if (card.Status == CardStatus.Active)
-                throw new InvalidOperationException($"Card with Id {cardId} is already active");
+                throw new InvalidOperationException($"Card with Id {cardNumber} is already active");
 
             card.Status = CardStatus.Active;
 
@@ -133,15 +160,14 @@ namespace MyBank.Application
             OnCardUpdated(card);
         }
 
-        public async Task UnblockCardAsync(int cardId, CancellationToken token)
+        public async Task UnblockCardAsync(string cardNumber, CancellationToken token)
         {
-            Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, token);
+            Card card = (await _unitOfWork.CardRepository.QueryAsync(c => c.CardNumber.Equals(cardNumber), token)).FirstOrDefault()!;
 
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(cardNumber, $"Card with number {cardNumber} not found.");
 
             if (card.Status == CardStatus.Active)
-                throw new InvalidOperationException($"Card with Id {cardId} is already active");
+                throw new InvalidOperationException($"Card with number {cardNumber} is already active");
 
             card.Status = CardStatus.Active;
 
