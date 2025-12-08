@@ -57,7 +57,8 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
         ThrowIfDisposed();
 
         IQueryable<T> query = _dbSet;
-        includes.ToList().ForEach(include => query = query.Include(include));
+        foreach (var include in includes)
+            query = query.Include(include);
 
         return await query.Where(predicate).ToListAsync();
     }

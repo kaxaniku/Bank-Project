@@ -153,10 +153,9 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    // TODO: Use card Number instead of Id
-    public void ProcessCardPayment(int cardId, string recieverNum, decimal amount)
+    public void ProcessCardPayment(string cardNum, string recieverNum, decimal amount)
     {
-        Card card = _cardService.FindCard(cardId);
+        Card card = _cardService.FindCard(cardNum);
         Account reciever = _accountService.FindAccount(recieverNum);
         Account account = card.Account;
         if (account.AccountId == reciever.AccountId)
@@ -363,10 +362,9 @@ public sealed class TransactionService : ITransactionService
         OnTransactionMade(transaction);
     }
 
-    // TODO: Use card Number instead of Id
-    public async Task ProcessCardPaymentAsync(int cardId, string recieverNum, decimal amount, CancellationToken cancellationToken)
+    public async Task ProcessCardPaymentAsync(string cardNum, string recieverNum, decimal amount, CancellationToken cancellationToken)
     {
-        Card card = await _cardService.FindCardAsync(cardId, cancellationToken);
+        Card card = await _cardService.FindCardAsync(cardNum, cancellationToken);
         Account reciever = await _accountService.FindAccountAsync(recieverNum, cancellationToken);
         Account account = card.Account;
         if (account.AccountId == reciever.AccountId)

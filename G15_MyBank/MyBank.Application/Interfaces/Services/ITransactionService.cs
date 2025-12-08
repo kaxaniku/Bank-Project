@@ -10,8 +10,8 @@ public interface ITransactionService
     Task<Transaction?> GetTransactionAsync(int transactionId, CancellationToken cancellationToken);
     IEnumerable<Transaction> ListTransactions(string toAccountNum, TransactionType type);
     Task<IEnumerable<Transaction>> ListTransactionsAsync(string toAccountNum, TransactionType type ,CancellationToken cancellationToken);
-    void ProcessCardPayment(int cardId, string recieverNum, decimal amount);
-    Task ProcessCardPaymentAsync(int cardId, string recieverNum, decimal amount, CancellationToken cancellationToken);
+    void ProcessCardPayment(string cardNum, string recieverNum, decimal amount);
+    Task ProcessCardPaymentAsync(string cardNum, string recieverNum, decimal amount, CancellationToken cancellationToken);
     void TransferMoney(string fromAccountNum, string toAccountNum, decimal amount);
     Task TransferMoneyAsync(string fromAccountNum, string toAccountNum, decimal amount, CancellationToken cancellationToken);
     void DepositMoney(string toAccountNum, decimal amount);

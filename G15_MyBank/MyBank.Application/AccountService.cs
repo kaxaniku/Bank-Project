@@ -1,6 +1,7 @@
 ﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyBank.Application;
 
@@ -51,7 +52,7 @@ public sealed class AccountService : IAccountService
     {
         Account account = FindAccount(accountNum);
         if (account.Status == AccountStatus.Active)
-            throw new InvalidOperationException($"Account with ID {accountNum} is already active.");
+            throw new InvalidOperationException($"Account with number {accountNum} is already active.");
         account.Status = AccountStatus.Active;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -63,7 +64,7 @@ public sealed class AccountService : IAccountService
     {
         Account account = FindAccount(accountNum);
         if (account.Status == AccountStatus.Inactive)
-            throw new InvalidOperationException($"Account with ID {accountNum} is already inactive.");
+            throw new InvalidOperationException($"Account with number {accountNum} is already inactive.");
         account.Status = AccountStatus.Inactive;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -75,7 +76,7 @@ public sealed class AccountService : IAccountService
     {
         Account account = FindAccount(accountNum);
         if (account.Status == AccountStatus.Blocked)
-            throw new InvalidOperationException($"Account with ID {accountNum} is already blocked.");
+            throw new InvalidOperationException($"Account with number {accountNum} is already blocked.");
         account.Status = AccountStatus.Blocked;
 
         _unitOfWork.AccountRepository.Update(account);
@@ -133,7 +134,7 @@ public sealed class AccountService : IAccountService
     {
         var account = await FindAccountAsync(accountNum, cancellationToken);
         if (account.Status == AccountStatus.Active)
-            throw new InvalidOperationException($"Account with ID {accountNum} is already active.");
+            throw new InvalidOperationException($"Account with number {accountNum} is already active.");
         account.Status = AccountStatus.Active;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -145,7 +146,7 @@ public sealed class AccountService : IAccountService
     {
         var account = await FindAccountAsync(accountNum, cancellationToken);
         if (account.Status == AccountStatus.Inactive)
-            throw new InvalidOperationException($"Account with ID {accountNum} is already inactive.");
+            throw new InvalidOperationException($"Account with number {accountNum} is already inactive.");
         account.Status = AccountStatus.Inactive;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -157,7 +158,7 @@ public sealed class AccountService : IAccountService
     {
         var account = await FindAccountAsync(accountNum, cancellationToken);
         if (account.Status == AccountStatus.Blocked)
-            throw new InvalidOperationException($"Account with ID {accountNum} is already blocked.");
+            throw new InvalidOperationException($"Account with number {accountNum} is already blocked.");
         account.Status = AccountStatus.Blocked;
 
         await _unitOfWork.AccountRepository.UpdateAsync(account);
@@ -171,13 +172,14 @@ public sealed class AccountService : IAccountService
         return account.Balance;
     }
 
+
     public async Task<Account> FindAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
         var accounts = await _unitOfWork.AccountRepository.QueryAsync(x => x.AccountNumber == accountNum, cancellationToken);
         Account account = accounts.FirstOrDefault()
-            ?? throw new InvalidOperationException($"Account with ID {accountNum} does not exist.");
+            ?? throw new InvalidOperationException($"Account with number {accountNum} does not exist.");
         if (!account.Activity.IsActive)
-            throw new InvalidOperationException($"Account with ID {accountNum} no longer exists.");
+            throw new InvalidOperationException($"Account with number {accountNum} no longer exists.");
         return account;
     }
 
