@@ -9,8 +9,8 @@ public interface ICustomerService
     Task<Customer> FindCustomerAsync(int customerId, CancellationToken cancellationToken);
     IEnumerable<Account> ListAccountsByCustomer(int customerId);
     Task<IEnumerable<Account>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken);
-    IEnumerable<Customer> ListAllCustomers();
-    Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken);
+    IEnumerable<Customer> ListAllCustomers(int pageNumber = 1);
+    Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken, int pageNumber = 1);
     void RegisterNewCustomer(
         string personalNumber,
         string firstName,
