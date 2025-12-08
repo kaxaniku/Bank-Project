@@ -48,9 +48,9 @@ public sealed class CountryCityServices : ICountryCityServices
         return _unitOfWork.CityRepository.Query(x => x.Country.CountryId == countryId, x => x.Country);
     }
 
-    public IAsyncEnumerable<Country> ListAllCountriesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken)
     {
-        return _unitOfWork.CountryRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
+        return await _unitOfWork.CountryRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
     public async Task<Country> GetCountryAsync(int countryId, CancellationToken cancellationToken)
@@ -63,9 +63,9 @@ public sealed class CountryCityServices : ICountryCityServices
     }
 
     // TODO: Add pagination support
-    public IAsyncEnumerable<City> ListAllCitiesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken)
     {
-        return _unitOfWork.CityRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
+        return await _unitOfWork.CityRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
     public async Task<City> GetCityAsync(int cityId, CancellationToken cancellationToken)
@@ -78,8 +78,8 @@ public sealed class CountryCityServices : ICountryCityServices
     }
 
     // TODO: Add pagination support
-    public IAsyncEnumerable<City> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
     {
-        return _unitOfWork.CityRepository.QueryAsync(x => x.Country.CountryId == countryId, cancellationToken, x => x.Country);
+        return await _unitOfWork.CityRepository.QueryAsync(x => x.Country.CountryId == countryId, cancellationToken, x => x.Country);
     }
 }

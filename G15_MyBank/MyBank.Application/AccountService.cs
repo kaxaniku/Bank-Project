@@ -171,11 +171,9 @@ public sealed class AccountService : IAccountService
         return account.Balance;
     }
 
-
-    // TODO: fix firstordefault error
-    public IAsyncEnumerable<Account> FindAccountAsync(string accountNum, CancellationToken cancellationToken)
+    public async Task<Account> FindAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        var accounts = _unitOfWork.AccountRepository.QueryAsync(x => x.AccountNumber == accountNum, cancellationToken);
+        var accounts = await _unitOfWork.AccountRepository.QueryAsync(x => x.AccountNumber == accountNum, cancellationToken);
         Account account = accounts.FirstOrDefault()
             ?? throw new InvalidOperationException($"Account with ID {accountNum} does not exist.");
         if (!account.Activity.IsActive)

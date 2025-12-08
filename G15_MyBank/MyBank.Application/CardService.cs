@@ -188,9 +188,9 @@ public sealed class CardService : ICardService
         return card;
     }
 
-    public IAsyncEnumerable<Card> ListCardsByAccountAsync(string accountNum, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Card>> ListCardsByAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        return _unitOfWork.CardRepository.QueryAsync(x => x.Account.AccountNumber == accountNum, cancellationToken, x => x.Account);
+        return await _unitOfWork.CardRepository.QueryAsync(x => x.Account.AccountNumber == accountNum, cancellationToken, x => x.Account);
     }
 
     private static void OnCardIssued(Card card)

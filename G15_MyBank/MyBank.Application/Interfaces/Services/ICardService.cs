@@ -13,7 +13,7 @@ public interface ICardService
     void IssueNewCard(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, string accountNum);
     Task IssueNewCardAsync(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, string accountNum, CancellationToken cancellationToken);
     IEnumerable<Card> ListCardsByAccount(string accountNum);
-    IAsyncEnumerable<Card> ListCardsByAccountAsync(string accountNum, CancellationToken cancellationToken);
+    Task<IEnumerable<Card>> ListCardsByAccountAsync(string accountNum, CancellationToken cancellationToken);
     Card FindCard(int cardId);
     Task<Card> FindCardAsync(int cardId, CancellationToken cancellationToken);
 }
