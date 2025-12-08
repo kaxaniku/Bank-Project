@@ -65,7 +65,7 @@ public sealed class CountryCityServices : ICountryCityServices
 
         IQueryable<City> query =
             _unitOfWork.CityRepository
-                .Query(x => x.Country.CountryId = countryId);
+                .Query(x => x.Country.CountryId == countryId, x => x.Country);
 
         return query
             .Skip(skip)
@@ -137,7 +137,7 @@ public sealed class CountryCityServices : ICountryCityServices
 
         IQueryable<City> query =
             _unitOfWork.CityRepository
-                .Query(x => x.Country.CountryId = countryId);
+                .Query(x => x.Country.CountryId == countryId, x => x.Country);
 
         return await query
             .Skip(skip)

@@ -215,7 +215,7 @@ public sealed class TransactionService : ITransactionService
         return _unitOfWork.TransactionRepository.GetById(transactionId);
     }
 
-    public IEnumerable<Transaction> ListTransactions(string accountNum, TransactionType type, int pageNumber = 1)
+    public IEnumerable<Transaction> ListTransactions(TransactionType type, int pageNumber = 1)
     {
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
@@ -448,7 +448,7 @@ public sealed class TransactionService : ITransactionService
         return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, cancellationToken);
     }
 
-    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(string accountNum, TransactionType type, CancellationToken cancellationToken, int pageNumber = 1)
+    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(TransactionType type, CancellationToken cancellationToken, int pageNumber = 1)
     {
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
