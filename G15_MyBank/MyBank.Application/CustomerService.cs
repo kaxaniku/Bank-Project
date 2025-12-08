@@ -19,18 +19,14 @@ namespace MyBank.Application
 
         public Customer? FindCustomer(string personalNumber)
         {
-            Customer customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault()!;
-
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with number {personalNumber} not found");
-
-            return customer;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(personalNumber));
+            return _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault();
         }
 
         public async Task<Customer?> FindCustomerAsync(string personalNumber, CancellationToken token)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with number {personalNumber} not found");
             Customer customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault()!;
-
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with number {personalNumber} not found");
 
             return customer;
         }
