@@ -1,4 +1,5 @@
-﻿using MyBank.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
@@ -27,10 +28,22 @@ public sealed class CountryCityServices : ICountryCityServices
         return customer;
     }
 
-    // TODO: Add pagination support
-    public IEnumerable<City> ListAllCities()
+    public IEnumerable<City> ListAllCities(int pageNumber = 1)
     {
-        return _unitOfWork.CityRepository.Query(x => x.Activity.IsActive);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<City> query =
+            _unitOfWork.CityRepository
+                .Query(x => x.Activity.IsActive);
+
+        return query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToList();
     }
 
     public City GetCity(int cityId)
@@ -42,15 +55,40 @@ public sealed class CountryCityServices : ICountryCityServices
         return city;
     }
 
-    // TODO: Add pagination support
-    public IEnumerable<City> ListCitiesByCountry(int countryId)
+    public IEnumerable<City> ListCitiesByCountry(int countryId, int pageNumber = 1)
     {
-        return _unitOfWork.CityRepository.Query(x => x.Country.CountryId == countryId, x => x.Country);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<City> query =
+            _unitOfWork.CityRepository
+                .Query(x => x.Country.CountryId = countryId);
+
+        return query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToList();
     }
 
-    public async Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken, int pageNumber = 1)
     {
-        return await _unitOfWork.CountryRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Country> query =
+            _unitOfWork.CountryRepository
+                .Query(x => x.Activity.IsActive);
+
+        return await query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
     public async Task<Country> GetCountryAsync(int countryId, CancellationToken cancellationToken)
@@ -62,10 +100,22 @@ public sealed class CountryCityServices : ICountryCityServices
         return customer;
     }
 
-    // TODO: Add pagination support
-    public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken, int pageNumber = 1)
     {
-        return await _unitOfWork.CityRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<City> query =
+            _unitOfWork.CityRepository
+                .Query(x => x.Activity.IsActive);
+
+        return await query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
     public async Task<City> GetCityAsync(int cityId, CancellationToken cancellationToken)
@@ -77,9 +127,21 @@ public sealed class CountryCityServices : ICountryCityServices
         return city;
     }
 
-    // TODO: Add pagination support
-    public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken, int pageNumber = 1)
     {
-        return await _unitOfWork.CityRepository.QueryAsync(x => x.Country.CountryId == countryId, cancellationToken, x => x.Country);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<City> query =
+            _unitOfWork.CityRepository
+                .Query(x => x.Country.CountryId = countryId);
+
+        return await query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
     }
 }

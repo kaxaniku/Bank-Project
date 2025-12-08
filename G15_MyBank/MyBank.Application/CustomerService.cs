@@ -1,9 +1,9 @@
 ﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyBank.Application;
-
 public sealed class CustomerService : ICustomerService
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -149,11 +149,24 @@ public sealed class CustomerService : ICustomerService
         return customer;
     }
 
-    // TODO: Add pagination support
-    public IEnumerable<Customer> ListAllCustomers()
+    public IEnumerable<Customer> ListAllCustomers(int pageNumber = 1)
     {
-        return _unitOfWork.CustomerRepository.Query(x => x.Activity.IsActive);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Customer> query =
+            _unitOfWork.CustomerRepository
+                .Query(x => x.Activity.IsActive);
+
+        return query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToList();
     }
+
 
     public IEnumerable<Account> ListAccountsByCustomer(int customerId)
     {
@@ -293,11 +306,24 @@ public sealed class CustomerService : ICustomerService
         return customer;
     }
 
-    // TODO: Add pagination support
-    public async Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken, int pageNumber = 1)
     {
-        return await _unitOfWork.CustomerRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Customer> query =
+            _unitOfWork.CustomerRepository
+                .Query(x => x.Activity.IsActive);
+
+        return await query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
     }
+
 
     public async Task<IEnumerable<Account>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken)
     {

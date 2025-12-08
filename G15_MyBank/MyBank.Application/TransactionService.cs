@@ -1,6 +1,7 @@
 ﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyBank.Application;
 
@@ -215,20 +216,44 @@ public sealed class TransactionService : ITransactionService
         return _unitOfWork.TransactionRepository.GetById(transactionId);
     }
 
-    // TODO: Add pagination support
-    public IEnumerable<Transaction> ListTransactions(string accountNum, TransactionType type)
+    public IEnumerable<Transaction> ListTransactions(string accountNum, TransactionType type, int pageNumber = 1)
     {
-        return _unitOfWork.TransactionRepository.Query(x => x.Type == type);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Transaction> query =
+            _unitOfWork.TransactionRepository
+                .Query(x => x.Type == type);
+
+        return query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToList();
     }
 
-    // TODO: Add pagination support
-    public IEnumerable<Transaction> GenerateStatement(string accountNum, DateTime fromDate, DateTime toDate)
+    public IEnumerable<Transaction> GenerateStatement(string accountNum, DateTime fromDate, DateTime toDate, int pageNumber = 1)
     {
+        if (pageNumber < 1)
+        throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
         Account account = _accountService.FindAccount(accountNum);
-        return _unitOfWork.TransactionRepository.Query(x =>
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Transaction> query =
+            _unitOfWork.TransactionRepository.Query(x =>
             (x.FromAccountId == account.AccountId || x.ToAccountId == account.AccountId) &&
             x.TransactionDate >= fromDate &&
             x.TransactionDate <= toDate);
+
+        return query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToList();
     }
 
     public async Task TransferMoneyAsync(string fromAccountNum, string toAccountNum, decimal amount, CancellationToken cancellationToken)
@@ -425,20 +450,44 @@ public sealed class TransactionService : ITransactionService
         return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, cancellationToken);
     }
 
-    // TODO: Add pagination support
-    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(string accountNum, TransactionType type, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(string accountNum, TransactionType type, CancellationToken cancellationToken, int pageNumber = 1)
     {
-        return await _unitOfWork.TransactionRepository.QueryAsync(x => x.Type == type, cancellationToken);
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Transaction> query =
+            _unitOfWork.TransactionRepository
+                .Query(x => x.Type == type);
+
+        return await query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
-    // TODO: Add pagination support
-    public async Task<IEnumerable<Transaction>> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Transaction>> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken, int pageNumber = 1)
     {
-        Account account = await _accountService.FindAccountAsync(accountNum, cancellationToken);
-        return await _unitOfWork.TransactionRepository.QueryAsync(x =>
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        Account account = _accountService.FindAccount(accountNum);
+
+        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Transaction> query =
+            _unitOfWork.TransactionRepository.Query(x =>
             (x.FromAccountId == account.AccountId || x.ToAccountId == account.AccountId) &&
             x.TransactionDate >= fromDate &&
-            x.TransactionDate <= toDate, cancellationToken);
+            x.TransactionDate <= toDate);
+
+        return await query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
     private static void OnTransactionMade(Transaction transaction)
