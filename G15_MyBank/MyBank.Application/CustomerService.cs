@@ -294,14 +294,14 @@ public sealed class CustomerService : ICustomerService
     }
 
     // TODO: Add pagination support
-    public async Task<IEnumerable<Customer>> ListAllCustomersAsync(CancellationToken cancellationToken)
+    public IAsyncEnumerable<Customer> ListAllCustomersAsync(CancellationToken cancellationToken)
     {
-        return await _unitOfWork.CustomerRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
+        return _unitOfWork.CustomerRepository.QueryAsync(x => x.Activity.IsActive, cancellationToken);
     }
 
-    public async Task<IEnumerable<Account>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken)
+    public IAsyncEnumerable<Account> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.AccountRepository.QueryAsync(x => x.Customer.CustomerId.Equals(customerId), cancellationToken, x => x.Customer);
+        return _unitOfWork.AccountRepository.QueryAsync(x => x.Customer.CustomerId.Equals(customerId), cancellationToken, x => x.Customer);
     }
 
     private static void OnCustomerRegistered(Customer customer)

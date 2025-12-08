@@ -9,9 +9,9 @@ public interface ICountryCityServices
     Country GetCountry(int countryId);
     Task<Country> GetCountryAsync(int countryId, CancellationToken cancellationToken);
     IEnumerable<City> ListAllCities();
-    Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken);
+    IAsyncEnumerable<City> ListAllCitiesAsync(CancellationToken cancellationToken);
     IEnumerable<Country> ListAllCountries();
-    Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken);
+    IAsyncEnumerable<Country> ListAllCountriesAsync(CancellationToken cancellationToken);
     IEnumerable<City> ListCitiesByCountry(int countryId);
-    Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken);
+    IAsyncEnumerable<City> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken);
 }

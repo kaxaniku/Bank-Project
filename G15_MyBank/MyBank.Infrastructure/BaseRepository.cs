@@ -52,14 +52,15 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
         return query.Where(predicate);
     }
 
-    public async Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken, params Expression<Func<T, object>>[] includes)
+    public IAsyncEnumerable<T> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken, params Expression<Func<T, object>>[] includes)
     {
         ThrowIfDisposed();
 
         IQueryable<T> query = _dbSet;
-        includes.ToList().ForEach(include => query = query.Include(include));
+        foreach (var include in includes)
+            query = query.Include(include);
 
-        return await query.Where(predicate).ToListAsync();
+        return query.Where(predicate).AsAsyncEnumerable();
     }
 
     public void Insert(T entity)

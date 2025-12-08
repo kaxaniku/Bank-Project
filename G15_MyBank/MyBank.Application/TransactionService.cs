@@ -426,16 +426,16 @@ public sealed class TransactionService : ITransactionService
     }
 
     // TODO: Add pagination support
-    public async Task<IEnumerable<Transaction>> ListTransactionsAsync(string accountNum, TransactionType type, CancellationToken cancellationToken)
+    public IAsyncEnumerable<Transaction> ListTransactionsAsync(string accountNum, TransactionType type, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.TransactionRepository.QueryAsync(x => x.Type == type, cancellationToken);
+        return _unitOfWork.TransactionRepository.QueryAsync(x => x.Type == type, cancellationToken);
     }
 
     // TODO: Add pagination support
-    public async Task<IEnumerable<Transaction>> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
+    public IAsyncEnumerable<Transaction> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken)
     {
         Account account = await _accountService.FindAccountAsync(accountNum, cancellationToken);
-        return await _unitOfWork.TransactionRepository.QueryAsync(x =>
+        return _unitOfWork.TransactionRepository.QueryAsync(x =>
             (x.FromAccountId == account.AccountId || x.ToAccountId == account.AccountId) &&
             x.TransactionDate >= fromDate &&
             x.TransactionDate <= toDate, cancellationToken);

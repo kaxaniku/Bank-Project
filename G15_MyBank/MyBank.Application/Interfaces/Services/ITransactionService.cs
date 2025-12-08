@@ -5,11 +5,11 @@ namespace MyBank.Application.Interfaces.Services;
 public interface ITransactionService
 {
     IEnumerable<Transaction> GenerateStatement(string toAccountNum, DateTime fromDate, DateTime toDate);
-    Task<IEnumerable<Transaction>> GenerateStatementAsync(string toAccountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken);
+    IAsyncEnumerable<Transaction> GenerateStatementAsync(string toAccountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken);
     Transaction? GetTransaction(int transactionId);
     Task<Transaction?> GetTransactionAsync(int transactionId, CancellationToken cancellationToken);
     IEnumerable<Transaction> ListTransactions(string toAccountNum, TransactionType type);
-    Task<IEnumerable<Transaction>> ListTransactionsAsync(string toAccountNum, TransactionType type ,CancellationToken cancellationToken);
+    IAsyncEnumerable<Transaction> ListTransactionsAsync(string toAccountNum, TransactionType type ,CancellationToken cancellationToken);
     void ProcessCardPayment(int cardId, string recieverNum, decimal amount);
     Task ProcessCardPaymentAsync(int cardId, string recieverNum, decimal amount, CancellationToken cancellationToken);
     void TransferMoney(string fromAccountNum, string toAccountNum, decimal amount);
