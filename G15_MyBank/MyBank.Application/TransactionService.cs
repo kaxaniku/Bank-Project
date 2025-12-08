@@ -236,7 +236,7 @@ public sealed class TransactionService : ITransactionService
     public IEnumerable<Transaction> GenerateStatement(string accountNum, DateTime fromDate, DateTime toDate, int pageNumber = 1)
     {
         if (pageNumber < 1)
-        throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
         Account account = _accountService.FindAccount(accountNum);
 
@@ -463,7 +463,7 @@ public sealed class TransactionService : ITransactionService
         return await query
             .Skip(skip)
             .Take(pageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken: cancellationToken);
     }
 
     public async Task<IEnumerable<Transaction>> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken, int pageNumber = 1)

@@ -1,9 +1,10 @@
-﻿using MyBank.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace MyBank.Application;
+
 public sealed class CustomerService : ICustomerService
 {
     private readonly IUnitOfWork _unitOfWork;
