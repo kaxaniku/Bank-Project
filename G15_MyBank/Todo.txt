@@ -18,6 +18,12 @@
 
 16. Move repository interfaces to the application module.+
 
-17. Add Email message sender service.
-18. Send confirmation email after user registration.
+17. Add Email message sender service.+
+18. Send confirmation email after user registration.+
 19. Implement functionality that allows manage confirmation mail templates not yet(To be discussed).
+
+20. Add Serilog and configure it for API
+    a. All request should be logged in seperate text file
+    b. All errors should be logged in seperate text file
+21. Implement global error handling middleware for API
+22. Add controllers for services(Empty methods)
