@@ -13,34 +13,70 @@ namespace MyBank.Application
             _unitOfWork = unitOfWork;
         }
 
-        public IEnumerable<City> GetAllCities()
+        public IEnumerable<City> GetAllCities(int pageNumber = 1, int pageSize = 10)
         {
-            return _unitOfWork.CityRepository.Query(c => c.Activity.IsActive);
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            return _unitOfWork.CityRepository.Query(c => c.Activity.IsActive).Skip(skip).Take(pageSize).ToList();
         }
 
-        public async Task<IEnumerable<City>> GetAllCitiesAsync(CancellationToken token)
+        public async Task<IEnumerable<City>> GetAllCitiesAsync(CancellationToken token, int pageNumber = 1, int pageSize = 10)
         {
-            return await _unitOfWork.CityRepository.QueryAsync(c => c.Activity.IsActive, token);
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            var query = await _unitOfWork.CityRepository.QueryAsync(c => c.Activity.IsActive, token);
+
+            return query.Skip(skip).Take(pageSize).ToList();
         }
 
-        public IEnumerable<Country> GetAllCountries()
+        public IEnumerable<Country> GetAllCountries(int pageNumber = 1, int pageSize = 10)
         {
-            return _unitOfWork.CountryRepository.Query(c => c.Activity.IsActive);
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            return _unitOfWork.CountryRepository.Query(c => c.Activity.IsActive).Skip(skip).Take(pageSize).ToList();
         }
 
-        public async Task<IEnumerable<Country>> GetAllCountriesAsync(CancellationToken token)
+        public async Task<IEnumerable<Country>> GetAllCountriesAsync(CancellationToken token, int pageNumber = 1, int pageSize = 10)
         {
-            return await _unitOfWork.CountryRepository.QueryAsync(c => c.Activity.IsActive, token);
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            var query = await _unitOfWork.CountryRepository.QueryAsync(c => c.Activity.IsActive, token);
+
+            return query.Skip(skip).Take(pageSize).ToList();
         }
 
-        public IEnumerable<City> GetCitiesByCountry(int countryId)
+        public IEnumerable<City> GetCitiesByCountry(int countryId, int pageNumber = 1, int pageSize = 10)
         {
-            return _unitOfWork.CityRepository.Query(c => c.Country.CountryId == countryId).ToList();
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            return _unitOfWork.CityRepository.Query(c => c.Country.CountryId == countryId).Skip(skip).Take(pageSize).ToList();
         }
 
-        public async Task<IEnumerable<City>> GetCitiesByCountryAsync(int countryId, CancellationToken token)
+        public async Task<IEnumerable<City>> GetCitiesByCountryAsync(int countryId, CancellationToken token, int pageNumber = 1, int pageSize = 10)
         {
-            return await _unitOfWork.CityRepository.QueryAsync(c => c.Country.CountryId == countryId, token);
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            var query = await _unitOfWork.CityRepository.QueryAsync(c => c.Country.CountryId == countryId, token);
+
+            return query.Skip(skip).Take(pageSize).ToList();
         }
 
         public City? GetCity(int cityId)

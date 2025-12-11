@@ -8,11 +8,11 @@ namespace MyBank.Application.Interfaces.Services
         Task<City?> GetCityAsync(int cityId, CancellationToken token);
         Country? GetCountry(int countryId);
         Task<Country?> GetCountryAsync(int countryId, CancellationToken token);
-        IEnumerable<City> GetAllCities();
-        Task<IEnumerable<City>> GetAllCitiesAsync(CancellationToken token);
-        IEnumerable<Country> GetAllCountries();
-        Task<IEnumerable<Country>> GetAllCountriesAsync(CancellationToken token);
-        IEnumerable<City> GetCitiesByCountry(int countryId);
-        Task<IEnumerable<City>> GetCitiesByCountryAsync(int countryId, CancellationToken token);
+        IEnumerable<City> GetAllCities(int pageNumber, int pageSize);
+        Task<IEnumerable<City>> GetAllCitiesAsync(CancellationToken token, int pageNumber, int pageSize);
+        IEnumerable<Country> GetAllCountries(int pageNumber, int pageSize);
+        Task<IEnumerable<Country>> GetAllCountriesAsync(CancellationToken token, int pageNumber, int pageSize);
+        IEnumerable<City> GetCitiesByCountry(int countryId, int pageNumber, int pageSize);
+        Task<IEnumerable<City>> GetCitiesByCountryAsync(int countryId, CancellationToken token, int pageNumber, int pageSize);
     }
 }

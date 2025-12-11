@@ -19,8 +19,7 @@ namespace MyBank.Application
         {
             Account account = _unitOfWork.AccountRepository.GetById(toAccountId)!;
 
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {account} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             if (amount <= 0)
                 throw new ArgumentNullException("Amount must be positive to deposit");
@@ -38,9 +37,19 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            _unitOfWork.TransactionRepository.Insert(transaction);
-            _unitOfWork.AccountRepository.Update(account);
-            _unitOfWork.SaveChanges();
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                _unitOfWork.TransactionRepository.Insert(transaction);
+                _unitOfWork.AccountRepository.Update(account);
+                _unitOfWork.SaveChanges();
+                _unitOfWork.CommitTransaction();
+            }
+            catch
+            {
+                _unitOfWork.RollbackTransaction();
+                throw;
+            }
             OnTransactionProcessed(transaction);
         }
 
@@ -48,8 +57,7 @@ namespace MyBank.Application
         {
             Account account = await _unitOfWork.AccountRepository.GetByIdAsync(accountId, token);
 
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {account} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             if (amount <= 0)
                 throw new ArgumentNullException("Amount must be positive to deposit");
@@ -67,29 +75,54 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
-            await _unitOfWork.AccountRepository.UpdateAsync(account, token);
-            await _unitOfWork.SavechangesAsync(token);
+            try
+            {
+                await _unitOfWork.BeginTrasactionAsync(token);
+                await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
+                await _unitOfWork.AccountRepository.UpdateAsync(account, token);
+                await _unitOfWork.SavechangesAsync(token);
+                await _unitOfWork.CommitTransactionAsync(token);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(token);
+                throw;
+            }
             OnTransactionProcessed(transaction);
         }
 
-        public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate)
+        public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate, int pageNumber = 1, int pageSize = 10)
         {
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
             return _unitOfWork.TransactionRepository.Query(t =>
             (t.FromAccountId == accountId || 
             t.ToAccountId == accountId) &&
             t.TransactionDate >= fromDate &&
             t.TransactionDate < toDate).
-            OrderBy(t => t.TransactionDate).ToList();
+            OrderBy(t => t.TransactionDate).
+            Skip(skip).
+            Take(pageSize).
+            ToList();
         }
 
-        public async Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken token)
+        public async Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken token, int pageNumber = 1, int pageSize = 10)
         {
-            return await _unitOfWork.TransactionRepository.QueryAsync(t =>
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            var query = await _unitOfWork.TransactionRepository.QueryAsync(t =>
             (t.FromAccountId == accountId ||
             t.ToAccountId == accountId) &&
             t.TransactionDate >= fromDate &&
             t.TransactionDate < toDate, token);
+
+            return query.OrderBy(t => t.TransactionDate).Skip(skip).Take(pageSize).ToList();
         }
 
         public Transaction? GetTransaction(int transactionId)
@@ -102,25 +135,37 @@ namespace MyBank.Application
             return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, token);
         }
 
-        public IEnumerable<Transaction> GetTransactions(int accountId)
+        public IEnumerable<Transaction> GetTransactions(int accountId, int pageNumber = 1, int pageSize = 10)
         {
-            return _unitOfWork.TransactionRepository.Query(t => t.ToAccountId == accountId || t.FromAccountId == accountId).ToList();
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            var query = _unitOfWork.TransactionRepository.Query(t => t.ToAccountId == accountId || t.FromAccountId == accountId);
+
+            return query.Skip(skip).Take(pageSize).ToList();         
         }
 
-        public async Task<IEnumerable<Transaction>> GetTransactionsAsync(int accountId, CancellationToken token)
+        public async Task<IEnumerable<Transaction>> GetTransactionsAsync(int accountId, CancellationToken token, int pageNumber = 1, int pageSize = 10)
         {
-            return await _unitOfWork.TransactionRepository.QueryAsync(t => t.ToAccountId == accountId || t.FromAccountId == accountId, token);
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            var query = await _unitOfWork.TransactionRepository.QueryAsync(t => t.ToAccountId == accountId || t.FromAccountId == accountId, token);
+
+            return query.Skip(skip).Take(pageSize).ToList();
         }
 
         public bool IsTransactionAllowed(int fromAccountId, int toAccountId, decimal amount)
         {
             Account fromAccount = _unitOfWork.AccountRepository.GetById(fromAccountId)!;
-            if (fromAccount == null)
-                throw new KeyNotFoundException($"Account with Id {fromAccountId} not found");
+            ArgumentNullException.ThrowIfNull(fromAccount);
 
             Account toAccount = _unitOfWork.AccountRepository.GetById(toAccountId)!;
-            if (toAccount == null)
-                throw new KeyNotFoundException($"Account with Id {toAccountId} not found");
+            ArgumentNullException.ThrowIfNull(toAccount);
 
             if (amount <= 0)
                 return false;
@@ -135,12 +180,10 @@ namespace MyBank.Application
         public async Task<bool> IsTransactionAllowedAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken token)
         {
             Account fromAccount = await _unitOfWork.AccountRepository.GetByIdAsync(fromAccountId, token);
-            if (fromAccount == null)
-                throw new KeyNotFoundException($"Account with Id {fromAccountId} not found");
+            ArgumentNullException.ThrowIfNull(fromAccount);
 
             Account toAccount = await _unitOfWork.AccountRepository.GetByIdAsync(toAccountId, token);
-            if (toAccount == null)
-                throw new KeyNotFoundException($"Account with Id {toAccountId} not found");
+            ArgumentNullException.ThrowIfNull(toAccount);
 
             if (amount <= 0)
                 return false;
@@ -155,12 +198,10 @@ namespace MyBank.Application
         public void ProcessCardPayment(int cardId, int recieverId,  decimal amount)
         {
             Card card = _unitOfWork.CardRepository.GetById(cardId)!;
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNull(card);
 
             Account reciever = _unitOfWork.AccountRepository.GetById(recieverId)!;
-            if (reciever == null)
-                throw new KeyNotFoundException($"Account with Id {recieverId} not found");
+            ArgumentNullException.ThrowIfNull(reciever);
 
             Account account = card.Account;
 
@@ -191,22 +232,29 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            _unitOfWork.TransactionRepository.Insert(transaction);
-            _unitOfWork.AccountRepository.Update(account);
-            _unitOfWork.AccountRepository.Update(reciever);
-            _unitOfWork.SaveChanges();
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                _unitOfWork.TransactionRepository.Insert(transaction);
+                _unitOfWork.AccountRepository.Update(account);
+                _unitOfWork.AccountRepository.Update(reciever);
+                _unitOfWork.SaveChanges();
+                _unitOfWork.CommitTransaction();
+            }
+            catch
+            {
+                _unitOfWork.RollbackTransaction();
+            }
             OnTransactionProcessed(transaction);
         }
 
         public async Task ProcessCardPaymentAsync(int cardId, int recieverId, decimal amount, CancellationToken token)
         {
             Card card = await _unitOfWork.CardRepository.GetByIdAsync(cardId, token);
-            if (card == null)
-                throw new KeyNotFoundException($"Card with Id {cardId} not found");
+            ArgumentNullException.ThrowIfNull(card);
 
             Account reciever = await _unitOfWork.AccountRepository.GetByIdAsync(recieverId, token)!;
-            if (reciever == null)
-                throw new KeyNotFoundException($"Account with Id {recieverId} not found");
+            ArgumentNullException.ThrowIfNull(reciever);
 
             Account account = card.Account;
 
@@ -237,22 +285,30 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
-            await _unitOfWork.AccountRepository.UpdateAsync(account, token);
-            await _unitOfWork.AccountRepository.UpdateAsync(reciever, token);
-            await _unitOfWork.SavechangesAsync(token);
+            try
+            {
+                await _unitOfWork.BeginTrasactionAsync(token);
+                await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
+                await _unitOfWork.AccountRepository.UpdateAsync(account, token);
+                await _unitOfWork.AccountRepository.UpdateAsync(reciever, token);
+                await _unitOfWork.SavechangesAsync(token);
+                await _unitOfWork.CommitTransactionAsync(token);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(token);
+                throw;
+            }
             OnTransactionProcessed(transaction);
         }
 
         public void TransferMoney(int fromAccountId, int toAccountId, decimal amount)
         {
             Account fromAccount = _unitOfWork.AccountRepository.GetById(fromAccountId)!;
-            if (fromAccount == null)
-                throw new ArgumentNullException($"Account with Id {fromAccountId} not found");
+            ArgumentNullException.ThrowIfNull(fromAccount);
 
             Account toAccount = _unitOfWork.AccountRepository.GetById(toAccountId)!;
-            if (toAccount == null)
-                throw new ArgumentNullException($"Account with Id {toAccountId} not found");
+            ArgumentNullException.ThrowIfNull(toAccount);
 
             if (fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
                 throw new InvalidOperationException("Both of account must be active to transfer");
@@ -275,22 +331,30 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            _unitOfWork.TransactionRepository.Insert(transaction);
-            _unitOfWork.AccountRepository.Update(fromAccount);
-            _unitOfWork.AccountRepository.Update(toAccount);
-            _unitOfWork.SaveChanges();
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                _unitOfWork.TransactionRepository.Insert(transaction);
+                _unitOfWork.AccountRepository.Update(fromAccount);
+                _unitOfWork.AccountRepository.Update(toAccount);
+                _unitOfWork.SaveChanges();
+                _unitOfWork.CommitTransaction();
+            }
+            catch
+            {
+                _unitOfWork.RollbackTransaction();
+                throw;
+            }
             OnTransactionProcessed(transaction);
         }
 
         public async Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount, CancellationToken token)
         {
             Account fromAccount = await _unitOfWork.AccountRepository.GetByIdAsync(fromAccountId, token)!;
-            if (fromAccount == null)
-                throw new ArgumentNullException($"Account with Id {fromAccountId} not found");
+            ArgumentNullException.ThrowIfNull(fromAccount);
 
             Account toAccount = await _unitOfWork.AccountRepository.GetByIdAsync(toAccountId, token)!;
-            if (toAccount == null)
-                throw new ArgumentNullException($"Account with Id {toAccountId} not found");
+            ArgumentNullException.ThrowIfNull(toAccount);
 
             if (fromAccount.Status != AccountStatus.Active || toAccount.Status != AccountStatus.Active)
                 throw new InvalidOperationException("Both of account must be active to transfer");
@@ -313,10 +377,20 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
-            await _unitOfWork.AccountRepository.UpdateAsync(fromAccount, token);
-            await _unitOfWork.AccountRepository.UpdateAsync(toAccount, token);
-            await _unitOfWork.SavechangesAsync(token);
+            try
+            {
+                await _unitOfWork.BeginTrasactionAsync(token);
+                await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
+                await _unitOfWork.AccountRepository.UpdateAsync(fromAccount, token);
+                await _unitOfWork.AccountRepository.UpdateAsync(toAccount, token);
+                await _unitOfWork.SavechangesAsync(token);
+                await _unitOfWork.CommitTransactionAsync(token);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(token);
+                throw;
+            }
             OnTransactionProcessed(transaction);
         }
 
@@ -324,8 +398,7 @@ namespace MyBank.Application
         {
             Account account = _unitOfWork.AccountRepository.GetById(fromAccountId)!;
 
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {fromAccountId} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             if (amount <= 0)
                 throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
@@ -343,9 +416,18 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            _unitOfWork.TransactionRepository.Insert(transaction);
-            _unitOfWork.AccountRepository.Update(account);
-            _unitOfWork.SaveChanges();
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                _unitOfWork.TransactionRepository.Insert(transaction);
+                _unitOfWork.AccountRepository.Update(account);
+                _unitOfWork.SaveChanges();
+                _unitOfWork.CommitTransaction();
+            }
+            catch
+            {
+                _unitOfWork.RollbackTransaction();
+            }
             OnTransactionProcessed(transaction);
         }
 
@@ -353,8 +435,7 @@ namespace MyBank.Application
         {
             Account account = await _unitOfWork.AccountRepository.GetByIdAsync(fromAccountId, token)!;
 
-            if (account == null)
-                throw new KeyNotFoundException($"Account with Id {fromAccountId} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             if (amount <= 0)
                 throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
@@ -372,9 +453,19 @@ namespace MyBank.Application
                 TransactionDate = DateTime.UtcNow
             };
 
-            await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
-            await _unitOfWork.AccountRepository.UpdateAsync(account, token);
-            await _unitOfWork.SavechangesAsync(token);
+            try
+            {
+                await _unitOfWork.BeginTrasactionAsync(token);
+                await _unitOfWork.TransactionRepository.InsertAsync(transaction, token);
+                await _unitOfWork.AccountRepository.UpdateAsync(account, token);
+                await _unitOfWork.SavechangesAsync(token);
+                await _unitOfWork.CommitTransactionAsync(token);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(token);
+                throw;
+            }
             OnTransactionProcessed(transaction);
         }
 

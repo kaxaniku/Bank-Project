@@ -8,8 +8,8 @@ namespace MyBank.Application.Interfaces.Services
         Task<Customer?> FindCustomerAsync(string personalNumber, CancellationToken token);
         IEnumerable<Account> GetAccountsByCustomer(string personalNumber);
         Task<IEnumerable<Account>> GetAccountsByCustomerAsync(string personalNumber, CancellationToken token);
-        IEnumerable<Customer> GetAllCustomers();
-        Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken token);
+        IEnumerable<Customer> GetAllCustomers(int pageNumber, int pageSize);
+        Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken token, int pageNumber, int pageSize);
         void RegisterNewCustomer(string personalNumber, 
         string firstName, 
         string lastName, 

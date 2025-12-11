@@ -43,7 +43,7 @@ namespace MyBank.Application
                 EnableSsl = true
             };
 
-            client.SendAsync(message, token);
+            await client.SendMailAsync(message, token);
         }
     }
 }

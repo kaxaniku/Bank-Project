@@ -9,7 +9,7 @@
         void CommitTransaction();
         Task CommitTransactionAsync(CancellationToken token);
         void RollbackTransaction();
-        Task RollbackTransactionAsyn(CancellationToken token);
+        Task RollbackTransactionAsync(CancellationToken token);
 
         IAccountRepository AccountRepository { get; }
         ICardRepository CardRepository { get; }

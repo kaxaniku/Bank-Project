@@ -92,7 +92,7 @@ namespace MyBank.Infrastructure
             _dbTransaction = null;
         }
         
-        public async Task RollbackTransactionAsyn(CancellationToken token)
+        public async Task RollbackTransactionAsync(CancellationToken token)
         {
             if (_dbTransaction == null)
                 throw new InvalidOperationException("No transaction in progress to rollback.");

@@ -15,8 +15,8 @@ namespace MyBank.Application
         public AccountService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        } 
-        
+        }
+
         public IEnumerable<Account> GetAccountsByCostumer(string personalNumber)
         {
             return _unitOfWork.AccountRepository.Query(c => c.Customer.PersonalNumber.Equals(personalNumber)).ToList();
@@ -28,14 +28,16 @@ namespace MyBank.Application
 
             return accounts.ToList();
         }
-        
+
         public void OpenNewAccount(string personalNumber, string accountNumber, decimal balance)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(accountNumber);
             ArgumentOutOfRangeException.ThrowIfNegative(balance);
 
-            Customer customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault()!;
+            Customer? customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault();
+
+            ArgumentNullException.ThrowIfNull(customer);
 
             Account account = new()
             {
@@ -44,20 +46,22 @@ namespace MyBank.Application
                 Balance = balance
             };
 
-            ArgumentNullException.ThrowIfNull(account, "Account cannot be null");
+            ArgumentNullException.ThrowIfNull(nameof(account));
 
             _unitOfWork.AccountRepository.Insert(account);
             _unitOfWork.SaveChanges();
             OnAccountOpened(account);
-        } 
-        
+        }
+
         public async Task OpenNewAccountAsync(string personalNumber, string accountNumber, decimal balance, CancellationToken token)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(accountNumber);
             ArgumentOutOfRangeException.ThrowIfNegative(balance);
 
-            Customer customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault()!;
+            Customer? customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault();
+
+            ArgumentNullException.ThrowIfNull(customer);
 
             Account account = new()
             {
@@ -67,36 +71,36 @@ namespace MyBank.Application
                 Status = AccountStatus.Active
             };
 
-            ArgumentNullException.ThrowIfNull(account, "Account cannot be null");
+            ArgumentNullException.ThrowIfNull(nameof(account));
 
             await _unitOfWork.AccountRepository.InsertAsync(account, token);
             await _unitOfWork.SavechangesAsync(token);
             OnAccountOpened(account);
         }
-        
+
         public decimal CheckBalance(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault()!;
+            Account? account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNull(account, $"Account with number {accountNumber} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             return account.Balance;
         }
 
         public async Task<decimal> CheckBalanceAsync(string accountNumber, CancellationToken token)
         {
-            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber == (accountNumber), token)).FirstOrDefault()!;
+            Account? account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber == (accountNumber), token)).FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNull(account, $"Account with number {accountNumber} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             return account.Balance;
         }
 
         public void FreezeAccount(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault()!;
+            Account? account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNull(account, $"Account with number {accountNumber} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             if (account.Status == AccountStatus.Closed)
                 throw new InvalidOperationException("Closed account cannot be frozen.");
@@ -112,9 +116,11 @@ namespace MyBank.Application
 
         public async Task FreezeAccountAsync(string accountNumber, CancellationToken token)
         {
-            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault()!;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(accountNumber));
 
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with id {accountNumber} not found");
+            Account? account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault();
+
+            ArgumentNullException.ThrowIfNull(account);
 
             if (account.Status == AccountStatus.Closed)
                 throw new InvalidOperationException("Closed account cannot be frozen.");
@@ -131,9 +137,11 @@ namespace MyBank.Application
 
         public void UnfreezeAccount(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault()!;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(accountNumber));
 
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with id {accountNumber} not found");
+            Account? account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber)).FirstOrDefault();
+
+            ArgumentNullException.ThrowIfNull(account);
 
             if (account.Status == AccountStatus.Active)
                 throw new InvalidOperationException("Account is already activated.");
@@ -147,9 +155,11 @@ namespace MyBank.Application
 
         public async Task UnfreezeAccountAsync(string accountNumber, CancellationToken token)
         {
-            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault()!;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(accountNumber));
+            
+            Account? account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with id {accountNumber} not found");
+            ArgumentNullException.ThrowIfNull(account);
 
             if (account.Status == AccountStatus.Active)
                 throw new InvalidOperationException("Account is already activated.");
@@ -160,12 +170,14 @@ namespace MyBank.Application
             await _unitOfWork.SavechangesAsync(token);
             OnAccountUpdated(account);
         }
-        
+
         public void CloseAccount(string accountNumber)
         {
-            Account account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber))!.FirstOrDefault()!;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(accountNumber));
+            
+            Account? account = _unitOfWork.AccountRepository.Query(a => a.AccountNumber.Equals(accountNumber))!.FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with number {accountNumber} was not found.");
+            ArgumentNullException.ThrowIfNull(account);
 
             _unitOfWork.AccountRepository.Delete(account);
             _unitOfWork.SaveChanges();
@@ -174,9 +186,11 @@ namespace MyBank.Application
 
         public async Task CloseAccountAsync(string accountNumber, CancellationToken token)
         {
-            Account account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault()!;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(accountNumber));
+            
+            Account? account = (await _unitOfWork.AccountRepository.QueryAsync(a => a.AccountNumber.Equals(accountNumber), token)).FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(accountNumber, $"Account with Id {accountNumber} was not found.");
+            ArgumentNullException.ThrowIfNull(account);
 
             await _unitOfWork.AccountRepository.DeleteAsync(account, token);
             await _unitOfWork.SavechangesAsync(token);

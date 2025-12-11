@@ -9,7 +9,7 @@ namespace MyBank.Application
         private readonly IUnitOfWork _unitOfWork;
 
         public event Action<Customer>? CustomerCreated;
-        public event Action<Customer>? Customerupdated;
+        public event Action<Customer>? CustomerUpdated;
         public event Action<Customer>? CustomerRemoved;
 
         public CustomerService(IUnitOfWork unitOfWork)
@@ -20,15 +20,15 @@ namespace MyBank.Application
         public Customer? FindCustomer(string personalNumber)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(nameof(personalNumber));
-            return _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault();
+            
+            return _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault()!;
         }
 
         public async Task<Customer?> FindCustomerAsync(string personalNumber, CancellationToken token)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with number {personalNumber} not found");
-            Customer customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault()!;
-
-            return customer;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(personalNumber));
+            
+             return (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault()!;
         }
 
         public IEnumerable<Account> GetAccountsByCustomer(string personalNumber)
@@ -43,14 +43,26 @@ namespace MyBank.Application
             return accounts.ToList();
         }
 
-        public IEnumerable<Customer> GetAllCustomers()
+        public IEnumerable<Customer> GetAllCustomers(int pageNumber = 1, int pageSize = 10)
         {
-            return _unitOfWork.CustomerRepository.Query(c => c.Activity.IsActive).ToList();
+            if(pageNumber < 1)
+                throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be greater or equal of 1.");
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            return _unitOfWork.CustomerRepository.Query(c => c.Activity.IsActive).Skip(skip).Take(pageSize).ToList();
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken token)
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken token, int pageNumber = 1, int pageSize = 10)
         {
-            return await _unitOfWork.CustomerRepository.QueryAsync(c => c.Activity.IsActive, token);
+            if (pageNumber < 1)
+                throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be greater or equal of 1.");
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            var query =  await _unitOfWork.CustomerRepository.QueryAsync(c => c.Activity.IsActive, token);
+
+            return query.Skip(skip).Take(pageSize).ToList();
         }
 
         public void RegisterNewCustomer(string personalNumber, 
@@ -65,13 +77,13 @@ namespace MyBank.Application
             string zipCode,
             int cityId)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(firstName);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(lastName);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(email);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(phoneNumber);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(addressLine1);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(zipCode);
+            ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(email);
+            ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
+            ArgumentException.ThrowIfNullOrWhiteSpace(zipCode);
             if (dateOfBirth >= DateTime.UtcNow) throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
 
             City city = _unitOfWork.CityRepository.GetById(cityId)!;
@@ -113,13 +125,13 @@ namespace MyBank.Application
             int cityId,
             CancellationToken token)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(firstName);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(lastName);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(email);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(phoneNumber);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(addressLine1);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(zipCode);
+            ArgumentException.ThrowIfNullOrWhiteSpace(personalNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(email);
+            ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
+            ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
+            ArgumentException.ThrowIfNullOrWhiteSpace(zipCode);
             if (dateOfBirth >= DateTime.UtcNow) throw new ArgumentException("Date of birth must be in the past.", nameof(dateOfBirth));
 
             City city = await _unitOfWork.CityRepository.GetByIdAsync(cityId, token)!;
@@ -150,9 +162,11 @@ namespace MyBank.Application
 
         public void RemoveCustomer(string personalNumber)
         {
-            Customer customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault()!;
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(personalNumber));
+            
+            Customer? customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with number {personalNumber} not found");
+            ArgumentNullException.ThrowIfNull(customer);
 
             _unitOfWork.CustomerRepository.Delete(customer);
             _unitOfWork.SaveChanges();
@@ -161,9 +175,11 @@ namespace MyBank.Application
 
         public async Task RemoveCustomerAsync(string personalNumber, CancellationToken token)
         {
-            var customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault();
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(personalNumber));
+           
+            Customer? customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault();
 
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with personal number {personalNumber} not found");
+            ArgumentNullException.ThrowIfNull(customer);
 
             await _unitOfWork.CustomerRepository.DeleteAsync(customer, token);
             await _unitOfWork.SavechangesAsync(token);
@@ -172,9 +188,11 @@ namespace MyBank.Application
 
         public void UpdateCustomer(string personalNumber)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with personal number {personalNumber} not found");
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(personalNumber));
 
-            Customer customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault()!;
+            Customer? customer = _unitOfWork.CustomerRepository.Query(c => c.PersonalNumber.Equals(personalNumber)).FirstOrDefault();
+
+            ArgumentNullException.ThrowIfNull(customer);
 
             _unitOfWork.CustomerRepository.Update(customer);
             _unitOfWork.SaveChanges();
@@ -183,9 +201,11 @@ namespace MyBank.Application
 
         public async Task UpdateCustomerAsync(string personalNumber, CancellationToken token)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(personalNumber, $"Customer with personal number {personalNumber} not found");
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(personalNumber));
 
-            Customer customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault()!;
+            Customer? customer = (await _unitOfWork.CustomerRepository.QueryAsync(c => c.PersonalNumber.Equals(personalNumber), token)).FirstOrDefault();
+
+            ArgumentNullException.ThrowIfNull(customer);
 
             await _unitOfWork.CustomerRepository.UpdateAsync(customer, token);
             await _unitOfWork.SavechangesAsync(token);
@@ -199,7 +219,7 @@ namespace MyBank.Application
 
         private void OnCustomerUpdated(Customer customer)
         {
-            Customerupdated?.Invoke(customer);
+            CustomerUpdated?.Invoke(customer);
         }
 
         private void OnCustomerRemoved(Customer customer)
