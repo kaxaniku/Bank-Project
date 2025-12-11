@@ -27,7 +27,7 @@ public sealed class CardService : ICardService
         {
             throw new ArgumentOutOfRangeException("Corresponding value of card type doesn't exist.");
         }
-        if(ExpirationDate <= DateTime.UtcNow)
+        if (ExpirationDate <= DateTime.UtcNow)
         {
             throw new ArgumentOutOfRangeException("Expiration date must be in the future.");
         }
@@ -105,7 +105,7 @@ public sealed class CardService : ICardService
         return card;
     }
 
-    public async Task IssueNewCardAsync(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, string accountNum, CancellationToken cancellationToken)
+    public async Task IssueNewCardAsync(string cardNumber, int cardType, string cvc, DateTime expirationDate, string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(cvc))
             throw new ArgumentException("Card number and CVC cannot be null or empty.");
@@ -113,7 +113,7 @@ public sealed class CardService : ICardService
         {
             throw new ArgumentOutOfRangeException("Corresponding value of card type doesn't exist.");
         }
-        if (ExpirationDate <= DateTime.UtcNow)
+        if (expirationDate <= DateTime.UtcNow)
         {
             throw new ArgumentOutOfRangeException("Expiration date must be in the future.");
         }
@@ -125,7 +125,7 @@ public sealed class CardService : ICardService
             CardNumber = cardNumber,
             CardType = (CardType)cardType,
             CVC = cvc,
-            ExpirationDate = ExpirationDate,
+            ExpirationDate = expirationDate,
             Status = CardStatus.Inactive,
             Account = account,
             Activity = new ActivityInfo()

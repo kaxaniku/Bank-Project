@@ -14,26 +14,37 @@ public sealed class CountryCityServices : ICountryCityServices
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public IEnumerable<Country> ListAllCountries()
-    {
-        return _unitOfWork.CountryRepository.Query(x => x.Activity.IsActive);
-    }
-
-    public Country GetCountry(int countryId)
-    {
-        Country customer = _unitOfWork.CountryRepository.GetById(countryId)
-            ?? throw new InvalidOperationException($"Country with ID {countryId} does not exist.");
-        if (!customer.Activity.IsActive)
-            throw new InvalidOperationException($"Country with ID {countryId} no longer exists.");
-        return customer;
-    }
-
-    public IEnumerable<City> ListAllCities(int pageNumber = 1)
+    public IEnumerable<Country> ListAllCountries(int pageSize = 10, int pageNumber = 1)
     {
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        const int pageSize = 10;
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<Country> query =
+            _unitOfWork.CountryRepository
+                .Query(x => x.Activity.IsActive);
+
+        return query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToList();
+    }
+
+    public Country GetCountry(int countryId)
+    {
+        Country country = _unitOfWork.CountryRepository.GetById(countryId)
+            ?? throw new InvalidOperationException($"Country with ID {countryId} does not exist.");
+        if (!country.Activity.IsActive)
+            throw new InvalidOperationException($"Country with ID {countryId} no longer exists.");
+        return country;
+    }
+
+    public IEnumerable<City> ListAllCities(int pageSize = 10, int pageNumber = 1)
+    {
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
         int skip = (pageNumber - 1) * pageSize;
 
         IQueryable<City> query =
@@ -55,12 +66,11 @@ public sealed class CountryCityServices : ICountryCityServices
         return city;
     }
 
-    public IEnumerable<City> ListCitiesByCountry(int countryId, int pageNumber = 1)
+    public IEnumerable<City> ListCitiesByCountry(int countryId, int pageSize = 10, int pageNumber = 1)
     {
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        const int pageSize = 10;
         int skip = (pageNumber - 1) * pageSize;
 
         IQueryable<City> query =
@@ -73,12 +83,11 @@ public sealed class CountryCityServices : ICountryCityServices
             .ToList();
     }
 
-    public async Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken, int pageNumber = 1)
+    public async Task<IEnumerable<Country>> ListAllCountriesAsync(CancellationToken cancellationToken, int pageSize = 10, int pageNumber = 1)
     {
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        const int pageSize = 10;
         int skip = (pageNumber - 1) * pageSize;
 
         IQueryable<Country> query =
@@ -88,7 +97,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return await query
             .Skip(skip)
             .Take(pageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Country> GetCountryAsync(int countryId, CancellationToken cancellationToken)
@@ -100,12 +109,11 @@ public sealed class CountryCityServices : ICountryCityServices
         return customer;
     }
 
-    public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken, int pageNumber = 1)
+    public async Task<IEnumerable<City>> ListAllCitiesAsync(CancellationToken cancellationToken, int pageSize = 10, int pageNumber = 1)
     {
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        const int pageSize = 10;
         int skip = (pageNumber - 1) * pageSize;
 
         IQueryable<City> query =
@@ -115,7 +123,7 @@ public sealed class CountryCityServices : ICountryCityServices
         return await query
             .Skip(skip)
             .Take(pageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<City> GetCityAsync(int cityId, CancellationToken cancellationToken)
@@ -127,12 +135,11 @@ public sealed class CountryCityServices : ICountryCityServices
         return city;
     }
 
-    public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken, int pageNumber = 1)
+    public async Task<IEnumerable<City>> ListCitiesByCountryAsync(int countryId, CancellationToken cancellationToken, int pageSize = 10, int pageNumber = 1)
     {
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        const int pageSize = 10;
         int skip = (pageNumber - 1) * pageSize;
 
         IQueryable<City> query =
@@ -142,6 +149,6 @@ public sealed class CountryCityServices : ICountryCityServices
         return await query
             .Skip(skip)
             .Take(pageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

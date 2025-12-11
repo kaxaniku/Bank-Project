@@ -102,10 +102,8 @@ public sealed class AccountService : IAccountService
 
     public async Task OpenNewAccountAsync(int customerId, string accountNumber, decimal initialBalance, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(accountNumber))
-            throw new ArgumentNullException(nameof(accountNumber));
-        if (initialBalance < 0)
-            throw new ArgumentOutOfRangeException(nameof(initialBalance), "Initial balance must be non-negative.");
+        ArgumentException.ThrowIfNullOrWhiteSpace(accountNumber);
+        ArgumentOutOfRangeException.ThrowIfNegative(initialBalance);
 
         var customer = await _customerService.FindCustomerAsync(customerId, cancellationToken);
 
