@@ -1,7 +1,6 @@
 ﻿using MyBank.Application.Interfaces.Repositories;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace MyBank.Application;
 
