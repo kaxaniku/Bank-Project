@@ -22,6 +22,7 @@ namespace MyBank.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.AddSerilogLogging();
 
             var app = builder.Build();
 
@@ -38,8 +39,9 @@ namespace MyBank.API
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
             app.Run();
         }

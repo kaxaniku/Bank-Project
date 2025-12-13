@@ -1,6 +1,6 @@
 namespace MyBank.API
 {
-    public class LoggerConfig
+    public class WeatherForecast
     {
         public DateOnly Date { get; set; }
 
