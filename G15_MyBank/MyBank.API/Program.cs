@@ -1,8 +1,7 @@
-
-using System.Data;
 using Microsoft.Data.SqlClient;
 using MyBank.API.Extensions;
 using Serilog;
+using System.Data;
 
 namespace MyBank.API
 {
