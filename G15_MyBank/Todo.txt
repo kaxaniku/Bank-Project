@@ -27,3 +27,5 @@
     b. All errors should be logged in seperate text file
 21. Implement global error handling middleware for API
 22. Add controllers for services(Empty methods)
+
+23. Move Pagination functionality from services to repositories.

@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MyBank.Domain.Interfaces;
 using MyBank.Application.Interfaces.Repositories;
+using MyBank.Domain;
 
 namespace MyBank.Infrastructure;
 
@@ -47,7 +48,7 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
         ThrowIfDisposed();
 
         IQueryable<T> query = _dbSet;
-        includes.ToList().ForEach(include => query = query.Include(include));
+        includes.ForEach(include => query = query.Include(include));
 
         return query.Where(predicate);
     }
