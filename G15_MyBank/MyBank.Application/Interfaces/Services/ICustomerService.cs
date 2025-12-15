@@ -2,7 +2,7 @@
 
 namespace MyBank.Application.Interfaces.Services
 {
-    internal interface ICustomerService 
+    public interface ICustomerService 
     {
         Customer? FindCustomer(string personalNumber);
         Task<Customer?> FindCustomerAsync(string personalNumber, CancellationToken token);

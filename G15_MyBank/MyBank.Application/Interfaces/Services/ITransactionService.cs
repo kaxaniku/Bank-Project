@@ -2,7 +2,7 @@
 
 namespace MyBank.Application.Interfaces.Services
 {
-    internal interface ITransactionService 
+    public interface ITransactionService 
     {
         IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate, int pageNumber, int pageSize);
         Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken token, int pageNumber, int pageSize);

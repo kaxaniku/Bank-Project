@@ -33,7 +33,7 @@ namespace MyBank.Application
             Card card = new()
             {
                 CardNumber = cardNumber,
-                CardType = (CardType)cardType,
+                CardType = cardType,
                 ExpirationDate = exparationDate,
                 CVC = cvc,
                 Account = account
@@ -57,7 +57,7 @@ namespace MyBank.Application
             Card card = new()
             {
                 CardNumber = cardNumber,
-                CardType = (CardType)cardType,
+                CardType = cardType,
                 ExpirationDate = exparationDate,
                 CVC = cvc,
                 Account = account

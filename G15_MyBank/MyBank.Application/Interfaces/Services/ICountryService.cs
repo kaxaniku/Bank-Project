@@ -2,7 +2,7 @@
 
 namespace MyBank.Application.Interfaces.Services
 {
-    internal interface ICountryService 
+    public interface ICountryService 
     {
         City? GetCity(int cityId);
         Task<City?> GetCityAsync(int cityId, CancellationToken token);

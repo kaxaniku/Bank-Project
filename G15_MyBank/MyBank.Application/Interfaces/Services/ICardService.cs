@@ -2,7 +2,7 @@
 
 namespace MyBank.Application.Interfaces.Services
 {
-    internal interface ICardService 
+    public interface ICardService 
     {
         void ActivateCard(string cardNumber);
         Task ActivateCardAsync(string cardNumber, CancellationToken token);

@@ -1,3 +1,6 @@
+using MyBank.API.GlobalExceptionHandling;
+using MyBank.API.Serilog;
+using Serilog;
 
 namespace MyBank.API
 {
@@ -5,7 +8,11 @@ namespace MyBank.API
     {
         public static void Main(string[] args)
         {
+            SerilogConfiguration.ConfigureLogger();
+
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog();
 
             // Add services to the container.
 
@@ -22,6 +29,8 @@ namespace MyBank.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
             app.UseHttpsRedirection();
 

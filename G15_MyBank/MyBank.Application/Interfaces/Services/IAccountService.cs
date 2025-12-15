@@ -2,7 +2,7 @@
 
 namespace MyBank.Application.Interfaces.Services
 {
-    internal interface IAccountService 
+    public interface IAccountService 
     {
         void OpenNewAccount(string personalNumber, string accounntNumber, decimal balance);
         Task OpenNewAccountAsync(string personalNumber, string accounntNumber, decimal balance, CancellationToken token);
