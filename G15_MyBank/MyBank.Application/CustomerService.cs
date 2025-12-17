@@ -156,9 +156,11 @@ public sealed class CustomerService : ICustomerService
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
         const int pageSize = 10;
-        return _unitOfWork.CustomerRepository.ListActive(pageNumber, pageSize);
-    }
 
+        return _unitOfWork.CustomerRepository
+            .Query(x => x.Activity.IsActive, pageNumber, pageSize)
+            .ToList();
+    }
 
     public IEnumerable<Account> ListAccountsByCustomer(int customerId)
     {

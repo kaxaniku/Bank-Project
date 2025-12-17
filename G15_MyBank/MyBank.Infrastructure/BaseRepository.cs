@@ -53,6 +53,23 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
         return query.Where(predicate);
     }
 
+    public IQueryable<T> Query(Expression<Func<T, bool>> predicate, int pageNumber, int pageSize, params Expression<Func<T, object>>[] includes)
+    {
+        ThrowIfDisposed();
+
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int defaultPageSize = 10;
+        if (pageSize < 1) pageSize = defaultPageSize;
+
+        int skip = (pageNumber - 1) * pageSize;
+
+        return Query(predicate, includes)
+            .Skip(skip)
+            .Take(pageSize);
+    }
+
     public async Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken, params Expression<Func<T, object>>[] includes)
     {
         ThrowIfDisposed();
@@ -62,6 +79,29 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
             query = query.Include(include);
 
         return await query.Where(predicate).ToListAsync();
+    }
+
+    public async Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate, int pageNumber, int pageSize, CancellationToken cancellationToken, params Expression<Func<T, object>>[] includes)
+    {
+        ThrowIfDisposed();
+
+        if (pageNumber < 1)
+            throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
+
+        const int defaultPageSize = 10;
+        if (pageSize < 1) pageSize = defaultPageSize;
+
+        int skip = (pageNumber - 1) * pageSize;
+
+        IQueryable<T> query = _dbSet;
+        foreach (var include in includes)
+            query = query.Include(include);
+
+        return await query
+            .Where(predicate)
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
     }
 
     public void Insert(T entity)
@@ -128,8 +168,9 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
 
         if (disposing)
         {
-            //We don't have managed resources to dispose in this base class
+
         }
+        
 
         _disposed = true;
     }
@@ -138,7 +179,6 @@ internal abstract class BaseRepository<T> : IDisposable, IAsyncDisposable, IBase
     {
         if (!_disposed)
         {
-            //Nothing to dispose asynchronously in this base class
 
             _disposed = true;
         }

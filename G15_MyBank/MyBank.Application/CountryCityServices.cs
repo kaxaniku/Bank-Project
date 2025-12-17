@@ -19,10 +19,9 @@ public sealed class CountryCityServices : ICountryCityServices
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        if (pageSize < 1)
-            throw new ArgumentException("Page size must be >= 1.", nameof(pageSize));
-
-        return _unitOfWork.CountryRepository.ListActive(pageNumber, pageSize);
+        return _unitOfWork.CountryRepository
+            .Query(x => x.Activity.IsActive, pageNumber, pageSize)
+            .ToList();
     }
 
     public Country GetCountry(int countryId)
@@ -39,12 +38,10 @@ public sealed class CountryCityServices : ICountryCityServices
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        if (pageSize < 1)
-            throw new ArgumentException("Page size must be >= 1.", nameof(pageSize));
-
-        return _unitOfWork.CityRepository.ListActive(pageNumber, pageSize);
+        return _unitOfWork.CityRepository
+            .Query(x => x.Activity.IsActive, pageNumber, pageSize)
+            .ToList();
     }
-
 
     public City GetCity(int cityId)
     {
@@ -60,15 +57,8 @@ public sealed class CountryCityServices : ICountryCityServices
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        int skip = (pageNumber - 1) * pageSize;
-
-        IQueryable<City> query =
-            _unitOfWork.CityRepository
-                .Query(x => x.Country.CountryId == countryId, x => x.Country);
-
-        return query
-            .Skip(skip)
-            .Take(pageSize)
+        return _unitOfWork.CityRepository
+            .Query(x => x.Country.CountryId == countryId, pageNumber, pageSize, x => x.Country)
             .ToList();
     }
 
@@ -77,16 +67,8 @@ public sealed class CountryCityServices : ICountryCityServices
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        int skip = (pageNumber - 1) * pageSize;
-
-        IQueryable<Country> query =
-            _unitOfWork.CountryRepository
-                .Query(x => x.Activity.IsActive);
-
-        return await query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
+        return await _unitOfWork.CountryRepository
+            .QueryAsync(x => x.Activity.IsActive, pageNumber, pageSize, cancellationToken);
     }
 
     public async Task<Country> GetCountryAsync(int countryId, CancellationToken cancellationToken)
@@ -103,16 +85,8 @@ public sealed class CountryCityServices : ICountryCityServices
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        int skip = (pageNumber - 1) * pageSize;
-
-        IQueryable<City> query =
-            _unitOfWork.CityRepository
-                .Query(x => x.Activity.IsActive);
-
-        return await query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
+        return await _unitOfWork.CityRepository
+            .QueryAsync(x => x.Activity.IsActive, pageNumber, pageSize, cancellationToken);
     }
 
     public async Task<City> GetCityAsync(int cityId, CancellationToken cancellationToken)
@@ -129,15 +103,7 @@ public sealed class CountryCityServices : ICountryCityServices
         if (pageNumber < 1)
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
-        int skip = (pageNumber - 1) * pageSize;
-
-        IQueryable<City> query =
-            _unitOfWork.CityRepository
-                .Query(x => x.Country.CountryId == countryId, x => x.Country);
-
-        return await query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
+        return await _unitOfWork.CityRepository
+            .QueryAsync(x => x.Country.CountryId == countryId, pageNumber, pageSize, cancellationToken, x => x.Country);
     }
 }
