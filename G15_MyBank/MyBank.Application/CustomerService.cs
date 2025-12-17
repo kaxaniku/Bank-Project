@@ -156,16 +156,7 @@ public sealed class CustomerService : ICustomerService
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
         const int pageSize = 10;
-        int skip = (pageNumber - 1) * pageSize;
-
-        IQueryable<Customer> query =
-            _unitOfWork.CustomerRepository
-                .Query(x => x.Activity.IsActive);
-
-        return query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToList();
+        return _unitOfWork.CustomerRepository.ListActive(pageNumber, pageSize);
     }
 
 

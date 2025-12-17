@@ -221,17 +221,9 @@ public sealed class TransactionService : ITransactionService
             throw new ArgumentException("Page number must be >= 1.", nameof(pageNumber));
 
         const int pageSize = 10;
-        int skip = (pageNumber - 1) * pageSize;
-
-        IQueryable<Transaction> query =
-            _unitOfWork.TransactionRepository
-                .Query(x => x.Type == type);
-
-        return query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToList();
+        return _unitOfWork.TransactionRepository.ListByType(type, pageNumber, pageSize);
     }
+
 
     public IEnumerable<Transaction> GenerateStatement(string accountNum, DateTime fromDate, DateTime toDate, int pageNumber = 1)
     {
@@ -241,19 +233,10 @@ public sealed class TransactionService : ITransactionService
         Account account = _accountService.FindAccount(accountNum);
 
         const int pageSize = 10;
-        int skip = (pageNumber - 1) * pageSize;
-
-        IQueryable<Transaction> query =
-            _unitOfWork.TransactionRepository.Query(x =>
-            (x.FromAccountId == account.AccountId || x.ToAccountId == account.AccountId) &&
-            x.TransactionDate >= fromDate &&
-            x.TransactionDate <= toDate);
-
-        return query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToList();
+        return _unitOfWork.TransactionRepository.ListForAccountBetweenDates(
+            account.AccountId, fromDate, toDate, pageNumber, pageSize);
     }
+
 
     public async Task TransferMoneyAsync(string fromAccountNum, string toAccountNum, decimal amount, CancellationToken cancellationToken)
     {
