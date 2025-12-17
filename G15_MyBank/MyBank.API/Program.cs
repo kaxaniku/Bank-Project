@@ -1,7 +1,12 @@
 
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using MyBank.API.Extensions;
+using MyBank.Application;
+using MyBank.Application.Interfaces.Repositories;
+using MyBank.Application.Interfaces.Services;
+using MyBank.Infrastructure;
 using Serilog;
 
 namespace MyBank.API
@@ -17,11 +22,21 @@ namespace MyBank.API
 
             // Add services to the container.
             builder.Services.AddControllers();
-            builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
+            builder.Services.AddDbContext<BankDbContext>(options =>
+                options.UseSqlServer(connectionString));
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<ICountryCityServices, CountryCityServices>();
+            builder.Services.AddScoped<ICardService, CardService>();
+            builder.Services.AddScoped<ITransactionService, TransactionService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(Program));
             builder.AddSerilogLogging();
 
             var app = builder.Build();

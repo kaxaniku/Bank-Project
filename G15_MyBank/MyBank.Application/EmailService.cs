@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using Microsoft.Extensions.Options;
 using MyBank.Application.Interfaces.Services;
 
 namespace MyBank.Application;
@@ -8,9 +9,9 @@ public sealed class EmailService : IEmailService
 {
     private readonly EmailSettings _emailSettings;
 
-    public EmailService(EmailSettings emailSettings)
+    public EmailService(IOptions<EmailSettings> emailSettings)
     {
-        _emailSettings = emailSettings;
+        _emailSettings = emailSettings.Value;
     }
 
     public void SendEmail(string to, string subject, string body)

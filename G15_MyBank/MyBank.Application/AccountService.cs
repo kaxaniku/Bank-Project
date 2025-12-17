@@ -30,7 +30,8 @@ public sealed class AccountService : IAccountService
             Customer = customer,
             AccountNumber = accountNumber,
             Balance = initialBalance,
-            Status = AccountStatus.Active
+            Status = AccountStatus.Active,
+            Activity = new ActivityInfo()
         };
 
         _unitOfWork.AccountRepository.Insert(account);
@@ -92,7 +93,7 @@ public sealed class AccountService : IAccountService
 
     public Account FindAccount(string accountNum)
     {
-        Account account = _unitOfWork.AccountRepository.Query(x => x.AccountNumber == accountNum).FirstOrDefault()
+        Account account = _unitOfWork.AccountRepository.Query(x => x.AccountNumber == accountNum, x => x.Customer).FirstOrDefault()
             ?? throw new InvalidOperationException($"Account with number {accountNum} does not exist.");
         if (!account.Activity.IsActive)
             throw new InvalidOperationException($"Account with number {accountNum} no longer exists.");
@@ -111,7 +112,8 @@ public sealed class AccountService : IAccountService
             Customer = customer!,
             AccountNumber = accountNumber,
             Balance = initialBalance,
-            Status = AccountStatus.Active
+            Status = AccountStatus.Active,
+            Activity = new ActivityInfo()
         };
 
         await _unitOfWork.AccountRepository.InsertAsync(account, cancellationToken);
@@ -172,7 +174,7 @@ public sealed class AccountService : IAccountService
 
     public async Task<Account> FindAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        var accounts = await _unitOfWork.AccountRepository.QueryAsync(x => x.AccountNumber == accountNum, cancellationToken);
+        var accounts = await _unitOfWork.AccountRepository.QueryAsync(x => x.AccountNumber == accountNum, cancellationToken, x => x.Customer);
         Account account = accounts.FirstOrDefault()
             ?? throw new InvalidOperationException($"Account with number {accountNum} does not exist.");
         if (!account.Activity.IsActive)

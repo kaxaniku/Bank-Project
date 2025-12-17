@@ -6,6 +6,8 @@ namespace MyBank.Infrastructure;
 
 public sealed class BankDbContext : DbContext
 {
+    public BankDbContext() { }
+    public BankDbContext(DbContextOptions<BankDbContext> options) : base(options) { }
     public DbSet<Account>? Accounts { get; set; }
     public DbSet<Card>? Cards { get; set; }
     public DbSet<City>? Cities { get; set; }
@@ -50,7 +52,9 @@ public sealed class BankDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionString);
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionString);
+        }
     }
 }
