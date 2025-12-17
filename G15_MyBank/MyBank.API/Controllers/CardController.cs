@@ -34,7 +34,7 @@ namespace MyBank.API.Controllers
         }
 
         [HttpDelete("{cardNumber}/close")]
-        public async Task<IActionResult> CloseAccount(string cardNumber, CancellationToken cancellationToken)
+        public async Task<IActionResult> CloseCard(string cardNumber, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

@@ -16,13 +16,13 @@ namespace MyBank.API.Controllers
         }
 
         [HttpGet("{customerNumber}")]
-        public async Task<IActionResult> FindCustomer(string customerNumber, CancellationToken cancellationToken)
+        public async Task<IActionResult> FindCustomer(int customerId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         [HttpGet("{accountNumber}/list")]
-        public async Task<IActionResult> GetAccountsByCustomer([FromRoute] string customerNumber, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAccountsByCustomer([FromRoute] int customerId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -34,7 +34,7 @@ namespace MyBank.API.Controllers
         }
 
         [HttpDelete("{customerNumber}/remove")]
-        public async Task<IActionResult> RemoveCustomer(string customerNumber, CancellationToken cancellationToken)
+        public async Task<IActionResult> RemoveCustomer(int customerId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
