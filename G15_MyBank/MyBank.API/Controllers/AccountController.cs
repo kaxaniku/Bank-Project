@@ -30,7 +30,7 @@ public class AccountController : ControllerBase
         return Ok(account);
     }
 
-    [HttpDelete("accounts/{accountNum}")]
+    [HttpDelete("{accountNum}/close")]
     public async Task<IActionResult> CloseAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
@@ -41,7 +41,7 @@ public class AccountController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("accounts/{accountNum}/activate")]
+    [HttpPut("{accountNum}/activate")]
     public async Task<IActionResult> ActivateAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
@@ -52,7 +52,7 @@ public class AccountController : ControllerBase
         return Ok("Account successfully activated.");
     }
 
-    [HttpPut("accounts/{accountNum}/deactivate")]
+    [HttpPut("{accountNum}/deactivate")]
     public async Task<IActionResult> DeactivateAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
@@ -63,7 +63,7 @@ public class AccountController : ControllerBase
         return Ok("Account successfully deactivated.");
     }
 
-    [HttpPut("accounts/{accountNum}/block")]
+    [HttpPut("{accountNum}/block")]
     public async Task<IActionResult> BlockAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
@@ -74,7 +74,7 @@ public class AccountController : ControllerBase
         return Ok("Account successfully blocked.");
     }
 
-    [HttpGet("accounts/{accountNum}/balance")]
+    [HttpGet("{accountNum}/balance")]
     public async Task<IActionResult> CheckBalance(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
@@ -85,7 +85,7 @@ public class AccountController : ControllerBase
         return Ok(new { Balance = balance });
     }
 
-    [HttpGet("accounts/{accountNum}")]
+    [HttpGet("{accountNum}")]
     public async Task<IActionResult> FindAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))

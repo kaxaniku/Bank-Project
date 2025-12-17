@@ -1,6 +1,3 @@
-
-using System.Data;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MyBank.API.Extensions;
 using MyBank.Application;
