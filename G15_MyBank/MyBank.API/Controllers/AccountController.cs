@@ -19,18 +19,20 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> OpenNewAccount([FromBody] AccountModel account, CancellationToken cancellationToken)
+    public async Task<IActionResult> OpenNewAccount([FromBody] AccountModel? account, CancellationToken cancellationToken)
     {
         if (account == null)
-        {
-            return BadRequest("account is null");
-        }
-        await _accountService.OpenNewAccountAsync(account.CustomerId, 
-            account.AccountNumber, account.Balance, cancellationToken);
-        return Ok(account);
+            return BadRequest("Account is null");
+
+        await _accountService.OpenNewAccountAsync(
+                account.CustomerId,
+                account.AccountNumber,
+                account.Balance,
+                cancellationToken);
+        return Ok(new { account, message = "Account successfully opened." });
     }
 
-    [HttpDelete("{accountNum}/close")]
+    [HttpDelete("{accountNum}")]
     public async Task<IActionResult> CloseAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
@@ -41,7 +43,7 @@ public class AccountController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("{accountNum}/activate")]
+    [HttpPut("activate/{accountNum}")]
     public async Task<IActionResult> ActivateAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
