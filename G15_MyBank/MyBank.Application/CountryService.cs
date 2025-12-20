@@ -13,70 +13,58 @@ namespace MyBank.Application
             _unitOfWork = unitOfWork;
         }
 
-        public IEnumerable<City> GetAllCities(int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<City> GetAllCities(int pageNumber, int pageSize = 10)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
-
-            return _unitOfWork.CityRepository.Query(c => c.Activity.IsActive).Skip(skip).Take(pageSize).ToList();
+            return _unitOfWork.CityRepository.Query(c => c.Activity.IsActive, pageNumber, pageSize).ToList();
         }
 
-        public async Task<IEnumerable<City>> GetAllCitiesAsync(CancellationToken token, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<City>> GetAllCitiesAsync(CancellationToken token, int pageNumber, int pageSize = 10)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
+            var query = await _unitOfWork.CityRepository.QueryAsync(c => c.Activity.IsActive, token, pageNumber, pageSize);
 
-            var query = await _unitOfWork.CityRepository.QueryAsync(c => c.Activity.IsActive, token);
-
-            return query.Skip(skip).Take(pageSize).ToList();
+            return query.ToList();
         }
 
-        public IEnumerable<Country> GetAllCountries(int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<Country> GetAllCountries(int pageNumber, int pageSize = 10)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
-
-            return _unitOfWork.CountryRepository.Query(c => c.Activity.IsActive).Skip(skip).Take(pageSize).ToList();
+            return _unitOfWork.CountryRepository.Query(c => c.Activity.IsActive, pageNumber, pageSize).ToList();
         }
 
-        public async Task<IEnumerable<Country>> GetAllCountriesAsync(CancellationToken token, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Country>> GetAllCountriesAsync(CancellationToken token, int pageNumber, int pageSize = 10)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
+            var query = await _unitOfWork.CountryRepository.QueryAsync(c => c.Activity.IsActive, token, pageNumber, pageSize);
 
-            var query = await _unitOfWork.CountryRepository.QueryAsync(c => c.Activity.IsActive, token);
-
-            return query.Skip(skip).Take(pageSize).ToList();
+            return query.ToList();
         }
 
-        public IEnumerable<City> GetCitiesByCountry(int countryId, int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<City> GetCitiesByCountry(int countryId, int pageNumber, int pageSize = 10)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
-
-            return _unitOfWork.CityRepository.Query(c => c.Country.CountryId == countryId).Skip(skip).Take(pageSize).ToList();
+            return _unitOfWork.CityRepository.Query(c => c.Country.CountryId == countryId, pageNumber, pageSize).ToList();
         }
 
-        public async Task<IEnumerable<City>> GetCitiesByCountryAsync(int countryId, CancellationToken token, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<City>> GetCitiesByCountryAsync(int countryId, CancellationToken token, int pageNumber, int pageSize = 10)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
+            var query = await _unitOfWork.CityRepository.QueryAsync(c => c.Country.CountryId == countryId, token, pageNumber, pageSize);
 
-            var query = await _unitOfWork.CityRepository.QueryAsync(c => c.Country.CountryId == countryId, token);
-
-            return query.Skip(skip).Take(pageSize).ToList();
+            return query.ToList();
         }
 
         public City? GetCity(int cityId)

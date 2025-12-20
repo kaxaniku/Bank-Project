@@ -91,38 +91,36 @@ namespace MyBank.Application
             OnTransactionProcessed(transaction);
         }
 
-        public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate, int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<Transaction> GenerateStatement(int accountId, DateTime fromDate, DateTime toDate, int pageNumber, int pageSize)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
-
-            int skip = (pageNumber - 1) * pageSize;
 
             return _unitOfWork.TransactionRepository.Query(t =>
-            (t.FromAccountId == accountId || 
+            (t.FromAccountId == accountId ||
             t.ToAccountId == accountId) &&
             t.TransactionDate >= fromDate &&
-            t.TransactionDate < toDate).
-            OrderBy(t => t.TransactionDate).
-            Skip(skip).
-            Take(pageSize).
-            ToList();
+            t.TransactionDate < toDate, 
+            pageNumber, 
+            pageSize).
+            OrderBy(t => t.TransactionDate);
         }
 
-        public async Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken token, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Transaction>> GenerateStatementAsync(int accountId, DateTime fromDate, DateTime toDate, CancellationToken token, int pageNumber, int pageSize)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
-
-            int skip = (pageNumber - 1) * pageSize;
 
             var query = await _unitOfWork.TransactionRepository.QueryAsync(t =>
             (t.FromAccountId == accountId ||
             t.ToAccountId == accountId) &&
             t.TransactionDate >= fromDate &&
-            t.TransactionDate < toDate, token);
+            t.TransactionDate < toDate, 
+            token, 
+            pageNumber, 
+            pageSize);
 
-            return query.OrderBy(t => t.TransactionDate).Skip(skip).Take(pageSize).ToList();
+            return query.OrderBy(t => t.TransactionDate);
         }
 
         public Transaction? GetTransaction(int transactionId)
@@ -135,28 +133,24 @@ namespace MyBank.Application
             return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, token);
         }
 
-        public IEnumerable<Transaction> GetTransactions(int accountId, int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<Transaction> GetTransactions(int accountId, int pageNumber, int pageSize)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
+            var query = _unitOfWork.TransactionRepository.Query(t => t.ToAccountId == accountId || t.FromAccountId == accountId, pageNumber, pageSize);
 
-            var query = _unitOfWork.TransactionRepository.Query(t => t.ToAccountId == accountId || t.FromAccountId == accountId);
-
-            return query.Skip(skip).Take(pageSize).ToList();         
+            return query;         
         }
 
-        public async Task<IEnumerable<Transaction>> GetTransactionsAsync(int accountId, CancellationToken token, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Transaction>> GetTransactionsAsync(int accountId, CancellationToken token, int pageNumber, int pageSize)
         {
             if (pageNumber < 1)
                 throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
 
-            int skip = (pageNumber - 1) * pageSize;
+            var query = await _unitOfWork.TransactionRepository.QueryAsync(t => t.ToAccountId == accountId || t.FromAccountId == accountId, token, pageNumber, pageSize);
 
-            var query = await _unitOfWork.TransactionRepository.QueryAsync(t => t.ToAccountId == accountId || t.FromAccountId == accountId, token);
-
-            return query.Skip(skip).Take(pageSize).ToList();
+            return query;
         }
 
         public bool IsTransactionAllowed(int fromAccountId, int toAccountId, decimal amount)

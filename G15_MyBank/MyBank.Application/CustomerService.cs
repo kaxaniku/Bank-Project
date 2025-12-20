@@ -43,26 +43,22 @@ namespace MyBank.Application
             return accounts.ToList();
         }
 
-        public IEnumerable<Customer> GetAllCustomers(int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<Customer> GetAllCustomers(int pageNumber, int pageSize = 10)
         {
             if(pageNumber < 1)
                 throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be greater or equal of 1.");
 
-            int skip = (pageNumber - 1) * pageSize;
-
-            return _unitOfWork.CustomerRepository.Query(c => c.Activity.IsActive).Skip(skip).Take(pageSize).ToList();
+            return _unitOfWork.CustomerRepository.Query(c => c.Activity.IsActive, pageNumber, pageSize);
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken token, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(CancellationToken token, int pageNumber, int pageSize = 10)
         {
             if (pageNumber < 1)
                 throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be greater or equal of 1.");
 
-            int skip = (pageNumber - 1) * pageSize;
+            var query =  await _unitOfWork.CustomerRepository.QueryAsync(c => c.Activity.IsActive, token, pageSize, pageNumber);
 
-            var query =  await _unitOfWork.CustomerRepository.QueryAsync(c => c.Activity.IsActive, token);
-
-            return query.Skip(skip).Take(pageSize).ToList();
+            return query.ToList();
         }
 
         public void RegisterNewCustomer(string personalNumber, 

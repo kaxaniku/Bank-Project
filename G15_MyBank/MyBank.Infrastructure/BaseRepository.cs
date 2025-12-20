@@ -45,6 +45,22 @@ namespace MyBank.Infrastructure
 
             return _dbSet.Where(predicate);
         }
+        
+        public IQueryable<T> Query(Expression<Func<T, bool>> predicate, int pageNumber, int pageSize = 10)
+        {
+            ThrowIfDisposed();
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            return Query(predicate).
+                   Skip(skip).
+                   Take(pageSize);    
+        }
 
         public async Task<List<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken token)
         {
@@ -53,6 +69,26 @@ namespace MyBank.Infrastructure
                 throw new ArgumentNullException(nameof(predicate));
 
             return await _dbSet.Where(predicate).ToListAsync(token);
+        }
+        
+        public async Task<List<T>> QueryAsync(Expression<Func<T, bool>> predicate, CancellationToken token, int pageNumber, int pageSize)
+        {
+            ThrowIfDisposed();
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater or equal of 1", nameof(pageNumber));
+
+            int skip = (pageNumber - 1) * pageSize;
+
+            IQueryable<T> query = _dbSet; 
+
+            return await 
+                query.Where(predicate).
+                Skip(skip).
+                Take(pageSize).
+                ToListAsync(token);        
         }
 
         public void Insert(T entity)
@@ -149,6 +185,10 @@ namespace MyBank.Infrastructure
         }
 
         private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_isDisposed, GetType());
+
+        
+
+        
 
         ~BaseRepository() => Dispose(false);
     }
