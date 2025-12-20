@@ -1,4 +1,4 @@
-﻿namespace MyBank.API.Models;
+﻿namespace MyBank.API.Models.CustomerModels;
 
 public sealed record CustomerModel
 {

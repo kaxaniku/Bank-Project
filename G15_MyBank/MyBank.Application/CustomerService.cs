@@ -26,7 +26,7 @@ public sealed class CustomerService : ICustomerService
         string personalNumber,
         string firstName,
         string lastName,
-        Gender gender,
+        byte gender,
         string email,
         string phoneNumber,
         DateTime dateOfBirth,
@@ -49,7 +49,7 @@ public sealed class CustomerService : ICustomerService
             PersonalNumber = personalNumber,
             FirstName = firstName,
             LastName = lastName,
-            Gender = gender,
+            Gender = (Gender)gender,
             Email = email,
             PhoneNumber = phoneNumber,
             DateOfBirth = dateOfBirth,
@@ -73,7 +73,7 @@ public sealed class CustomerService : ICustomerService
         int customerId,
         string firstName,
         string lastName,
-        Gender gender,
+        byte gender,
         DateTime dateOfBirth)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
@@ -83,7 +83,7 @@ public sealed class CustomerService : ICustomerService
         Customer customer = FindCustomer(customerId);
         customer.FirstName = firstName;
         customer.LastName = lastName;
-        customer.Gender = gender;
+        customer.Gender = (Gender)gender;
         customer.DateOfBirth = dateOfBirth;
 
         _unitOfWork.CustomerRepository.Update(customer);
@@ -143,7 +143,7 @@ public sealed class CustomerService : ICustomerService
 
     public Customer FindCustomer(int customerId)
     {
-        Customer customer = _unitOfWork.CustomerRepository.GetById(customerId)
+        Customer customer = _unitOfWork.CustomerRepository.Query(x => x.CustomerId == customerId, x => x.City).FirstOrDefault()
             ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
         if (!customer.Activity.IsActive)
             throw new InvalidOperationException($"Customer with ID {customerId} no longer exists.");
@@ -164,14 +164,14 @@ public sealed class CustomerService : ICustomerService
 
     public IEnumerable<Account> ListAccountsByCustomer(int customerId)
     {
-        return _unitOfWork.AccountRepository.Query(x => x.Customer.CustomerId == customerId, x => x.Customer);
+        return _unitOfWork.AccountRepository.Query(x => x.Customer.CustomerId == customerId && x.Activity.IsActive, x => x.Customer);
     }
 
     public async Task RegisterNewCustomerAsync(
         string personalNumber,
         string firstName,
         string lastName,
-        Gender gender,
+        byte gender,
         string email,
         string phoneNumber,
         DateTime dateOfBirth,
@@ -196,7 +196,7 @@ public sealed class CustomerService : ICustomerService
             PersonalNumber = personalNumber,
             FirstName = firstName,
             LastName = lastName,
-            Gender = gender,
+            Gender = (Gender)gender,
             Email = email,
             PhoneNumber = phoneNumber,
             DateOfBirth = dateOfBirth,
@@ -206,7 +206,7 @@ public sealed class CustomerService : ICustomerService
                 AddressLine2 = addressLine2,
                 ZipCode = zipCode
             },
-            City = new City { CityId = cityId },
+            City = _countryCityService.GetCity(cityId)!,
             Activity = new ActivityInfo()
         };
 
@@ -220,7 +220,7 @@ public sealed class CustomerService : ICustomerService
         int customerId,
         string firstName,
         string lastName,
-        Gender gender,
+        byte gender,
         DateTime dateOfBirth,
         CancellationToken cancellationToken)
     {
@@ -232,7 +232,7 @@ public sealed class CustomerService : ICustomerService
         Customer customer = await FindCustomerAsync(customerId, cancellationToken);
         customer.FirstName = firstName;
         customer.LastName = lastName;
-        customer.Gender = gender;
+        customer.Gender = (Gender)gender;
         customer.DateOfBirth = dateOfBirth;
 
         await _unitOfWork.CustomerRepository.UpdateAsync(customer);
@@ -293,7 +293,8 @@ public sealed class CustomerService : ICustomerService
 
     public async Task<Customer> FindCustomerAsync(int customerId, CancellationToken cancellationToken)
     {
-        Customer customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId, cancellationToken)
+        var customers = await _unitOfWork.CustomerRepository.QueryAsync(x => x.CustomerId == customerId, cancellationToken, x => x.City);
+        Customer customer = customers.FirstOrDefault()
             ?? throw new InvalidOperationException($"Customer with ID {customerId} does not exist.");
         if (!customer.Activity.IsActive)
             throw new InvalidOperationException($"Customer with ID {customerId} no longer exists.");
@@ -321,7 +322,7 @@ public sealed class CustomerService : ICustomerService
 
     public async Task<IEnumerable<Account>> ListAccountsByCustomerAsync(int customerId, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.AccountRepository.QueryAsync(x => x.Customer.CustomerId.Equals(customerId), cancellationToken, x => x.Customer);
+        return await _unitOfWork.AccountRepository.QueryAsync(x => x.Customer.CustomerId.Equals(customerId) && x.Activity.IsActive, cancellationToken, x => x.Customer);
     }
 
     private static void OnCustomerRegistered(Customer customer)

@@ -15,7 +15,7 @@ public interface ICustomerService
         string personalNumber,
         string firstName,
         string lastName,
-        Gender gender,
+        byte gender,
         string email,
         string phoneNumber,
         DateTime dateOfBirth,
@@ -26,7 +26,7 @@ public interface ICustomerService
     Task RegisterNewCustomerAsync(string personalNumber,
     string firstName,
     string lastName,
-    Gender gender,
+    byte gender,
     string email,
     string phoneNumber,
     DateTime dateOfBirth,
@@ -41,13 +41,13 @@ public interface ICustomerService
     int customerId,
     string firstName,
     string lastName,
-    Gender gender,
+    byte gender,
     DateTime dateOfBirth);
     Task UpdateCustomerDisplayInfoAsync(
     int customerId,
     string firstName,
     string lastName,
-    Gender gender,
+    byte gender,
     DateTime dateOfBirth,
     CancellationToken cancellationToken);
     void UpdateCustomerPrivateInfo(

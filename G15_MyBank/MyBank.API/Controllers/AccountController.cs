@@ -36,9 +36,8 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> CloseAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
-        {
             return BadRequest("accountNum is required");
-        }
+     
         await _accountService.CloseAccountAsync(accountNum, cancellationToken);
         return NoContent();
     }
@@ -47,42 +46,34 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> ActivateAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
-        {
             return BadRequest("accountNum is required");
-        }
         await _accountService.ActivateAccountAsync(accountNum, cancellationToken);
         return Ok("Account successfully activated.");
     }
 
-    [HttpPut("{accountNum}/deactivate")]
+    [HttpPut("deactivate/{accountNum}")]
     public async Task<IActionResult> DeactivateAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
-        {
             return BadRequest("accountNum is required");
-        }
         await _accountService.DeactivateAccountAsync(accountNum, cancellationToken);
         return Ok("Account successfully deactivated.");
     }
 
-    [HttpPut("{accountNum}/block")]
+    [HttpPut("block/{accountNum}")]
     public async Task<IActionResult> BlockAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
-        {
             return BadRequest("accountNum is required");
-        }
         await _accountService.BlockAccountAsync(accountNum, cancellationToken);
         return Ok("Account successfully blocked.");
     }
 
-    [HttpGet("{accountNum}/balance")]
+    [HttpGet("balance/{accountNum}")]
     public async Task<IActionResult> CheckBalance(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
-        {
             return BadRequest("accountNum is required");
-        }
         var balance = await _accountService.CheckBalanceAsync(accountNum, cancellationToken);
         return Ok(new { Balance = balance });
     }
@@ -91,9 +82,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> FindAccount(string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(accountNum))
-        {
             return BadRequest("accountNum is required");
-        }
         var account = await _accountService.FindAccountAsync(accountNum, cancellationToken);
         var accountModel = _mapper.Map<AccountModel>(account);
         return Ok(accountModel);

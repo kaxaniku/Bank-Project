@@ -88,6 +88,7 @@ public sealed class TransactionService : ITransactionService
         Transaction transaction = new()
         {
             ToAccountId = toAccount.AccountId,
+            FromAccountId = 1,
             Amount = amount,
             Description = $"Deposited money to {toAccount.AccountNumber}",
             Type = TransactionType.Deposit,
@@ -131,6 +132,7 @@ public sealed class TransactionService : ITransactionService
         Transaction transaction = new()
         {
             FromAccountId = fromAccount.AccountId,
+            ToAccountId = 1,
             Amount = amount,
             Description = $"Withdrawn Money from {fromAccount.AccountNumber}",
             Type = TransactionType.Withdrawal,
@@ -227,8 +229,6 @@ public sealed class TransactionService : ITransactionService
             .ToList();
     }
 
-
-
     public IEnumerable<Transaction> GenerateStatement(string accountNum, DateTime fromDate, DateTime toDate, int pageNumber = 1)
     {
         if (pageNumber < 1)
@@ -247,8 +247,6 @@ public sealed class TransactionService : ITransactionService
                 pageSize)
             .ToList();
     }
-
-
 
     public async Task TransferMoneyAsync(string fromAccountNum, string toAccountNum, decimal amount, CancellationToken cancellationToken)
     {
@@ -316,6 +314,7 @@ public sealed class TransactionService : ITransactionService
         Transaction transaction = new()
         {
             ToAccountId = toAccount.AccountId,
+            FromAccountId = 1,
             Amount = amount,
             Description = $"Deposited money to {toAccount.AccountNumber}",
             Type = TransactionType.Deposit,
@@ -359,6 +358,7 @@ public sealed class TransactionService : ITransactionService
         Transaction transaction = new()
         {
             FromAccountId = fromAccount.AccountId,
+            ToAccountId = 1,
             Amount = amount,
             Description = $"Withdrawn Money from {fromAccount.AccountNumber}",
             Type = TransactionType.Withdrawal,
@@ -440,7 +440,10 @@ public sealed class TransactionService : ITransactionService
 
     public async Task<Transaction?> GetTransactionAsync(int transactionId, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.TransactionRepository.GetByIdAsync(transactionId, cancellationToken);
+        var transactions = await _unitOfWork.TransactionRepository.QueryAsync(x => x.TransactionId == transactionId, cancellationToken, x => x.FromAccount!, x => x.ToAccount!);
+        Transaction transaction = transactions.FirstOrDefault()
+            ?? throw new InvalidOperationException($"Transaction with ID {transactionId} does not exist.");
+        return transaction;
     }
 
     public async Task<IEnumerable<Transaction>> ListTransactionsAsync(TransactionType type, CancellationToken cancellationToken, int pageNumber = 1)
@@ -453,7 +456,6 @@ public sealed class TransactionService : ITransactionService
         return await _unitOfWork.TransactionRepository
             .QueryAsync(x => x.Type == type, pageNumber, pageSize, cancellationToken);
     }
-
 
     public async Task<IEnumerable<Transaction>> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken, int pageNumber = 1)
     {
@@ -473,7 +475,6 @@ public sealed class TransactionService : ITransactionService
                 pageSize,
                 cancellationToken);
     }
-
 
     private static void OnTransactionMade(Transaction transaction)
     {

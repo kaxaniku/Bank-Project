@@ -19,7 +19,7 @@ public sealed class CardService : ICardService
     public static event Action<Card>? CardUpdated;
     public static event Action<int>? CardClosed;
 
-    public void IssueNewCard(string cardNumber, int cardType, string cvc, DateTime ExpirationDate, string accountNum)
+    public void IssueNewCard(string cardNumber, byte cardType, string cvc, DateTime ExpirationDate, string accountNum)
     {
         if (string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(cvc))
             throw new ArgumentException("Card number and CVC cannot be null or empty.");
@@ -93,19 +93,19 @@ public sealed class CardService : ICardService
 
     public IEnumerable<Card> ListCardsByAccount(string accountNum)
     {
-        return _unitOfWork.CardRepository.Query(x => x.Account.AccountNumber == accountNum, x => x.Account);
+        return _unitOfWork.CardRepository.Query(x => x.Account.AccountNumber == accountNum && x.Activity.IsActive, x => x.Account);
     }
 
     public Card FindCard(string cardNum)
     {
-        Card card = _unitOfWork.CardRepository.Query(x => x.CardNumber == cardNum).FirstOrDefault()
+        Card card = _unitOfWork.CardRepository.Query(x => x.CardNumber == cardNum, x => x.Account).FirstOrDefault()
             ?? throw new InvalidOperationException($"Card with number {cardNum} does not exist.");
         if (!card.Activity.IsActive)
             throw new InvalidOperationException($"Card with number {cardNum} no longer exists.");
         return card;
     }
 
-    public async Task IssueNewCardAsync(string cardNumber, int cardType, string cvc, DateTime expirationDate, string accountNum, CancellationToken cancellationToken)
+    public async Task IssueNewCardAsync(string cardNumber, byte cardType, string cvc, DateTime expirationDate, string accountNum, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(cvc))
             throw new ArgumentException("Card number and CVC cannot be null or empty.");
@@ -179,7 +179,7 @@ public sealed class CardService : ICardService
 
     public async Task<Card> FindCardAsync(string cardNum, CancellationToken cancellationToken)
     {
-        var cards = await _unitOfWork.CardRepository.QueryAsync(x => x.CardNumber == cardNum, cancellationToken);
+        var cards = await _unitOfWork.CardRepository.QueryAsync(x => x.CardNumber == cardNum, cancellationToken, x => x.Account);
         Card card = cards.FirstOrDefault()
             ?? throw new InvalidOperationException($"Card with Number {cardNum} does not exist.");
         if (!card.Activity.IsActive)
@@ -189,7 +189,7 @@ public sealed class CardService : ICardService
 
     public async Task<IEnumerable<Card>> ListCardsByAccountAsync(string accountNum, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.CardRepository.QueryAsync(x => x.Account.AccountNumber == accountNum, cancellationToken, x => x.Account);
+        return await _unitOfWork.CardRepository.QueryAsync(x => x.Account.AccountNumber == accountNum && x.Activity.IsActive, cancellationToken, x => x.Account);
     }
 
     private static void OnCardIssued(Card card)

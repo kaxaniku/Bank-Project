@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MyBank.API.Models.CustomerModels;
 using MyBank.API.Models;
 using MyBank.Application.Interfaces.Services;
 
@@ -9,52 +11,106 @@ namespace MyBank.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService, IMapper mapper)
         {
             _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
+            _mapper = mapper;
         }
 
-        [HttpGet("{customerNumber}")]
+        [HttpGet("{customerId}")]
         public async Task<IActionResult> FindCustomer([FromRoute] int customerId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (customerId <= 0)
+                return BadRequest("customerId is required");
+            var customer = await _customerService.FindCustomerAsync(customerId, cancellationToken);
+            var customerModel = _mapper.Map<CustomerModel>(customer);
+            return Ok(customerModel);
         }
 
-        [HttpGet("{accountNumber}/list")]
+        [HttpGet("list/{customerId}")]
         public async Task<IActionResult> GetAccountsByCustomer([FromRoute] int customerId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (customerId <= 0)
+                return BadRequest("customerId is required");
+            var accounts = await _customerService.ListAccountsByCustomerAsync(customerId, cancellationToken);
+            var accountModels = _mapper.Map<IEnumerable<AccountModel>>(accounts);
+            return Ok(accountModels);
         }
 
         [HttpPost]
         public async Task<IActionResult> RegisterCustomer([FromBody] CustomerModel customer, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (customer == null)
+                return BadRequest("Customer is null");
+            await _customerService.RegisterNewCustomerAsync(
+                    customer.PersonalNumber,
+                    customer.FirstName,
+                    customer.LastName,
+                    customer.Gender,
+                    customer.Email,
+                    customer.PhoneNumber,
+                    customer.DateOfBirth,
+                    customer.AddressLine1,
+                    customer.AddressLine2,
+                    customer.ZipCode,
+                    customer.CityId,
+                    cancellationToken);
+            return Ok(new { customer, message = "Customer successfully registered." });
         }
 
-        [HttpDelete("remove/{customerNumber}")]
+        [HttpDelete("remove/{customerId}")]
         public async Task<IActionResult> RemoveCustomer(int customerId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (customerId <= 0)
+                return BadRequest("customerId is required");
+            await _customerService.RemoveCustomerAsync(customerId, cancellationToken);
+            return NoContent();
         }
 
-        [HttpPut("{customerNumber}/updateDisplayInfo")]
-        public async Task<IActionResult> UpdateCustomerDisplayInfo([FromBody] CustomerModel customer, CancellationToken cancellationToken)
+        [HttpPut("updateDisplayInfo/{customerId}")]
+        public async Task<IActionResult> UpdateCustomerDisplayInfo(int customerId, [FromBody] CustomerDisplayModel customer, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (customer == null)
+                return BadRequest("Customer is null");
+            await _customerService.UpdateCustomerDisplayInfoAsync(
+                customerId,
+                customer.FirstName,
+                customer.LastName,
+                customer.Gender,
+                customer.DateOfBirth,
+                cancellationToken);
+            return Ok(new { customer, message = "Customer display information successfully updated." });
         }
 
-        [HttpPut("{customerNumber}/updatePrivateInfo")]
-        public async Task<IActionResult> UpdateCustomerPrivateInfo([FromBody] CustomerModel customer, CancellationToken cancellationToken)
+        [HttpPut("updatePrivateInfo/{customerId}")]
+        public async Task<IActionResult> UpdateCustomerPrivateInfo(int customerId, [FromBody] CustomerPrivateModel customer, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (customer == null)
+                return BadRequest("Customer is null");
+            await _customerService.UpdateCustomerPrivateInfoAsync(
+                customerId,
+                customer.PersonalNumber,
+                customer.Email,
+                customer.PhoneNumber,
+                cancellationToken);
+            return Ok(new { customer, message = "Customer private information successfully updated." });
         }
 
-        [HttpPut("{customerNumber}/updateAddressInfo")]
-        public async Task<IActionResult> UpdateCustomerAddressInfo([FromBody] CustomerModel customer, CancellationToken cancellationToken)
+        [HttpPut("updateAddressInfo/{customerId}")]
+        public async Task<IActionResult> UpdateCustomerAddressInfo(int customerId, [FromBody] CustomerAddressModel customer, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (customer == null)
+                return BadRequest("Customer is null");
+            await _customerService.UpdateCustomerAddressInfoAsync(
+                customerId,
+                customer.AddressLine1,
+                customer.AddressLine2,
+                customer.ZipCode,
+                customer.CityId,
+                cancellationToken);
+            return Ok(new { customer, message = "Customer address information successfully updated." });
         }
     }
 }
