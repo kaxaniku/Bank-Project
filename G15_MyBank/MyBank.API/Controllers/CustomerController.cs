@@ -29,6 +29,7 @@ namespace MyBank.API.Controllers
             return Ok(customerModel);
         }
 
+        // TODO: Move this to the AccountController
         [HttpGet("list/{customerId}")]
         public async Task<IActionResult> GetAccountsByCustomer([FromRoute] int customerId, CancellationToken cancellationToken)
         {
@@ -40,7 +41,7 @@ namespace MyBank.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterCustomer([FromBody] CustomerModel customer, CancellationToken cancellationToken)
+        public async Task<IActionResult> RegisterCustomer([FromBody] CustomerModel? customer, CancellationToken cancellationToken)
         {
             if (customer == null)
                 return BadRequest("Customer is null");
@@ -60,7 +61,7 @@ namespace MyBank.API.Controllers
             return Ok(new { customer, message = "Customer successfully registered." });
         }
 
-        [HttpDelete("remove/{customerId}")]
+        [HttpDelete("{customerId}")]
         public async Task<IActionResult> RemoveCustomer(int customerId, CancellationToken cancellationToken)
         {
             if (customerId <= 0)
@@ -70,7 +71,7 @@ namespace MyBank.API.Controllers
         }
 
         [HttpPut("updateDisplayInfo/{customerId}")]
-        public async Task<IActionResult> UpdateCustomerDisplayInfo(int customerId, [FromBody] CustomerDisplayModel customer, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCustomerDisplayInfo(int customerId, [FromBody] CustomerDisplayModel? customer, CancellationToken cancellationToken)
         {
             if (customer == null)
                 return BadRequest("Customer is null");
@@ -85,7 +86,7 @@ namespace MyBank.API.Controllers
         }
 
         [HttpPut("updatePrivateInfo/{customerId}")]
-        public async Task<IActionResult> UpdateCustomerPrivateInfo(int customerId, [FromBody] CustomerPrivateModel customer, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCustomerPrivateInfo(int customerId, [FromBody] CustomerPrivateModel? customer, CancellationToken cancellationToken)
         {
             if (customer == null)
                 return BadRequest("Customer is null");
@@ -99,7 +100,7 @@ namespace MyBank.API.Controllers
         }
 
         [HttpPut("updateAddressInfo/{customerId}")]
-        public async Task<IActionResult> UpdateCustomerAddressInfo(int customerId, [FromBody] CustomerAddressModel customer, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCustomerAddressInfo(int customerId, [FromBody] CustomerAddressModel? customer, CancellationToken cancellationToken)
         {
             if (customer == null)
                 return BadRequest("Customer is null");

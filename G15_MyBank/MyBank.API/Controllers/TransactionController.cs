@@ -75,7 +75,7 @@ public class TransactionController : ControllerBase
         return Ok(new { message = "Money withdrawn successfully" });
     }
 
-    [HttpPost("card-payment")]
+    [HttpPost("cardpayment")]
     public async Task<IActionResult> ProcessCardPayment(
         [FromBody] CardPaymentRequest request,
         CancellationToken cancellationToken)
@@ -109,7 +109,7 @@ public class TransactionController : ControllerBase
     {
         var transactions = await _transactionService.ListTransactionsAsync(type, cancellationToken, pageNumber);
         var transactionModels = _mapper.Map<IEnumerable<TransactionModel>>(transactions);
-        return Ok(transactions);
+        return Ok(transactionModels);
     }
 
     [HttpGet("statementList/{accountNum}")]
@@ -125,7 +125,7 @@ public class TransactionController : ControllerBase
         var transactions = await _transactionService.GenerateStatementAsync(
             accountNum, from, to, cancellationToken, pageNumber);
         var transactionModels = _mapper.Map<IEnumerable<TransactionModel>>(transactions);
-        return Ok(transactions);
+        return Ok(transactionModels);
     }
 }
 
