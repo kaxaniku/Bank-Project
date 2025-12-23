@@ -16,6 +16,8 @@ namespace MyBank.API
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.ConfigureLogger();
+            builder.ConfigureAuth();
+            builder.ConfigureBearer();
 
             // Add services to the container.
             builder.Services.AddControllers();
@@ -49,6 +51,7 @@ namespace MyBank.API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
-using MyBank.Application.Interfaces.Services;
-using MyBank.API.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MyBank.API.Models;
+using MyBank.Application.Interfaces.Services;
 
 namespace MyBank.API.Controllers;
 
+[Authorize(Roles = "Admin,User")]
 [ApiController]
 [Route("[controller]")]
 public class AccountController : ControllerBase

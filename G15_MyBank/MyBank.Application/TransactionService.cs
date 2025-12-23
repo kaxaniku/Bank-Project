@@ -454,7 +454,7 @@ public sealed class TransactionService : ITransactionService
         const int pageSize = 10;
 
         return await _unitOfWork.TransactionRepository
-            .QueryAsync(x => x.Type == type, pageNumber, pageSize, cancellationToken);
+            .QueryAsync(x => x.Type == type, pageNumber, pageSize, cancellationToken, x => x.FromAccount!, x => x.ToAccount!);
     }
 
     public async Task<IEnumerable<Transaction>> GenerateStatementAsync(string accountNum, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken, int pageNumber = 1)
@@ -473,7 +473,7 @@ public sealed class TransactionService : ITransactionService
                 x.TransactionDate <= toDate,
                 pageNumber,
                 pageSize,
-                cancellationToken);
+                cancellationToken, x => x.FromAccount!, x => x.ToAccount!);
     }
 
     private static void OnTransactionMade(Transaction transaction)

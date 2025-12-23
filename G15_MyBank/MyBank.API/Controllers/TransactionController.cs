@@ -1,12 +1,15 @@
 using System.Globalization;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBank.API.Models;
+using MyBank.API.Models.Requests;
 using MyBank.Application.Interfaces.Services;
 using MyBank.Domain;
 
 namespace MyBank.API.Controllers;
 
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class TransactionController : ControllerBase
@@ -127,24 +130,4 @@ public class TransactionController : ControllerBase
         var transactionModels = _mapper.Map<IEnumerable<TransactionModel>>(transactions);
         return Ok(transactionModels);
     }
-}
-
-public sealed record TransferMoneyRequest
-{
-    public string FromAccountNum { get; set; } = null!;
-    public string ToAccountNum { get; set; } = null!;
-    public decimal Amount { get; set; }
-}
-
-public sealed record DepositWithdrawRequest
-{
-    public string AccountNum { get; set; } = null!;
-    public decimal Amount { get; set; }
-}
-
-public sealed record CardPaymentRequest
-{
-    public string CardNum { get; set; } = null!;
-    public string ReceiverAccountNum { get; set; } = null!;
-    public decimal Amount { get; set; }
 }
