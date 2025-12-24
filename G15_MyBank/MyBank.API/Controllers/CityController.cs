@@ -16,15 +16,15 @@ namespace MyBank.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCities(CancellationToken token)
+        public async Task<IActionResult> GetCities(CancellationToken token, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            return Ok(await _cityService.GetAllCitiesAsync(token, pageNumber, pageSize));
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCity([FromRoute] int id, CancellationToken token)
+        public async Task<IActionResult> GetCity([FromRoute] int cityId, CancellationToken token)
         {
-            throw new NotImplementedException();
+            return Ok(await _cityService.GetCityAsync(cityId, token));
         }
     }
 }

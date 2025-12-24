@@ -15,22 +15,22 @@ namespace MyBank.API.Controllers
             _countryService = countryService ?? throw new ArgumentNullException(nameof(countryService));
         }
 
-        [HttpGet("countries/{id}")]
-        public async Task<IActionResult> GetCountries(CancellationToken token)
+        [HttpGet]
+        public async Task<IActionResult> GetCountries(CancellationToken token, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            return Ok(await _countryService.GetAllCountriesAsync(token, pageNumber, pageSize));
         }
 
-        [HttpGet("{countryId}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetCountry(int countryId, CancellationToken token)
         {
-            throw new NotImplementedException();
+            return Ok(await _countryService.GetCountryAsync(countryId, token));
         }
 
-        [HttpGet("{countryId}/cities")]
-        public async Task<IActionResult> GetCitiesByCountry(int countryId, CancellationToken token)
+        [HttpGet("cityBy{Id}")]
+        public async Task<IActionResult> GetCitiesByCountry(int countryId, CancellationToken token, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            return Ok(await _countryService.GetCitiesByCountryAsync(countryId, token, pageNumber, pageSize));
         }
     }
 }

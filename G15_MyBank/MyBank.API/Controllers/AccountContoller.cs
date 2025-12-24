@@ -15,40 +15,69 @@ namespace MyBank.API.Controllers
             _accountService = accountService ?? throw new ArgumentException(nameof(accountService));
         }
 
-        [HttpGet("accounts/{personalNumber}")]
+        [HttpGet("AccountsByCustomer/{personalNumber}")]
         public async Task<IActionResult> GetByCustomer([FromRoute] string personalNumber, CancellationToken token)
         {
-            throw new NotImplementedException();
+            if (personalNumber == null)
+                return BadRequest("Personal number cannot be null");
+
+            return Ok( await _accountService.GetAccountsByCustomerAsync(personalNumber, token));
         }
 
         [HttpPost]
         public async Task<IActionResult> OpenAccount([FromBody] AccountModel account, CancellationToken token)
         {
-            throw new NotImplementedException();
+            if (account == null)
+                return BadRequest("Account not found");
+
+            await _accountService.OpenNewAccountAsync(
+                  account.Customer.PersonalNumber,
+                  account.AccountNumber,
+                  account.Balance,
+                  token);
+
+            return Ok(account);
         }
 
-        [HttpPut("account/{accoutNumber}/balance")]
+        [HttpPut("CheckBalance{accoutNumber}")]
         public async Task<IActionResult> CheckAccountBalance([FromRoute] string accountNumber, CancellationToken token)
         {
-            throw new NotImplementedException();
+            if (accountNumber == null)
+                return BadRequest($"Account with number {accountNumber} not found");
+
+            var accountBalance = await _accountService.CheckBalanceAsync(accountNumber, token);
+
+            return Ok(accountBalance);
         }
 
-        [HttpPut("account/by-number/{accountNumber}/freeze")]
-        public async Task<IActionResult> Freeze([FromBody] AccountModel account, CancellationToken token)
+        [HttpPut("FreezeAccount/{accountNumber}")]
+        public async Task<IActionResult> Freeze(string accountNumber, CancellationToken token)
         {
-            throw new NotImplementedException();
+            if (accountNumber == null)
+                return BadRequest($"Account with number {accountNumber} not found");
+
+            await _accountService.FreezeAccountAsync(accountNumber, token);
+            return Ok("Acount deactivated succesfully");
         }
 
-        [HttpPut("account/by-number/{accountNumber}/unfreeze")]
-        public async Task<IActionResult> Unfreeze([FromBody] AccountModel account, CancellationToken token)
+        [HttpPut("UnfreezeAccount{accountNumber}")]
+        public async Task<IActionResult> Unfreeze(string accountNumber, CancellationToken token)
         {
-            throw new NotImplementedException();
+            if (accountNumber == null)
+                return BadRequest($"Account with number {accountNumber} not found");
+
+            await _accountService.UnfreezeAccountAsync(accountNumber, token);
+            return Ok("Account activated succesfully");
         }
 
         [HttpDelete("{accountNumber}")]
-        public async Task<IActionResult> Close([FromRoute] string accountNumber, CancellationToken token)
+        public async Task<IActionResult> Close(string accountNumber, CancellationToken token)
         {
-            throw new NotImplementedException();
+            if (accountNumber == null)
+                return BadRequest($"Account with number {accountNumber} not found");
+
+            await _accountService.CloseAccountAsync(accountNumber, token);
+            return Ok("Account Closed succesfully");
         }
     }
 }
