@@ -21,7 +21,7 @@ public class CardController : ControllerBase
     }
 
     [HttpGet("{cardNumber}")]
-    public async Task<IActionResult> FindCard(string cardNumber, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCard(string cardNumber, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(cardNumber))
             return BadRequest("cardNumber is required");
@@ -38,11 +38,10 @@ public class CardController : ControllerBase
         var cards = await _cardService.ListCardsByAccountAsync(accountNumber, cancellationToken);
         var cardModels = _mapper.Map<IEnumerable<CardModel>>(cards);
         return Ok(cardModels);
-
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddCard([FromBody] CardModel card, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddCard([FromBody] CardModel? card, CancellationToken cancellationToken)
     {
         if (card == null)
             return BadRequest("Card is null");
