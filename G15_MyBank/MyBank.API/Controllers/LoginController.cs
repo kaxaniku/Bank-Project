@@ -56,6 +56,14 @@ public sealed class LoginController : ControllerBase
 
     private UserLogin? AuthenticateUser(UserLoginRequest userLogin)
     {
+        // TODO: We need to make users persistent in a database or other storage.
+        // For example we can use 2 options:
+        // 1. Store users in a database and validate credentials against it.
+        // 2. We can store users in config file as well.
+        // For now let's avoid using roles and use only username and password.
+        // This change will not use hardcoded users.
+        // It will be something like this:
+        // var user = _userService.GetUserByCredentials(userLogin.Name, userLogin.Password);
         if (userLogin.Name == "admin" && userLogin.Password == "admin")
         {
             UserLogin user = new UserLogin
