@@ -14,6 +14,7 @@ public sealed class BankDbContext : DbContext
     public DbSet<Country>? Countries { get; set; }
     public DbSet<Customer>? Customers { get; set; }
     public DbSet<Transaction>? Transactions { get; set; }
+    public DbSet<Login>? Logins { get; set; }
 
     public override int SaveChanges()
     {

@@ -1,7 +1,7 @@
 ﻿namespace MyBank.API.Models;
 
-public class UserLoginRequest
+public class UserLogin
 {
-    public string Name { get; set; } = null!;
-    public string Password { get; set; } = null!;
+    public string Username { get; set; } = null!;
+    public string PasswordHash { get; set; } = null!;
 }

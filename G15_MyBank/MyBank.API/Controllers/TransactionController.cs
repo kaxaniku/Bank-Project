@@ -9,7 +9,7 @@ using MyBank.Domain;
 
 namespace MyBank.API.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TransactionController : ControllerBase

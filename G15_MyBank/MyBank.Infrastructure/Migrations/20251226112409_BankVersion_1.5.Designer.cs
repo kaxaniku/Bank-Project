@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBank.Infrastructure;
 
@@ -12,9 +13,11 @@ using MyBank.Infrastructure;
 namespace MyBank.Infrastructure.Migrations
 {
     [DbContext(typeof(BankDbContext))]
-    partial class BankDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251226112409_BankVersion_1.5")]
+    partial class BankVersion_15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -313,9 +316,6 @@ namespace MyBank.Infrastructure.Migrations
                         });
 
                     b.HasKey("UserId");
-
-                    b.HasIndex("Username")
-                        .IsUnique();
 
                     b.ToTable("Logins");
                 });

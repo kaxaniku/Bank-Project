@@ -17,4 +17,5 @@ public interface IUnitOfWork : IDisposable, IAsyncDisposable
     ICountryRepository CountryRepository { get; }
     ICustomerRepository CustomerRepository { get; }
     ITransactionRepository TransactionRepository { get; }
+    ILoginRepository LoginRepository { get; }
 }

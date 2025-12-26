@@ -15,6 +15,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly Lazy<ICountryRepository> _country;
     private readonly Lazy<ICustomerRepository> _customer;
     private readonly Lazy<ITransactionRepository> _bankTransaction;
+    private readonly Lazy<ILoginRepository> _login;
 
     public IAccountRepository AccountRepository => CheckDisposedAndGet(_account);
     public ICardRepository CardRepository => CheckDisposedAndGet(_card);
@@ -22,6 +23,7 @@ public sealed class UnitOfWork : IUnitOfWork
     public ICountryRepository CountryRepository => CheckDisposedAndGet(_country);
     public ICustomerRepository CustomerRepository => CheckDisposedAndGet(_customer);
     public ITransactionRepository TransactionRepository => CheckDisposedAndGet(_bankTransaction);
+    public ILoginRepository LoginRepository => CheckDisposedAndGet(_login);
 
     public UnitOfWork(BankDbContext context)
     {
@@ -33,6 +35,7 @@ public sealed class UnitOfWork : IUnitOfWork
         _country = new Lazy<ICountryRepository>(() => new CountryRepository(_context));
         _customer = new Lazy<ICustomerRepository>(() => new CustomerRepository(_context));
         _bankTransaction = new Lazy<ITransactionRepository>(() => new TransactionRepository(_context));
+        _login = new Lazy<ILoginRepository>(() => new LoginRepository(_context));
     }
 
     public int SaveChanges()
@@ -159,6 +162,9 @@ public sealed class UnitOfWork : IUnitOfWork
 
             if (_bankTransaction.IsValueCreated)
                 _bankTransaction.Value.Dispose();
+
+            if (_login.IsValueCreated)
+                _login.Value.Dispose();
         }
 
         _disposed = true;
@@ -191,6 +197,8 @@ public sealed class UnitOfWork : IUnitOfWork
 
             if (_bankTransaction.IsValueCreated)
                 await _bankTransaction.Value.DisposeAsync();
+            if (_login.IsValueCreated)
+                await _login.Value.DisposeAsync();
 
             _disposed = true;
         }

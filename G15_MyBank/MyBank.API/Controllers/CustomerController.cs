@@ -7,7 +7,7 @@ using MyBank.Application.Interfaces.Services;
 
 namespace MyBank.API.Controllers;
 
-[Authorize(Roles = "Admin,User")]
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class CustomerController : ControllerBase
