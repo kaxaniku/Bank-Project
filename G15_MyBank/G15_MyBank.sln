@@ -21,7 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6AF93761-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{89C8EB51-7950-48F7-B81C-C232AC0F9EF8}"
 	ProjectSection(SolutionItems) = preProject
-		TextFile1.txt = TextFile1.txt
 		Todo.txt = Todo.txt
 	EndProjectSection
 EndProject
